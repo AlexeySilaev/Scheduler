@@ -1,0 +1,77 @@
+﻿<Window x:Class="Scheduler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Scheduler"
+        xmlns:vm="clr-namespace:Scheduler.ViewModels"
+        xmlns:templateSelectors="clr-namespace:Scheduler.TemplateSelectors"
+        mc:Ignorable="d"
+        Title="Напоминалка" Height="450" Width="800"
+        Loaded="MainWindow_OnLoaded">
+    <Window.DataContext>
+        <vm:MainViewModel></vm:MainViewModel>
+    </Window.DataContext>
+    <Window.Resources>
+        <templateSelectors:SchedulerItemTemplateSelector
+            AlarmTemplate="{StaticResource AlarmItemTemplate}"
+            EventTemplate="{StaticResource EventItemTemplate}"
+            NoteTemplate="{StaticResource NoteItemTemplate}"
+            x:Key="SchedulerGroupTemplateSelector"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1" Background="OrangeRed">
+            <TextBlock Text="{Binding Error}" Visibility="{Binding Error, Converter={StaticResource StringToVisibilbtyConverter}}"
+                       TextAlignment="Center" TextWrapping="Wrap" Margin="10"/>
+        </Grid>
+        <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Groups}" SelectedItem="{Binding SelectedGroup}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5" Orientation="Horizontal">
+                        <Image Width="32" Height="32" Source="{Binding Path=ImagePath}" />
+                        <TextBlock FontSize="16" VerticalAlignment="Center" Margin="5,0" Text="{Binding Path=Name}" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Grid.Row="1" Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <DockPanel LastChildFill="False" Margin="5"
+                       FocusManager.FocusedElement="{Binding ElementName=FilterBox}">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <TextBlock Text="Поиск вхождений" Margin="5,0" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SearchText, Delay=500, UpdateSourceTrigger=PropertyChanged}" MinWidth="250"
+                             VerticalContentAlignment="Center" x:Name="FilterBox"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <TextBlock Text="Добавить" Margin="5,0" VerticalAlignment="Center"/>
+                    <Button Command="{Binding AddItemCommand}">
+                        <Image Source="/Resources/add20x20.png"/>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+            <ListBox Grid.Row="1" Margin="5" 
+                     ItemsSource="{Binding SelectedGroup.Items}"
+                     SelectedValue="{Binding SelectedItem}"
+                     ItemTemplateSelector="{StaticResource SchedulerGroupTemplateSelector}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Grid>
+    </Grid>
+</Window>
