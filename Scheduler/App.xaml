@@ -60,7 +60,7 @@
                         <TextBlock Foreground="{StaticResource GrayText}">
                             <TextBlock.Text>
                                 <MultiBinding Converter="{StaticResource AlarmTimeToStringConverter}">
-                                    <Binding Path="IsExpired" />
+                                    <Binding Path="ExpiredType" />
                                     <Binding Path="RemainTime" />
                                 </MultiBinding>
                             </TextBlock.Text>
@@ -105,7 +105,7 @@
                             <TextBlock  Foreground="{StaticResource GrayText}">
                                 <TextBlock.Text>
                                     <MultiBinding Converter="{StaticResource EventDateToStringConverter}">
-                                        <Binding Path="IsExpired" />
+                                        <Binding Path="ExpiredType" />
                                         <Binding Path="NearestEventDate" />
                                     </MultiBinding>
                                 </TextBlock.Text>

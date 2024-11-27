@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Scheduler.Extensions;
+using Scheduler.ViewModels;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -9,9 +11,9 @@ namespace Scheduler.Converters
         public object Convert(
             object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            bool expired = (bool)values[0];
-            if (expired)
-                return "истекло время";
+            ExpiredType expiredType = (ExpiredType)values[0];
+            if (expiredType != ExpiredType.Active)
+                return expiredType.GetDescription().ToLower();
 
             TimeSpan ts = (TimeSpan)values[1];
             if (ts.TotalSeconds < 60)

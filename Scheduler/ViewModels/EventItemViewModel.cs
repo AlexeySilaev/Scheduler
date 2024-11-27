@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using Scheduler.Converters;
+using Scheduler.Extensions;
 
 namespace Scheduler.ViewModels
 {
@@ -52,12 +53,7 @@ namespace Scheduler.ViewModels
 
         public override string PeriodicityDescription
         {
-            get
-            {
-                EnumToStringConverter converter = new EnumToStringConverter();
-                return converter.Convert(Periodicity, typeof(Periodicity), null, CultureInfo.InvariantCulture)
-                    .ToString();
-            }
+            get { return Periodicity.GetDescription(); }
         }
 
         public EventItemViewModel(EventItem item) : base(item)
@@ -72,9 +68,9 @@ namespace Scheduler.ViewModels
             return item.GetNearestEventDate();
         }
 
-        public override void OnCurrentReminderIsExpired()
+        public override void OnCurrentReminderIsExpired(bool initializing)
         {
-            base.OnCurrentReminderIsExpired();
+            base.OnCurrentReminderIsExpired(initializing);
             OnPropertyChanged(nameof(NearestEventDate)); // для периодических
         }
 

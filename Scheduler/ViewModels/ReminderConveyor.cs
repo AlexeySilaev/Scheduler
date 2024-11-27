@@ -27,6 +27,8 @@ namespace Scheduler.ViewModels
 
         private Queue<TimerReminderItem> _timerReminderQueue;
         private ReminderWindowViewModel _reminderWindowViewModel;
+        // флаг для определения устаревших напоминаний при первом разборе очереди - за запуске
+        private bool _isInitializingCheckExpired;
 
 
         public ReminderConveyor(Alarms alarms, Events events)
@@ -38,8 +40,12 @@ namespace Scheduler.ViewModels
             _queueTimer.AutoReset = false;
             _queueTimer.Elapsed += QueueTimer_Elapsed;
             _lockQueue = new object();
+            _isInitializingCheckExpired = true;
         }
 
+        /// <summary>
+        /// Пересобрать конвейер.
+        /// </summary>
         public void Reconstruct()
         {
             lock (_lockQueue)
@@ -53,6 +59,9 @@ namespace Scheduler.ViewModels
             }
         }
 
+        /// <summary>
+        /// Остановить конвейер.
+        /// </summary>
         public void Stop()
         {
             lock (_lockQueue)
@@ -102,10 +111,10 @@ namespace Scheduler.ViewModels
                 TimerReminderItem nearestReminderItem = _timerReminderQueue.Peek();
                 // чтобы не терять в окне уведомлений элементы с одинаковым временем,
                 // пробежимся по голове очереди, где может быть серия просроченных
-                if (nearestReminderItem.CheckExpired(e.SignalTime))
+                if (nearestReminderItem.CheckExpired(e.SignalTime, _isInitializingCheckExpired))
                 {
                     List<ReminderItemViewModel> expired = new List<ReminderItemViewModel>();
-                    while (nearestReminderItem.CheckExpired(e.SignalTime))
+                    while (nearestReminderItem.CheckExpired(e.SignalTime, _isInitializingCheckExpired))
                     {
                         _timerReminderQueue.Dequeue();
                         expired.Add(nearestReminderItem.Source);
@@ -122,6 +131,8 @@ namespace Scheduler.ViewModels
                 }
                 else
                     CheckStartTimer();
+
+                _isInitializingCheckExpired = false;
 
                 Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                     _alarms.UpdateRemainTime()));

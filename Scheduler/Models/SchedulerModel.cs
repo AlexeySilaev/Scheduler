@@ -74,8 +74,8 @@ namespace Scheduler.Models
                 }
             });
             Alarms[0].AlarmTime = TimeSpan.FromSeconds(2);
-            Alarms[1].AlarmTime = TimeSpan.FromSeconds(2);
-            Events.ForEach(e => e.EventDate = DateTime.Now.AddSeconds(2));
+            Alarms[1].AlarmTime = TimeSpan.FromSeconds(3);
+            Events.ForEach(e => e.EventDate = DateTime.Now.AddSeconds(3));
         }
 
         public void Save()

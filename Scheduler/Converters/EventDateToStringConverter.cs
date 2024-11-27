@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Scheduler.ViewModels;
+using System;
 using System.Globalization;
 using System.Windows.Data;
+using Scheduler.Extensions;
 
 namespace Scheduler.Converters
 {
@@ -9,9 +11,9 @@ namespace Scheduler.Converters
         public object Convert(
             object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            bool expired = (bool)values[0];
-            if (expired)
-                return "истекло время";
+            ExpiredType expiredType = (ExpiredType)values[0];
+            if (expiredType != ExpiredType.Active)
+                return expiredType.GetDescription().ToLower();
 
             DateTime eventDate = (DateTime)values[1];
             return eventDate.ToString("dd.MM.yyyy HH:mm", new CultureInfo("RU-ru"));

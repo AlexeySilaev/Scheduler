@@ -45,7 +45,7 @@ namespace Scheduler.ViewModels
         public override List<TimerReminderItem> GetTimerReminderItems()
         {
             return _allItems
-                .Where(a => a.IsExpired == false)
+                .Where(a => a.ExpiredType == ExpiredType.Active)
                 .Select(a => new TimerReminderItem(a))
                 .ToList();
         }

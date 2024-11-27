@@ -17,11 +17,11 @@ namespace Scheduler.ViewModels
             ReminderDateTime = source.GetReminderDateTime();
         }
 
-        public bool CheckExpired(DateTime checkTime)
+        public bool CheckExpired(DateTime checkTime, bool initializing)
         {
             IsExpired = ReminderDateTime < checkTime;
             if (IsExpired)
-                Source.OnCurrentReminderIsExpired();
+                Source.OnCurrentReminderIsExpired(initializing);
             return IsExpired;
         }
 

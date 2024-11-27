@@ -60,7 +60,7 @@
                                                   Visibility="{Binding AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
                                                   ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, 
                                                            Path=DataContext.PostponeItems}" SelectedItem="{Binding Postpone}"/>
-                                        <TextBlock Text="{Binding PostponeDesctiption}" VerticalAlignment="Center"
+                                        <TextBlock Text="{Binding PostponeDescription}" VerticalAlignment="Center"
                                             Visibility="{Binding AllowPostpone, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
 
                                     </Grid>
