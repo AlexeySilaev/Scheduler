@@ -116,6 +116,7 @@
     <Compile Include="ViewModels\NoteItemViewModel.cs" />
     <Compile Include="ViewModels\Notes.cs" />
     <Compile Include="ViewModels\PostponeItem.cs" />
+    <Compile Include="ViewModels\ReminderConveyor.cs" />
     <Compile Include="ViewModels\SchedulerGroup.cs" />
     <Compile Include="ViewModels\SchedulerItemViewModel.cs" />
     <Compile Include="ViewModels\TimerReminderItem.cs" />
