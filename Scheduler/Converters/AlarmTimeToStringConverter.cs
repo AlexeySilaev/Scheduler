@@ -11,9 +11,9 @@ namespace Scheduler.Converters
         public object Convert(
             object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            ExpiredType expiredType = (ExpiredType)values[0];
-            if (expiredType != ExpiredType.Active)
-                return expiredType.GetDescription().ToLower();
+            ReminderState state = (ReminderState)values[0];
+            if (state != ReminderState.Active)
+                return state.GetDescription().ToLower();
 
             TimeSpan ts = (TimeSpan)values[1];
             if (ts.TotalSeconds < 60)

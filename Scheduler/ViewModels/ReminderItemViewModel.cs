@@ -4,26 +4,26 @@ using System.ComponentModel;
 
 namespace Scheduler.ViewModels
 {
-    public enum ExpiredType
+    public enum ReminderState
     {
         [Description("Активно")] Active,
         [Description("Устарело")] Obsolete,
-        [Description("Истекло время")] Expired
+        [Description("Выполнено")] Completed
     }
 
     public abstract class ReminderItemViewModel : SchedulerItemViewModel
     {
-        private ExpiredType _expiredType;
+        private ReminderState _state;
         private PostponeItem _postpone;
 
-        public ExpiredType ExpiredType
+        public ReminderState State
         {
-            get { return _expiredType; }
+            get { return _state; }
             private set
             {
-                if (ExpiredType == value) return;
-                _expiredType = value;
-                OnPropertyChanged(nameof(ExpiredType));
+                if (State == value) return;
+                _state = value;
+                OnPropertyChanged(nameof(State));
             }
         }
 
@@ -52,7 +52,7 @@ namespace Scheduler.ViewModels
 
         protected ReminderItemViewModel(SchedulerItem item) : base(item)
         {
-            _expiredType = ExpiredType.Active;
+            _state = ReminderState.Active;
             _postpone = CompleteItem.Instance;
         }
 
@@ -61,7 +61,7 @@ namespace Scheduler.ViewModels
         public virtual void OnCurrentReminderIsExpired(bool initializing)
         {
             if(IsOneTimeReminder)
-                ExpiredType = initializing ? ExpiredType.Obsolete : ExpiredType.Expired;
+                State = initializing ? ReminderState.Obsolete : ReminderState.Completed;
         }
 
         private void OnPostponeChanged()

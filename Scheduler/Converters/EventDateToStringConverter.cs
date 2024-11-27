@@ -11,9 +11,9 @@ namespace Scheduler.Converters
         public object Convert(
             object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            ExpiredType expiredType = (ExpiredType)values[0];
-            if (expiredType != ExpiredType.Active)
-                return expiredType.GetDescription().ToLower();
+            ReminderState state = (ReminderState)values[0];
+            if (state != ReminderState.Active)
+                return state.GetDescription().ToLower();
 
             DateTime eventDate = (DateTime)values[1];
             return eventDate.ToString("dd.MM.yyyy HH:mm", new CultureInfo("RU-ru"));

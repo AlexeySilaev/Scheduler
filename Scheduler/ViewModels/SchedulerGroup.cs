@@ -12,6 +12,8 @@ namespace Scheduler.ViewModels
 
         public abstract void Initialize();
         public abstract void Filter(string searchText);
+        public abstract void Remove(SchedulerItemViewModel item);
+
 
         public void InitializeComplete()
         {
@@ -22,6 +24,7 @@ namespace Scheduler.ViewModels
         {
             return Name;
         }
+
     }
 
     public abstract class ReminderGroup : SchedulerGroup

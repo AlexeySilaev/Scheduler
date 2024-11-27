@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Scheduler"
         xmlns:vm="clr-namespace:Scheduler.ViewModels"
         xmlns:templateSelectors="clr-namespace:Scheduler.TemplateSelectors"
+        xmlns:ui="clr-namespace:Scheduler.UI"
         mc:Ignorable="d"
         Title="Напоминалка" Height="450" Width="800"
         Loaded="MainWindow_OnLoaded">
@@ -72,6 +73,8 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
+            <ui:ConfirmDeleteControl Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding ConfirmDelete}"
+                Visibility="{Binding Path=DataContext, RelativeSource={RelativeSource Self}, Converter={StaticResource NotNullToVisibilityConverter}}"/>
         </Grid>
     </Grid>
 </Window>

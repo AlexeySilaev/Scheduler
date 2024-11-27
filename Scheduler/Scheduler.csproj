@@ -92,6 +92,7 @@
     <Compile Include="Converters\EventDateToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertBoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Converters\StringToVisibiltyConverter.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
@@ -103,6 +104,10 @@
     <Compile Include="Models\SchedulerModel.cs" />
     <Compile Include="TemplateSelectors\SchedulerItemTemplateSelector.cs" />
     <Compile Include="UI\AnimatedImage.cs" />
+    <Compile Include="UI\ConfirmDeleteControl.xaml.cs">
+      <DependentUpon>ConfirmDeleteControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ConfirmDeleteViewModel.cs" />
     <Compile Include="UI\ReminderWindow.xaml.cs">
       <DependentUpon>ReminderWindow.xaml</DependentUpon>
     </Compile>
@@ -134,6 +139,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UI\ConfirmDeleteControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ReminderWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

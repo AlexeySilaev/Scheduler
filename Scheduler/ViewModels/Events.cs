@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Scheduler.Models;
 
@@ -8,7 +9,7 @@ namespace Scheduler.ViewModels
 {
     public class Events : ReminderGroup
     {
-        private EventItemViewModel[] _allItems;
+        private List<EventItemViewModel> _allItems;
         private ObservableCollection<EventItemViewModel> _items;
 
         public override string Name
@@ -30,7 +31,7 @@ namespace Scheduler.ViewModels
         {
             _allItems = SchedulerModel.Instance.Events.Select(e => new EventItemViewModel(e))
                 .OrderBy(item => item.NearestEventDate)
-                .ToArray();
+                .ToList();
             _items = new ObservableCollection<EventItemViewModel>(_allItems);
         }
 
@@ -41,10 +42,18 @@ namespace Scheduler.ViewModels
             OnPropertyChanged(nameof(Items));
         }
 
+        public override void Remove(SchedulerItemViewModel item)
+        {
+            Debug.Assert(item.Type == SchedulerItemType.Event);
+            EventItemViewModel eventItem = (EventItemViewModel)item;
+            _allItems.Remove(eventItem);
+            _items.Remove(eventItem);
+        }
+
         public override List<TimerReminderItem> GetTimerReminderItems()
         {
             return _allItems
-                .Where(a => a.ExpiredType == ExpiredType.Active)
+                .Where(a => a.State == ReminderState.Active)
                 .Select(a => new TimerReminderItem(a))
                 .ToList();
         }

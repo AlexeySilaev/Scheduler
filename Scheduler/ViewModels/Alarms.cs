@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Scheduler.Models;
 
@@ -42,10 +43,18 @@ namespace Scheduler.ViewModels
             OnPropertyChanged(nameof(Items));
         }
 
+        public override void Remove(SchedulerItemViewModel item)
+        {
+            Debug.Assert(item.Type == SchedulerItemType.Alarm);
+            AlarmItemViewModel alarmItem = (AlarmItemViewModel)item;
+            _allItems.Remove(alarmItem);
+            _items.Remove(alarmItem);
+        }
+
         public override List<TimerReminderItem> GetTimerReminderItems()
         {
             return _allItems
-                .Where(a => a.ExpiredType == ExpiredType.Active)
+                .Where(a => a.State == ReminderState.Active)
                 .Select(a => new TimerReminderItem(a))
                 .ToList();
         }

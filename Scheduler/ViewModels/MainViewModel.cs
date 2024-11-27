@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Scheduler.Extensions;
+using Scheduler.UI;
 
 namespace Scheduler.ViewModels
 {
@@ -13,6 +15,7 @@ namespace Scheduler.ViewModels
         private SchedulerItemViewModel _selectedItem;
         private string _searchText;
         private string _error;
+        private ConfirmDeleteViewModel _confirmDelete;
 
         private Alarms Alarms
         {
@@ -67,6 +70,17 @@ namespace Scheduler.ViewModels
                 if (Error == value) return;
                 _error= value;
                 OnPropertyChanged(nameof(Error));
+            }
+        }
+
+        public ConfirmDeleteViewModel ConfirmDelete
+        {
+            get { return _confirmDelete; }
+            set
+            {
+                if (ConfirmDelete == value) return;
+                _confirmDelete = value;
+                OnPropertyChanged(nameof(ConfirmDelete));
             }
         }
 
@@ -125,6 +139,32 @@ namespace Scheduler.ViewModels
 
         public void OnDeleteItem(SchedulerItemViewModel schedulerItemViewModel)
         {
+            try
+            {
+                // TODO подтверждение удаления из настроек
+                ConfirmDelete = new ConfirmDeleteViewModel(schedulerItemViewModel,
+                    confirmed =>
+                    {
+                        ConfirmDelete = null;
+                        if(confirmed)
+                            DeleteItem(schedulerItemViewModel);
+                    });
+            }
+            catch (Exception x)
+            {
+                Error = $"Ошибка удаления элемента: {x.Message}";
+            }
+        }
+
+        private void DeleteItem(SchedulerItemViewModel schedulerItemViewModel)
+        {
+            int index = Convert.ToInt32(schedulerItemViewModel.Type);
+            Groups[index].Remove(schedulerItemViewModel);
+            _reminderConveyor.Reconstruct();
+        }
+
+        private void OnAddItem()
+        {
         }
 
         private void FilterSchedulerGroupItems()
@@ -132,10 +172,5 @@ namespace Scheduler.ViewModels
             if (SelectedGroup != null)
                 SelectedGroup.Filter(SearchText);
         }
-
-        private void OnAddItem()
-        {
-        }
-
     }
 }

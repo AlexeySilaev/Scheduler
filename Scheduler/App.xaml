@@ -12,6 +12,7 @@
         <converters:AlarmTimeToStringConverter x:Key="AlarmTimeToStringConverter"/>
         <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
         <converters:EventDateToStringConverter x:Key="EventDateToStringConverter"/>
+        <converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
         <SolidColorBrush x:Key="GrayText" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
         <Thickness x:Key="DetailsMargin" Left="5" Top="5" Right="5" Bottom="5" />
         <Thickness x:Key="ImagePanelMargin" Left="5" Top="5" Right="5" Bottom="5" />
@@ -60,13 +61,13 @@
                         <TextBlock Foreground="{StaticResource GrayText}">
                             <TextBlock.Text>
                                 <MultiBinding Converter="{StaticResource AlarmTimeToStringConverter}">
-                                    <Binding Path="ExpiredType" />
+                                    <Binding Path="State" />
                                     <Binding Path="RemainTime" />
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
                     </StackPanel>
-                    <StackPanel Grid.Row="0" x:Name="ImagesPanel" Visibility="Hidden" 
+                    <StackPanel Grid.Row="0" Grid.RowSpan="2" x:Name="ImagesPanel" Visibility="Hidden" 
                                 Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center"
                                 Margin="{StaticResource ImagePanelMargin}">
                         <Button Height="20" Width="20" Command="{Binding Edit}" Margin="2,0"
@@ -105,7 +106,7 @@
                             <TextBlock  Foreground="{StaticResource GrayText}">
                                 <TextBlock.Text>
                                     <MultiBinding Converter="{StaticResource EventDateToStringConverter}">
-                                        <Binding Path="ExpiredType" />
+                                        <Binding Path="State" />
                                         <Binding Path="NearestEventDate" />
                                     </MultiBinding>
                                 </TextBlock.Text>
@@ -115,7 +116,7 @@
                             <TextBlock Text="{Binding Periodicity, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"/>
                         </StackPanel>
                     </DockPanel>
-                    <StackPanel Grid.Row="0" x:Name="ImagesPanel" Visibility="Hidden" 
+                    <StackPanel Grid.Row="0" Grid.RowSpan="2" x:Name="ImagesPanel" Visibility="Hidden" 
                                 Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center"
                                 Margin="{StaticResource ImagePanelMargin}">
                         <Button Height="20" Width="20" Command="{Binding Edit}" Margin="2,0"
@@ -152,7 +153,7 @@
                         <TextBlock Text="Создано:" Foreground="{StaticResource GrayText}" Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding CreationDate, StringFormat='dd.MM.yyyy'}" Foreground="{StaticResource GrayText}"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="0" x:Name="ImagesPanel" Visibility="Hidden" 
+                    <StackPanel Grid.Row="0" Grid.RowSpan="2" x:Name="ImagesPanel" Visibility="Hidden" 
                                 Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center"
                                 Margin="{StaticResource ImagePanelMargin}">
                         <Button Height="20" Width="20" Command="{Binding Edit}" Margin="2,0"
