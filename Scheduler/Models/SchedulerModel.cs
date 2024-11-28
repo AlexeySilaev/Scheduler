@@ -15,12 +15,14 @@ namespace Scheduler.Models
         public List<AlarmItem> Alarms { get; }
         public List<EventItem> Events { get; }
         public List<NoteItem> Notes { get; }
+        public Settings Settings { get; }
 
         private SchedulerModel()
         {
             Alarms = new List<AlarmItem>();
             Events = new List<EventItem>();
             Notes = new List<NoteItem>();
+            Settings = new Settings();
         }
 
         public void Load()

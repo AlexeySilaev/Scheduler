@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace Scheduler.Converters
 {
-    internal class StringToVisibiltyConverter : IValueConverter
+    internal class StringToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

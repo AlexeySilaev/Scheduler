@@ -8,7 +8,7 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
-        <converters:StringToVisibiltyConverter x:Key="StringToVisibilbtyConverter"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
         <converters:AlarmTimeToStringConverter x:Key="AlarmTimeToStringConverter"/>
         <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
         <converters:EventDateToStringConverter x:Key="EventDateToStringConverter"/>

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Scheduler.Extensions;
+using Scheduler.Models;
 using Scheduler.UI;
 
 namespace Scheduler.ViewModels
@@ -85,6 +87,7 @@ namespace Scheduler.ViewModels
         }
 
         public ICommand AddItemCommand { get; }
+        public ICommand SettingsCommand { get; }
 
         public MainViewModel()
         {
@@ -93,6 +96,7 @@ namespace Scheduler.ViewModels
             _reminderConveyor = new ReminderConveyor(Alarms, Events);
             SelectedGroup = Groups[0];
             AddItemCommand = new Command(OnAddItem);
+            SettingsCommand = new Command(OnSettingsCommand);
         }
 
         public void InitializeAsync(Dispatcher dispather)
@@ -141,14 +145,20 @@ namespace Scheduler.ViewModels
         {
             try
             {
-                // TODO подтверждение удаления из настроек
-                ConfirmDelete = new ConfirmDeleteViewModel(schedulerItemViewModel,
-                    confirmed =>
-                    {
-                        ConfirmDelete = null;
-                        if(confirmed)
-                            DeleteItem(schedulerItemViewModel);
-                    });
+                if(SchedulerModel.Instance.Settings.DeleteSchedulerItemsMode == DeleteSchedulerItemsMode.Immediately)
+                    DeleteItem(schedulerItemViewModel);
+                else
+                {
+                    Debug.Assert(
+                        SchedulerModel.Instance.Settings.DeleteSchedulerItemsMode == DeleteSchedulerItemsMode.Confirm);
+                    ConfirmDelete = new ConfirmDeleteViewModel(schedulerItemViewModel,
+                        confirmed =>
+                        {
+                            ConfirmDelete = null;
+                            if (confirmed)
+                                DeleteItem(schedulerItemViewModel);
+                        });
+                }
             }
             catch (Exception x)
             {
@@ -165,6 +175,11 @@ namespace Scheduler.ViewModels
 
         private void OnAddItem()
         {
+        }
+
+        private void OnSettingsCommand()
+        {
+            ConfirmDelete = null;
         }
 
         private void FilterSchedulerGroupItems()
