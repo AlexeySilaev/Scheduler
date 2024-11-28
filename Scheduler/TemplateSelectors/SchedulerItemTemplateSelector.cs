@@ -12,7 +12,10 @@ namespace Scheduler.TemplateSelectors
 
         public override DataTemplate SelectTemplate(object value, DependencyObject container)
         {
+            if (value == null)
+                return null;
             SchedulerItemViewModel item = (SchedulerItemViewModel)value;
+            
             switch (item.Type)
             {
                 case SchedulerItemType.Alarm:

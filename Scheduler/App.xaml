@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:Scheduler.ViewModels"
              xmlns:converters="clr-namespace:Scheduler.Converters"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:ui="clr-namespace:Scheduler.UI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
@@ -13,6 +14,7 @@
         <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
         <converters:EventDateToStringConverter x:Key="EventDateToStringConverter"/>
         <converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
+        <converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
         <SolidColorBrush x:Key="GrayText" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
         <Thickness x:Key="DetailsMargin" Left="5" Top="5" Right="5" Bottom="5" />
         <Thickness x:Key="ImagePanelMargin" Left="5" Top="5" Right="5" Bottom="5" />
@@ -22,6 +24,21 @@
             <Setter Property ="FontSize" Value="14"/>
             <Setter Property ="FontWeight" Value="DemiBold"/>
             <Setter Property ="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="ui:ShiftControl">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ui:ShiftControl}">
+                        <UniformGrid x:Name="shiftPanel" Columns="2" >
+                            <!-- Область слева -->
+                            <ContentPresenter x:Name="LeftContent" Content="{TemplateBinding LeftContent}"></ContentPresenter>
+                            <!-- Область справа -->
+                            <ContentPresenter Grid.Column="1" x:Name="BackContent" Content="{TemplateBinding RightContent}"></ContentPresenter>
+                        </UniformGrid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <ControlTemplate x:Key="EditImageButton" TargetType="{x:Type Button}">

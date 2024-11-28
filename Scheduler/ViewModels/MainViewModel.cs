@@ -18,6 +18,7 @@ namespace Scheduler.ViewModels
         private string _searchText;
         private string _error;
         private ConfirmDeleteViewModel _confirmDelete;
+        private SchedulerItemViewModel _editingItem;
 
         private Alarms Alarms
         {
@@ -86,7 +87,21 @@ namespace Scheduler.ViewModels
             }
         }
 
+        public SchedulerItemViewModel EditingItem
+        {
+            get { return _editingItem; }
+            set
+            {
+                if (EditingItem == value) return;
+                _editingItem = value;
+                OnPropertyChanged(nameof(EditingItem));
+            }
+        }
+
+
         public ICommand AddItemCommand { get; }
+        public ICommand SaveItemCommand { get; }
+        public ICommand CancelEditItemCommand { get; }
         public ICommand SettingsCommand { get; }
 
         public MainViewModel()
@@ -96,6 +111,8 @@ namespace Scheduler.ViewModels
             _reminderConveyor = new ReminderConveyor(Alarms, Events);
             SelectedGroup = Groups[0];
             AddItemCommand = new Command(OnAddItem);
+            SaveItemCommand = new Command(OnSaveItem);
+            CancelEditItemCommand = new Command(OnCancelEditItem);
             SettingsCommand = new Command(OnSettingsCommand);
         }
 
@@ -139,6 +156,7 @@ namespace Scheduler.ViewModels
 
         public void OnEditItem(SchedulerItemViewModel schedulerItemViewModel)
         {
+            EditingItem = schedulerItemViewModel;
         }
 
         public void OnDeleteItem(SchedulerItemViewModel schedulerItemViewModel)
@@ -175,11 +193,23 @@ namespace Scheduler.ViewModels
 
         private void OnAddItem()
         {
+            EditingItem = new NoteItemViewModel(new NoteItem{Text = "Note"});
+        }
+
+        private void OnSaveItem()
+        {
+            EditingItem = null;
+        }
+
+        private void OnCancelEditItem()
+        {
+            EditingItem = null;
         }
 
         private void OnSettingsCommand()
         {
             ConfirmDelete = null;
+            EditingItem = null;
         }
 
         private void FilterSchedulerGroupItems()

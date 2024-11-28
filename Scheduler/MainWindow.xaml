@@ -18,7 +18,12 @@
             AlarmTemplate="{StaticResource AlarmItemTemplate}"
             EventTemplate="{StaticResource EventItemTemplate}"
             NoteTemplate="{StaticResource NoteItemTemplate}"
-            x:Key="SchedulerGroupTemplateSelector"/>
+            x:Key="SchedulerItemTemplateSelector"/>
+        <templateSelectors:SchedulerItemTemplateSelector
+            AlarmTemplate="{StaticResource AlarmItemTemplate}"
+            EventTemplate="{StaticResource EventItemTemplate}"
+            NoteTemplate="{StaticResource NoteItemTemplate}"
+            x:Key="EditorItemTemplateSelector"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -56,38 +61,66 @@
                 </StackPanel>
             </Button>
         </Grid>
-        <Grid Grid.Row="1" Grid.Column="1" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <DockPanel LastChildFill="False" Margin="5"
+        <!-- Список элементов / панель редактирования -->
+        <ui:ShiftControl Grid.Row="1" Grid.Column="1" IsShifted="{Binding EditingItem, Converter={StaticResource NotNullToBoolConverter}}">
+            <ui:ShiftControl.LeftContent>
+                <!-- Список -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <DockPanel LastChildFill="False" Margin="5,5"
                        FocusManager.FocusedElement="{Binding ElementName=FilterBox}">
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                    <TextBlock Text="Поиск вхождений" Margin="5,0" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding SearchText, Delay=500, UpdateSourceTrigger=PropertyChanged}" MinWidth="250"
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                            <TextBlock Text="Поиск вхождений" Margin="5,0" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding SearchText, Delay=500, UpdateSourceTrigger=PropertyChanged}" MinWidth="250"
                              VerticalContentAlignment="Center" x:Name="FilterBox"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <TextBlock Text="Добавить" Margin="5,0" VerticalAlignment="Center"/>
-                    <Button Command="{Binding AddItemCommand}">
-                        <Image Source="/Resources/add20x20.png"/>
-                    </Button>
-                </StackPanel>
-            </DockPanel>
-            <ListBox Grid.Row="1" Margin="5" 
-                     ItemsSource="{Binding SelectedGroup.Items}"
-                     SelectedValue="{Binding SelectedItem}"
-                     ItemTemplateSelector="{StaticResource SchedulerGroupTemplateSelector}"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
-            <ui:ConfirmDeleteControl Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding ConfirmDelete}"
+                        </StackPanel>
+                        <Button Command="{Binding AddItemCommand}" DockPanel.Dock="Right" Height="24"> 
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Text="Добавить" Margin="5,0" VerticalAlignment="Center"/>
+                                <Image Source="/Resources/add20x20.png"/>
+                            </StackPanel>
+                        </Button>
+                    </DockPanel>
+                    <ListBox Grid.Row="1" Margin="5" 
+                             ItemsSource="{Binding SelectedGroup.Items}"
+                             SelectedValue="{Binding SelectedItem}"
+                             ItemTemplateSelector="{StaticResource SchedulerItemTemplateSelector}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                    <ui:ConfirmDeleteControl Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding ConfirmDelete}"
                 Visibility="{Binding Path=DataContext, RelativeSource={RelativeSource Self}, Converter={StaticResource NotNullToVisibilityConverter}}"/>
-        </Grid>
+                </Grid>
+            </ui:ShiftControl.LeftContent>
+            <ui:ShiftControl.RightContent>
+                <!-- Редактирование элемента -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <DockPanel LastChildFill="False" Margin="5">
+                        <Button Content=" &lt; Отмена " DockPanel.Dock="Left" Height="24"
+                                Command="{Binding CancelEditItemCommand}" IsCancel="True"/>
+                        <Button Command="{Binding SaveItemCommand}" DockPanel.Dock="Right" Height="24">
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Text="Сохранить" Margin="5,0" VerticalAlignment="Center"/>
+                                <Image Source="/Resources/save.png" Width="16" Height="16"/>
+                            </StackPanel>
+                        </Button>
+                    </DockPanel>
+                    <ContentControl Grid.Row="1" Margin="5"  
+                                    ContentTemplateSelector="{StaticResource EditorItemTemplateSelector}" 
+                                    Content="{Binding EditingItem}"/>
+                </Grid>
+            </ui:ShiftControl.RightContent>
+        </ui:ShiftControl>
     </Grid>
 </Window>

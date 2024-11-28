@@ -31,7 +31,7 @@
                    Text="Вновь возникающие уведомления будут добавлены в общий список."  TextWrapping="Wrap"/> 
 
         <ui:GifImage Grid.Row="1" Stretch="None" Margin="12,12,0,0" 
-                          GifSource="/Resources/img.gif" AutoStart="True"/>
+                          GifSource="/Resources/reminder.gif" AutoStart="True"/>
         <ScrollViewer Grid.Column="1"  Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                       VerticalAlignment="Center">
             <ItemsControl ItemsSource="{Binding Items}" Margin="10" >
