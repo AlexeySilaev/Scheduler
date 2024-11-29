@@ -15,9 +15,13 @@
         <converters:EventDateToStringConverter x:Key="EventDateToStringConverter"/>
         <converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
         <converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
+        <converters:CharactersEnteredConverter x:Key="CharactersEnteredConverter"/>
+        <converters:StaticResourceToIntConverter x:Key="StaticResourceToIntConverter"/>
         <SolidColorBrush x:Key="GrayText" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
         <Thickness x:Key="DetailsMargin" Left="5" Top="5" Right="5" Bottom="5" />
         <Thickness x:Key="ImagePanelMargin" Left="5" Top="5" Right="5" Bottom="5" />
+        <system:Int32 x:Key="MaxReminderLength">500</system:Int32>
+        <system:Int32 x:Key="MaxNoteLength">1000</system:Int32>
 
         <Style x:Key="SchedulerItemText" TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="Wrap"/>
@@ -61,9 +65,10 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
+        <!-- Шаблоны для элементов SchedulerItemViewModel в списке -->
         <DataTemplate x:Key="AlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
-                <Grid Margin="0" >
+                <Grid Margin="2" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="60"/>
@@ -107,7 +112,7 @@
 
         <DataTemplate x:Key="EventItemTemplate" DataType="{x:Type viewModels:EventItemViewModel}" >
             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
-                <Grid Margin="0" >
+                <Grid Margin="2" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="60"/>
@@ -156,7 +161,7 @@
 
         <DataTemplate x:Key="NoteItemTemplate" DataType="{x:Type viewModels:NoteItemViewModel}" >
             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
-                <Grid Margin="0" >
+                <Grid Margin="2" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="60"/>
@@ -189,6 +194,61 @@
                         Value="Visible"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- Шаблоны для редактирования элементов SchedulerItemViewModel -->
+        <DataTemplate x:Key="EditAlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
+            <Grid Margin="10" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Описание" Margin="0,5"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
+                         MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                         Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                </ScrollViewer>
+                <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                           TextAlignment="Right" Margin="0,5"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="EditEventItemTemplate" DataType="{x:Type viewModels:EventItemViewModel}" >
+            <Grid Margin="10" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Описание" Margin="0,5"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
+                         MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                         Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                </ScrollViewer>
+                <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                           TextAlignment="Right" Margin="0,5"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="EditNoteItemTemplate" DataType="{x:Type viewModels:NoteItemViewModel}" >
+            <Grid Margin="10" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Описание" Margin="0,5"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
+                         MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxNoteLength}}"
+                         Height="185" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                </ScrollViewer>
+                <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxNoteLength}}"
+                           TextAlignment="Right" Margin="0,5"/>
+            </Grid>
         </DataTemplate>
 
     </Application.Resources>

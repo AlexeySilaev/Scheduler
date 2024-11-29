@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Scheduler.Extensions;
 using Scheduler.Models;
 
 namespace Scheduler.ViewModels
@@ -48,6 +49,11 @@ namespace Scheduler.ViewModels
             EventItemViewModel eventItem = (EventItemViewModel)item;
             _allItems.Remove(eventItem);
             _items.Remove(eventItem);
+        }
+
+        public override SchedulerItemViewModel CreateNewItem()
+        {
+            return new EventItemViewModel(new EventItem { Text = SchedulerItemType.Event.GetDescription() });
         }
 
         public override List<TimerReminderItem> GetTimerReminderItems()

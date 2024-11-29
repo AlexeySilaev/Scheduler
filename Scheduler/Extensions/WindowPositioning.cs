@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scheduler.Models;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -10,7 +11,15 @@ namespace Scheduler.Extensions
     {
         private static NativeMethods.MONITORINFO _primaryMonitor;
 
-        public static void SetCentered(this Window window)
+        public static void SetPosition(this Window window, NotificationsWindowPosition position)
+        {
+            if(position == NotificationsWindowPosition.Center)
+                SetCentered(window);
+            else if (position == NotificationsWindowPosition.RightBottom)
+                SetRightBottom(window);
+        }
+
+        private static void SetCentered(Window window)
         {
             Size winSize = GetElementPixelSize(window);
             window.Left = _primaryMonitor.rcWork.left + (_primaryMonitor.rcWork.Size.Width - winSize.Width) / 2;
@@ -18,7 +27,7 @@ namespace Scheduler.Extensions
             window.WindowStartupLocation = WindowStartupLocation.Manual;
         }
 
-        public static void SetRightBottom(this Window window)
+        private static void SetRightBottom(Window window)
         {
             Size winSize = GetElementPixelSize(window);
             window.Left = _primaryMonitor.rcWork.left + _primaryMonitor.rcWork.Size.Width - winSize.Width;

@@ -2,6 +2,7 @@
 using Scheduler.ViewModels;
 using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace Scheduler.Converters
@@ -11,6 +12,9 @@ namespace Scheduler.Converters
         public object Convert(
             object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            if (values[0] == DependencyProperty.UnsetValue)
+                return null;
+
             ReminderState state = (ReminderState)values[0];
             if (state != ReminderState.Active)
                 return state.GetDescription().ToLower();

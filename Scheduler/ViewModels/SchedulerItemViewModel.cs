@@ -52,6 +52,23 @@ namespace Scheduler.ViewModels
             mainViewModel.OnDeleteItem(this);
         }
 
+        public virtual string Validate()
+        {
+            if (string.IsNullOrWhiteSpace(Text))
+                return "Необходимо заполнить описание.";
+            return null;
+        }
+
+        public virtual void EndEdit()
+        {
+            _item.Text = Text;
+        }
+
+        public virtual void CancelEdit()
+        {
+            Text = _item.Text;
+        }
+
         public virtual void Save()
         {
             _item.Text = Text;

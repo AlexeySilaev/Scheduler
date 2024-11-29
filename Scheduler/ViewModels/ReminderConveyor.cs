@@ -5,6 +5,7 @@ using System.Linq;
 using System.Timers;
 using System.Windows;
 using Scheduler.Extensions;
+using Scheduler.Models;
 
 namespace Scheduler.ViewModels
 {
@@ -148,7 +149,7 @@ namespace Scheduler.ViewModels
                 ReminderWindowViewModel context = (ReminderWindowViewModel)window.DataContext;
                 context.View = window;
                 expired.ForEach(reminder => context.Items.Add(reminder));
-                window.SetRightBottom();
+                window.SetPosition(SchedulerModel.Instance.Settings.NotificationsWindowPosition);
                 window.Show();
                 _reminderWindowViewModel = context;
             }

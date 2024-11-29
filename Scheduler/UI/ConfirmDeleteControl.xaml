@@ -8,7 +8,7 @@
              d:DesignHeight="350" d:DesignWidth="520"
              Background="{DynamicResource {x:Static SystemColors.GradientInactiveCaptionBrushKey}}"
              Opacity="0.95"
-             DataContext="{x:Type local:ConfirmDeleteViewModel}">
+             d:DataContext="{d:DesignInstance local:ConfirmDeleteViewModel}">
     <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
         <Grid>
             <Grid.RowDefinitions>
@@ -16,9 +16,9 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="Удалить элемент?" TextAlignment="Center" 
+            <TextBlock Grid.Row="0" Text="{Binding Question, Mode=OneTime}" TextAlignment="Center" 
                        VerticalAlignment="Bottom" FontSize="16" Margin="10"/>
-            <TextBlock Grid.Row="1" Text="{Binding SchedulerItem}" FontSize="14" FontWeight="DemiBold"
+            <TextBlock Grid.Row="1" Text="{Binding SchedulerText, Mode=OneTime}" FontSize="14" FontWeight="DemiBold"
                        LineHeight="18" MaxHeight="72" TextWrapping="Wrap" TextAlignment="Center"
                        TextTrimming="CharacterEllipsis" Margin="50,10"/>
             <Grid Grid.Row="2" VerticalAlignment="Top" Margin="10">

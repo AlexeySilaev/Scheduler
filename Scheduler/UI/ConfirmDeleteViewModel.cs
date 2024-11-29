@@ -1,23 +1,34 @@
 ﻿using System;
 using System.Windows.Input;
+using Scheduler.Extensions;
 using Scheduler.ViewModels;
 
 namespace Scheduler.UI
 {
     public class ConfirmDeleteViewModel : BaseViewModel
     {
+        private readonly SchedulerItemViewModel _schedulerItem;
         private readonly Action<bool> _deleteMethod;
 
-        public SchedulerItemViewModel SchedulerItem { get; }
+        public string Question
+        {
+            get { return $"Удалить элемент «{_schedulerItem.Type.GetDescription()}»?"; }
+        }
+
+        public string SchedulerText
+        {
+            get { return _schedulerItem.Text; }
+        }
+
         public ICommand YesCommand { get; }
         public ICommand NoCommand { get; }
 
         public ConfirmDeleteViewModel(SchedulerItemViewModel schedulerItem, Action<bool> deleteMethod)
         {
-            SchedulerItem = schedulerItem;
+            _schedulerItem = schedulerItem;
+            _deleteMethod = deleteMethod;
             YesCommand = new Command(OnYes);
             NoCommand = new Command(OnNo);
-            _deleteMethod = deleteMethod;
         }
 
         private void OnYes()

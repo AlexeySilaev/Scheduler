@@ -12,13 +12,21 @@ namespace Scheduler.Models
         Immediately
     }
 
+    public enum NotificationsWindowPosition
+    {
+        Center,
+        RightBottom
+    }
+
     public class Settings
     {
         public DeleteSchedulerItemsMode DeleteSchedulerItemsMode { get; set; }
+        public NotificationsWindowPosition NotificationsWindowPosition { get; set; }
 
         public Settings()
         {
             DeleteSchedulerItemsMode = DeleteSchedulerItemsMode.Immediately;
+            NotificationsWindowPosition = NotificationsWindowPosition.RightBottom;
         }
     }
 }

@@ -8,7 +8,7 @@
         xmlns:templateSelectors="clr-namespace:Scheduler.TemplateSelectors"
         xmlns:ui="clr-namespace:Scheduler.UI"
         mc:Ignorable="d"
-        Title="Напоминалка" Height="450" Width="800"
+        Title="Напоминалка" Height="450" Width="730"
         Loaded="MainWindow_OnLoaded">
     <Window.DataContext>
         <vm:MainViewModel></vm:MainViewModel>
@@ -20,9 +20,9 @@
             NoteTemplate="{StaticResource NoteItemTemplate}"
             x:Key="SchedulerItemTemplateSelector"/>
         <templateSelectors:SchedulerItemTemplateSelector
-            AlarmTemplate="{StaticResource AlarmItemTemplate}"
-            EventTemplate="{StaticResource EventItemTemplate}"
-            NoteTemplate="{StaticResource NoteItemTemplate}"
+            AlarmTemplate="{StaticResource EditAlarmItemTemplate}"
+            EventTemplate="{StaticResource EditEventItemTemplate}"
+            NoteTemplate="{StaticResource EditNoteItemTemplate}"
             x:Key="EditorItemTemplateSelector"/>
     </Window.Resources>
     <Grid>
@@ -105,6 +105,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <DockPanel LastChildFill="False" Margin="5">
                         <Button Content=" &lt; Отмена " DockPanel.Dock="Left" Height="24"
@@ -119,6 +120,13 @@
                     <ContentControl Grid.Row="1" Margin="5"  
                                     ContentTemplateSelector="{StaticResource EditorItemTemplateSelector}" 
                                     Content="{Binding EditingItem}"/>
+                    <Border Grid.Row="2" Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
+                            BorderBrush="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}"
+                            BorderThickness="1" Margin="{StaticResource DetailsMargin}">
+                        <TextBlock Text="{Binding ValidationWarning}" Visibility="{Binding ValidationWarning, Converter={StaticResource StringToVisibilityConverter}}"
+                                   TextAlignment="Center" TextWrapping="Wrap" Margin="10"
+                                   Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}"/>
+                    </Border>
                 </Grid>
             </ui:ShiftControl.RightContent>
         </ui:ShiftControl>

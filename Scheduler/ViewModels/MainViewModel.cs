@@ -17,6 +17,7 @@ namespace Scheduler.ViewModels
         private SchedulerItemViewModel _selectedItem;
         private string _searchText;
         private string _error;
+        private string _validationWarning;
         private ConfirmDeleteViewModel _confirmDelete;
         private SchedulerItemViewModel _editingItem;
 
@@ -38,6 +39,7 @@ namespace Scheduler.ViewModels
             {
                 if (SelectedGroup == value) return;
                 SearchText = string.Empty;
+                OnCancelEditItem();
                 _selectedGroup = value;
                 OnPropertyChanged(nameof(SelectedGroup));
             }
@@ -60,6 +62,7 @@ namespace Scheduler.ViewModels
             set
             {
                 if (SelectedItem == value) return;
+                OnCancelEditItem();
                 _selectedItem = value;
                 OnPropertyChanged(nameof(SelectedItem));
             }
@@ -73,6 +76,17 @@ namespace Scheduler.ViewModels
                 if (Error == value) return;
                 _error= value;
                 OnPropertyChanged(nameof(Error));
+            }
+        }
+
+        public string ValidationWarning
+        {
+            get { return _validationWarning; }
+            set
+            {
+                if (ValidationWarning == value) return;
+                _validationWarning = value;
+                OnPropertyChanged(nameof(ValidationWarning));
             }
         }
 
@@ -95,6 +109,8 @@ namespace Scheduler.ViewModels
                 if (EditingItem == value) return;
                 _editingItem = value;
                 OnPropertyChanged(nameof(EditingItem));
+                if (EditingItem == null)
+                    ValidationWarning = null;
             }
         }
 
@@ -111,7 +127,7 @@ namespace Scheduler.ViewModels
             _reminderConveyor = new ReminderConveyor(Alarms, Events);
             SelectedGroup = Groups[0];
             AddItemCommand = new Command(OnAddItem);
-            SaveItemCommand = new Command(OnSaveItem);
+            SaveItemCommand = new Command(OnEndEditItem);
             CancelEditItemCommand = new Command(OnCancelEditItem);
             SettingsCommand = new Command(OnSettingsCommand);
         }
@@ -193,23 +209,32 @@ namespace Scheduler.ViewModels
 
         private void OnAddItem()
         {
-            EditingItem = new NoteItemViewModel(new NoteItem{Text = "Note"});
+            EditingItem = SelectedGroup.CreateNewItem();
         }
 
-        private void OnSaveItem()
+        private void OnEndEditItem()
         {
-            EditingItem = null;
+            ValidationWarning = EditingItem.Validate();
+            if (string.IsNullOrEmpty(ValidationWarning))
+            {
+                EditingItem.EndEdit();
+                EditingItem = null;
+            }
         }
 
         private void OnCancelEditItem()
         {
+            if (EditingItem == null) return;
+
+            EditingItem.CancelEdit();
             EditingItem = null;
+            ValidationWarning = null;
         }
 
         private void OnSettingsCommand()
         {
             ConfirmDelete = null;
-            EditingItem = null;
+            OnCancelEditItem();
         }
 
         private void FilterSchedulerGroupItems()

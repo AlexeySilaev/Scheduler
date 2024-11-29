@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Scheduler.Extensions;
 using Scheduler.Models;
 
 namespace Scheduler.ViewModels
@@ -49,6 +50,11 @@ namespace Scheduler.ViewModels
             AlarmItemViewModel alarmItem = (AlarmItemViewModel)item;
             _allItems.Remove(alarmItem);
             _items.Remove(alarmItem);
+        }
+
+        public override SchedulerItemViewModel CreateNewItem()
+        {
+            return new AlarmItemViewModel(new AlarmItem { Text = SchedulerItemType.Alarm.GetDescription() });
         }
 
         public override List<TimerReminderItem> GetTimerReminderItems()
