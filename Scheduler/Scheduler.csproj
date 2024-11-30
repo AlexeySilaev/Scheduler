@@ -117,6 +117,7 @@
       <DependentUpon>ReminderWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ReminderWindowViewModel.cs" />
+    <Compile Include="UI\TimeTextBox.cs" />
     <Compile Include="ViewModels\AlarmItemViewModel.cs" />
     <Compile Include="ViewModels\Alarms.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

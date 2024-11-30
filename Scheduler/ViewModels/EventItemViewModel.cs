@@ -9,6 +9,7 @@ namespace Scheduler.ViewModels
     internal class EventItemViewModel : ReminderItemViewModel
     {
         private DateTime _eventDate;
+        private TimeSpan _eventTime;
         private Periodicity _periodicity;
 
         public DateTime EventDate
@@ -19,6 +20,17 @@ namespace Scheduler.ViewModels
                 if (EventDate == value) return;
                 _eventDate = value;
                 OnPropertyChanged(nameof(EventDate));
+            }
+        }
+
+        public TimeSpan EventTime
+        {
+            get { return _eventTime; }
+            set
+            {
+                if (EventTime == value) return;
+                _eventTime = value;
+                OnPropertyChanged(nameof(EventTime));
             }
         }
 
@@ -59,6 +71,7 @@ namespace Scheduler.ViewModels
         public EventItemViewModel(EventItem item) : base(item)
         {
             _eventDate = item.EventDate;
+            _eventTime = item.EventDate.TimeOfDay;
             _periodicity = item.Periodicity;
         }
 

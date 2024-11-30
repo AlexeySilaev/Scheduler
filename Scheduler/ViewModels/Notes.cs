@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using Scheduler.Extensions;
 using Scheduler.Models;
 
 namespace Scheduler.ViewModels
@@ -53,7 +52,7 @@ namespace Scheduler.ViewModels
 
         public override SchedulerItemViewModel CreateNewItem()
         {
-            return new NoteItemViewModel(new NoteItem { Text = SchedulerItemType.Note.GetDescription() });
+            return new NoteItemViewModel(new NoteItem { Text = string.Empty });
         }
     }
 }

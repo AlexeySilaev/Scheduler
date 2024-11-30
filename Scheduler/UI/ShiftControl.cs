@@ -31,7 +31,7 @@ namespace Scheduler.UI
         {
             ShiftControl fc = sender as ShiftControl;
             if (fc != null)
-                fc.OnIsFlippedChanged();
+                fc.OnIsShiftedChanged();
         }
 
         public bool IsShifted
@@ -53,12 +53,12 @@ namespace Scheduler.UI
             if (IsShifted)
             {
                 // просто установить отступ слева в ActualWidth эффекта не дает
-                PerformShift(shiftPanel, TimeSpan.Zero);
+               // PerformShift(shiftPanel, TimeSpan.Zero);
             }
             return arrangeBounds;
         }
 
-        private void OnIsFlippedChanged()
+        private void OnIsShiftedChanged()
         {
             var shiftPanel = (FrameworkElement)GetTemplateChild("shiftPanel");
             PerformShift(shiftPanel, TimeSpan.FromMilliseconds(250));

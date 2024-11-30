@@ -122,8 +122,9 @@
                                     Content="{Binding EditingItem}"/>
                     <Border Grid.Row="2" Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
                             BorderBrush="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}"
-                            BorderThickness="1" Margin="{StaticResource DetailsMargin}">
-                        <TextBlock Text="{Binding ValidationWarning}" Visibility="{Binding ValidationWarning, Converter={StaticResource StringToVisibilityConverter}}"
+                            BorderThickness="1" Margin="{StaticResource DetailsMargin}"
+                            Visibility="{Binding ValidationWarning, Converter={StaticResource StringToVisibilityConverter}}">
+                        <TextBlock Text="{Binding ValidationWarning}" 
                                    TextAlignment="Center" TextWrapping="Wrap" Margin="10"
                                    Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}"/>
                     </Border>

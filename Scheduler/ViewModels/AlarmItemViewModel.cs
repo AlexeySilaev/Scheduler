@@ -80,6 +80,13 @@ namespace Scheduler.ViewModels
             RemainTime = GetReminderDateTime() - DateTime.Now;
         }
 
+        public override void EndEdit()
+        {
+            base.EndEdit();
+            AlarmItem item = (AlarmItem)_item;
+            item.AlarmTime = AlarmTime;
+        }
+
         public override void Save()
         {
             base.Save();
