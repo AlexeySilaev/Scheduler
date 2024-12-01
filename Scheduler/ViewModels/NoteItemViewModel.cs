@@ -28,6 +28,19 @@ namespace Scheduler.ViewModels
             _creationDate = item.CreationDate;
         }
 
+        protected override bool CanExecuteEdit()
+        {
+            return true;
+        }
+
+        public override void EndEdit()
+        {
+            base.EndEdit();
+            CreationDate = DateTime.Now;
+            NoteItem item = (NoteItem)_item;
+            item.CreationDate = CreationDate;
+        }
+
         public override void Save()
         {
             base.Save();

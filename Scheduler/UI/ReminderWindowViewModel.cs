@@ -17,7 +17,7 @@ namespace Scheduler.UI
             {
                 CompleteItem.Instance,
                 new PostponeItem("5 мин", 5),
-                new PostponeItem("15 мин", 15),
+                new PostponeItem("10 мин", 10),
                 new PostponeItem("30 мин", 30),
                 new PostponeItem("1 час", 60),
                 new PostponeItem("2 часа", 120),

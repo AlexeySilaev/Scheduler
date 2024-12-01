@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace Scheduler.ViewModels
 {
-    internal class Command : ICommand
+    public class Command : ICommand
     {
         private Action _execute;
         private Func<bool> _canExecute;

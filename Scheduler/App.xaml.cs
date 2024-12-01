@@ -41,8 +41,11 @@ namespace Scheduler
 
         static void OnUnexpectedError(string title, string message)
         {
-            MainViewModel viewModel = MainViewModel.FindInstance();
-            viewModel.Error = $"{title}: {message}";
+            Current.Dispatcher.Invoke(() =>
+            {
+                MainViewModel viewModel = MainViewModel.FindInstance();
+                viewModel.Error = $"{title}: {message}";
+            });
         }
     }
 }

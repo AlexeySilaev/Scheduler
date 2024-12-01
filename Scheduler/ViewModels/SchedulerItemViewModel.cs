@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows.Input;
 using Scheduler.Models;
 
@@ -29,16 +30,18 @@ namespace Scheduler.ViewModels
 
         public abstract SchedulerItemType Type { get; }
 
-        public ICommand Edit { get; }
+        public Command Edit { get; }
         public ICommand Delete { get; }
 
         protected SchedulerItemViewModel(SchedulerItem item)
         {
             _item = item;
             _text = item.Text;
-            Edit = new Command(OnEdit);
+            Edit = new Command(OnEdit, CanExecuteEdit);
             Delete = new Command(OnDelete);
         }
+
+        protected abstract bool CanExecuteEdit();
 
         private void OnEdit()
         {

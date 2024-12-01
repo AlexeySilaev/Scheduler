@@ -21,13 +21,13 @@ namespace Scheduler.ViewModels
         private ConfirmDeleteViewModel _confirmDelete;
         private SchedulerItemViewModel _editingItem;
 
-        private Alarms Alarms
+        private AlarmGroup Alarms
         {
-            get { return (Alarms)Groups[0]; }
+            get { return (AlarmGroup)Groups[0]; }
         }
-        private Events Events
+        private EventGroup Events
         {
-            get { return (Events)Groups[1]; }
+            get { return (EventGroup)Groups[1]; }
         }
 
         public SchedulerGroup[] Groups { get; }
@@ -123,7 +123,7 @@ namespace Scheduler.ViewModels
         public MainViewModel()
         {
             _searchText = string.Empty;
-            Groups = new[] { new Alarms(), new Events(), (SchedulerGroup)new Notes() };
+            Groups = new[] { new AlarmGroup(), new EventGroup(), (SchedulerGroup)new NoteGroup() };
             _reminderConveyor = new ReminderConveyor(Alarms, Events);
             SelectedGroup = Groups[0];
             AddItemCommand = new Command(OnAddItem);
@@ -218,7 +218,10 @@ namespace Scheduler.ViewModels
             if (string.IsNullOrEmpty(ValidationWarning))
             {
                 EditingItem.EndEdit();
+                SelectedGroup.CheckAddNew(EditingItem);
                 EditingItem = null;
+                FilterSchedulerGroupItems();
+                _reminderConveyor.Reconstruct();
             }
         }
 

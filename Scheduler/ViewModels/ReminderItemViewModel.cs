@@ -24,6 +24,7 @@ namespace Scheduler.ViewModels
                 if (State == value) return;
                 _state = value;
                 OnPropertyChanged(nameof(State));
+                Edit.RaiseCanExecuteChanged();
             }
         }
 
@@ -62,6 +63,22 @@ namespace Scheduler.ViewModels
         {
             if(IsOneTimeReminder)
                 State = initializing ? ReminderState.Obsolete : ReminderState.Completed;
+        }
+
+        protected override bool CanExecuteEdit()
+        {
+            return State == ReminderState.Active;
+        }
+
+        public override string Validate()
+        {
+            string result = base.Validate();
+            if (string.IsNullOrEmpty(result))
+            {
+                if (CanExecuteEdit() == false)
+                    result = "Сохранение неактивных напоминаний запрещено.";
+            }
+            return result;
         }
 
         private void OnPostponeChanged()

@@ -14,6 +14,7 @@ namespace Scheduler.ViewModels
         public abstract void Filter(string searchText);
         public abstract void Remove(SchedulerItemViewModel item);
         public abstract SchedulerItemViewModel CreateNewItem();
+        public abstract void CheckAddNew(SchedulerItemViewModel item);
 
 
         public void InitializeComplete()

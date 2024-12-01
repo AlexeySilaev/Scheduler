@@ -21,8 +21,8 @@ namespace Scheduler.ViewModels
         private const double SLOW_TIMER_INTERVAL = 1000 * 30;
         private const double FAST_TIMER_INTERVAL = 1000 * 0.5;
 
-        private readonly Alarms _alarms;
-        private readonly Events _events;
+        private readonly AlarmGroup _alarms;
+        private readonly EventGroup _events;
         private readonly Timer _queueTimer;
         private readonly object _lockQueue;
 
@@ -32,7 +32,7 @@ namespace Scheduler.ViewModels
         private bool _isInitializingCheckExpired;
 
 
-        public ReminderConveyor(Alarms alarms, Events events)
+        public ReminderConveyor(AlarmGroup alarms, EventGroup events)
         {
             _alarms = alarms;
             _events = events;

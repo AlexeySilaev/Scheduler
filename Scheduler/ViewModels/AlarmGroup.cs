@@ -8,7 +8,7 @@ using Scheduler.Models;
 
 namespace Scheduler.ViewModels
 {
-    public class Alarms : ReminderGroup
+    public class AlarmGroup : ReminderGroup
     {
         private List<AlarmItemViewModel> _allItems;
         private ObservableCollection<AlarmItemViewModel> _items;
@@ -54,6 +54,13 @@ namespace Scheduler.ViewModels
         public override SchedulerItemViewModel CreateNewItem()
         {
             return new AlarmItemViewModel(new AlarmItem { Text = string.Empty });
+        }
+
+        public override void CheckAddNew(SchedulerItemViewModel item)
+        {
+            Debug.Assert(item.Type == SchedulerItemType.Alarm);
+            if (_allItems.Contains(item) == false)
+                _allItems.Add((AlarmItemViewModel)item);
         }
 
         public override List<TimerReminderItem> GetTimerReminderItems()

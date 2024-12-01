@@ -3,6 +3,7 @@ using System;
 using System.Globalization;
 using Scheduler.Converters;
 using Scheduler.Extensions;
+using System.ComponentModel;
 
 namespace Scheduler.ViewModels
 {
@@ -11,6 +12,11 @@ namespace Scheduler.ViewModels
         private DateTime _eventDate;
         private TimeSpan _eventTime;
         private Periodicity _periodicity;
+
+        private EventItem EventItem
+        {
+            get { return (EventItem)_item; }
+        }
 
         public DateTime EventDate
         {
@@ -68,16 +74,26 @@ namespace Scheduler.ViewModels
             get { return Periodicity.GetDescription(); }
         }
 
+        public DateTime FullEventDate
+        {
+            get
+            {
+                return EventDate.AddHours(EventTime.Hours)
+                    .AddMinutes(EventTime.Minutes).AddSeconds(EventTime.Seconds);
+            }
+        }
+
         public EventItemViewModel(EventItem item) : base(item)
         {
-            _eventDate = item.EventDate;
+            // для удобства работы в интерфейсе дату поделим на две части
+            _eventDate = item.EventDate.Date;
             _eventTime = item.EventDate.TimeOfDay;
             _periodicity = item.Periodicity;
         }
 
         public override DateTime GetReminderDateTime()
         {
-            EventItem item = (EventItem)_item;
+            EventItem item = new EventItem { EventDate = FullEventDate, Periodicity = Periodicity };
             return item.GetNearestEventDate();
         }
 
@@ -87,12 +103,36 @@ namespace Scheduler.ViewModels
             OnPropertyChanged(nameof(NearestEventDate)); // для периодических
         }
 
+        public override string Validate()
+        {
+            string result = base.Validate();
+            if (string.IsNullOrEmpty(result))
+            {
+                if (FullEventDate < DateTime.Now)
+                    result = "Дата события меньше текущей.";
+            }
+            return result;
+        }
+
+        public override void EndEdit()
+        {
+            base.EndEdit();
+            EventItem.EventDate = FullEventDate;
+            EventItem.Periodicity = Periodicity;
+        }
+
+        public override void CancelEdit()
+        {
+            base.CancelEdit();
+            EventDate = EventItem.EventDate.Date;
+            EventTime = EventItem.EventDate.TimeOfDay;
+        }
+
         public override void Save()
         {
             base.Save();
-            EventItem item = (EventItem)_item;
-            item.EventDate = EventDate;
-            item.Periodicity = Periodicity;
+            EventItem.EventDate = FullEventDate;
+            EventItem.Periodicity = Periodicity;
         }
     }
 }

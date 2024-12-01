@@ -9,6 +9,11 @@ namespace Scheduler.ViewModels
         private TimeSpan _remainTime;
         private DateTime _nowDate;
 
+        private AlarmItem AlarmItem
+        {
+            get { return (AlarmItem)_item; }
+        }
+
         public TimeSpan AlarmTime
         {
             get { return _alarmTime; }
@@ -83,16 +88,23 @@ namespace Scheduler.ViewModels
         public override void EndEdit()
         {
             base.EndEdit();
-            AlarmItem item = (AlarmItem)_item;
-            item.AlarmTime = AlarmTime;
+            AlarmItem.AlarmTime = AlarmTime;
+            NowDate = DateTime.Now;
+            AlarmItem.NowDate = NowDate;
+            UpdateRemainTime();
+        }
+
+        public override void CancelEdit()
+        {
+            base.CancelEdit();
+            AlarmItem.AlarmTime = AlarmTime;
         }
 
         public override void Save()
         {
             base.Save();
-            AlarmItem item = (AlarmItem)_item;
-            item.AlarmTime = AlarmTime;
-            item.NowDate = NowDate;
+            AlarmItem.AlarmTime = AlarmTime;
+            AlarmItem.NowDate = NowDate;
         }
     }
 }

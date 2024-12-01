@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace Scheduler.ViewModels
 {
@@ -21,7 +22,7 @@ namespace Scheduler.ViewModels
         {
             IsExpired = ReminderDateTime < checkTime;
             if (IsExpired)
-                Source.OnCurrentReminderIsExpired(initializing);
+                Application.Current.Dispatcher.Invoke(() => Source.OnCurrentReminderIsExpired(initializing));
             return IsExpired;
         }
 

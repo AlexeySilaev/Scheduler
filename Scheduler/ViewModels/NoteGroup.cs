@@ -7,7 +7,7 @@ using Scheduler.Models;
 
 namespace Scheduler.ViewModels
 {
-    public class Notes : SchedulerGroup
+    public class NoteGroup : SchedulerGroup, IComparer<NoteItemViewModel>
     {
         private List<NoteItemViewModel> _allItems;
         private ObservableCollection<NoteItemViewModel> _items;
@@ -53,6 +53,20 @@ namespace Scheduler.ViewModels
         public override SchedulerItemViewModel CreateNewItem()
         {
             return new NoteItemViewModel(new NoteItem { Text = string.Empty });
+        }
+
+        public override void CheckAddNew(SchedulerItemViewModel item)
+        {
+            Debug.Assert(item.Type == SchedulerItemType.Note);
+            if (_allItems.Contains(item) == false)
+                _allItems.Add((NoteItemViewModel)item);
+            _allItems.Sort(this);
+        }
+
+        // сортировка по убыванию даты создания
+        int IComparer<NoteItemViewModel>.Compare(NoteItemViewModel x, NoteItemViewModel y)
+        {
+            return y.CreationDate.CompareTo(x.CreationDate);
         }
     }
 }

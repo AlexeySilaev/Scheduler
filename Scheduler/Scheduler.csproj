@@ -96,6 +96,7 @@
     <Compile Include="Converters\NotNullToBoolConverter.cs" />
     <Compile Include="Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Converters\StaticResourceToIntConverter.cs" />
+    <Compile Include="Converters\StringIsNullOrEmptyConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Models\SchedulerItem.cs" />
     <Compile Include="Models\SchedulerModel.cs" />
     <Compile Include="Models\Settings.cs" />
+    <Compile Include="Converters\PeriodicityToDataTemplateConverter.cs" />
     <Compile Include="TemplateSelectors\SchedulerItemTemplateSelector.cs" />
     <Compile Include="UI\AnimatedImage.cs" />
     <Compile Include="UI\ConfirmDeleteControl.xaml.cs">
@@ -119,14 +121,14 @@
     <Compile Include="UI\ReminderWindowViewModel.cs" />
     <Compile Include="UI\TimeTextBox.cs" />
     <Compile Include="ViewModels\AlarmItemViewModel.cs" />
-    <Compile Include="ViewModels\Alarms.cs" />
+    <Compile Include="ViewModels\AlarmGroup.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\Command.cs" />
     <Compile Include="ViewModels\EventItemViewModel.cs" />
-    <Compile Include="ViewModels\Events.cs" />
+    <Compile Include="ViewModels\EventGroup.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NoteItemViewModel.cs" />
-    <Compile Include="ViewModels\Notes.cs" />
+    <Compile Include="ViewModels\NoteGroup.cs" />
     <Compile Include="ViewModels\PostponeItem.cs" />
     <Compile Include="ViewModels\ReminderConveyor.cs" />
     <Compile Include="ViewModels\ReminderItemViewModel.cs" />
