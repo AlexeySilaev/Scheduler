@@ -102,9 +102,8 @@ namespace Scheduler.ViewModels
 
         public override void Save()
         {
-            base.Save();
-            AlarmItem.AlarmTime = AlarmTime;
-            AlarmItem.NowDate = NowDate;
+            if (State == ReminderState.Active)
+                SchedulerModel.Instance.Alarms.Add(AlarmItem);
         }
     }
 }

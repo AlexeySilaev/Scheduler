@@ -43,9 +43,7 @@ namespace Scheduler.ViewModels
 
         public override void Save()
         {
-            base.Save();
-            NoteItem item = (NoteItem)_item;
-            item.CreationDate = CreationDate;
+            SchedulerModel.Instance.Notes.Add((NoteItem)_item);
         }
     }
 }

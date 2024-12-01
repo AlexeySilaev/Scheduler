@@ -2,7 +2,7 @@
 
 namespace Scheduler.Models
 {
-    internal class NoteItem : SchedulerItem
+    public class NoteItem : SchedulerItem
     {
         public DateTime CreationDate { get; set; }
 

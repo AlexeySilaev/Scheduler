@@ -72,10 +72,7 @@ namespace Scheduler.ViewModels
             Text = _item.Text;
         }
 
-        public virtual void Save()
-        {
-            _item.Text = Text;
-        }
+        public abstract void Save();
 
         public override string ToString()
         {

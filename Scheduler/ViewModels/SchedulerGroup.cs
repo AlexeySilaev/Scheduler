@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Scheduler.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Policy;
 
 namespace Scheduler.ViewModels
 {
@@ -11,6 +13,7 @@ namespace Scheduler.ViewModels
         public abstract IEnumerable Items { get; }
 
         public abstract void Initialize();
+        public abstract void Save();
         public abstract void Filter(string searchText);
         public abstract void Remove(SchedulerItemViewModel item);
         public abstract SchedulerItemViewModel CreateNewItem();

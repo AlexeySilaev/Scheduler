@@ -16,7 +16,7 @@ namespace Scheduler.Models
         [Description("Ежегодно")] Annually
     }
 
-    internal class EventItem : SchedulerItem
+    public class EventItem : SchedulerItem
     {
         public DateTime EventDate { get; set; }
         public Periodicity Periodicity { get; set; }

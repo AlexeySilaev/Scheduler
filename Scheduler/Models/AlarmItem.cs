@@ -2,7 +2,7 @@
 
 namespace Scheduler.Models
 {
-    internal class AlarmItem : SchedulerItem
+    public class AlarmItem : SchedulerItem
     {
         /// <summary>
         /// Время срабатывания будильника.

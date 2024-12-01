@@ -130,9 +130,8 @@ namespace Scheduler.ViewModels
 
         public override void Save()
         {
-            base.Save();
-            EventItem.EventDate = FullEventDate;
-            EventItem.Periodicity = Periodicity;
+            if (State == ReminderState.Active)
+                SchedulerModel.Instance.Events.Add(EventItem);
         }
     }
 }

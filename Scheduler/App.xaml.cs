@@ -19,12 +19,6 @@ namespace Scheduler
             SchedulerModel.Instance.Load();
         }
 
-        protected override void OnExit(ExitEventArgs e)
-        {
-            SchedulerModel.Instance.Save();
-            base.OnExit(e);
-        }
-
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.ExceptionObject is Exception exception)

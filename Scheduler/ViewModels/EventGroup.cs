@@ -35,6 +35,12 @@ namespace Scheduler.ViewModels
             _items = new ObservableCollection<EventItemViewModel>(_allItems);
         }
 
+        public override void Save()
+        {
+            SchedulerModel.Instance.Events.Clear();
+            _allItems.ForEach(item => item.Save());
+        }
+
         public override void Filter(string searchText)
         {
             var filtered = _allItems.Where(item => item.Text.ToLower().Contains(searchText.ToLower()));

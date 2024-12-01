@@ -156,6 +156,7 @@ namespace Scheduler.ViewModels
         public void OnClosing()
         {
             _reminderConveyor.Stop();
+            SaveToModel();
         }
 
         public static MainViewModel FindInstance()
@@ -220,6 +221,7 @@ namespace Scheduler.ViewModels
                 EditingItem.EndEdit();
                 SelectedGroup.CheckAddNew(EditingItem);
                 EditingItem = null;
+                SaveToModel();
                 FilterSchedulerGroupItems();
                 _reminderConveyor.Reconstruct();
             }
@@ -244,6 +246,12 @@ namespace Scheduler.ViewModels
         {
             if (SelectedGroup != null)
                 SelectedGroup.Filter(SearchText);
+        }
+
+        public void SaveToModel()
+        {
+            Groups.ForEach(group => group.Save());
+            SchedulerModel.Instance.Save();
         }
     }
 }

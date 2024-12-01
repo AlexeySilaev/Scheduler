@@ -102,6 +102,7 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\WindowPositioning.cs" />
     <Compile Include="Models\AlarmItem.cs" />
+    <Compile Include="Models\Data.cs" />
     <Compile Include="Models\EventItem.cs" />
     <Compile Include="Models\NoteItem.cs" />
     <Compile Include="Models\SchedulerItem.cs" />
