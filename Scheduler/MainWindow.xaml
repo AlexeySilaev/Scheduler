@@ -70,7 +70,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <DockPanel LastChildFill="False" Margin="5,5"
+                    <DockPanel LastChildFill="False" Margin="5"
                        FocusManager.FocusedElement="{Binding ElementName=FilterBox}">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
                             <TextBlock Text="Поиск вхождений" Margin="5,0" VerticalAlignment="Center"/>
@@ -96,7 +96,7 @@
                         </ListBox.ItemContainerStyle>
                     </ListBox>
                     <ui:ConfirmDeleteControl Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding ConfirmDelete}"
-                Visibility="{Binding Path=DataContext, RelativeSource={RelativeSource Self}, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+                            Visibility="{Binding Path=DataContext, RelativeSource={RelativeSource Self}, Converter={StaticResource NotNullToVisibilityConverter}}"/>
                 </Grid>
             </ui:ShiftControl.LeftContent>
             <ui:ShiftControl.RightContent>
@@ -131,5 +131,8 @@
                 </Grid>
             </ui:ShiftControl.RightContent>
         </ui:ShiftControl>
+        <ui:SettingsControl Grid.Row="1" Grid.Column="1" DataContext="{Binding Settings}"
+                Visibility="{Binding Path=DataContext, RelativeSource={RelativeSource Self}, Converter={StaticResource NotNullToVisibilityConverter}}"/>
+
     </Grid>
 </Window>

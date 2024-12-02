@@ -18,15 +18,28 @@ namespace Scheduler.Models
         RightBottom
     }
 
+    public enum RingtoneMode
+    {
+        NoSound,
+        Default,
+        Custom
+    }
+
     public class Settings
     {
         public DeleteSchedulerItemsMode DeleteSchedulerItemsMode { get; set; }
         public NotificationsWindowPosition NotificationsWindowPosition { get; set; }
+        public RingtoneMode RingtoneMode { get; set; }
+        public string CustomSoundFilePath { get; set; }
+        public bool LaunchWithWindows { get; set; }
+        public bool MinimizeInTrayOnStart { get; set; }
 
         public Settings()
         {
-            DeleteSchedulerItemsMode = DeleteSchedulerItemsMode.Immediately;
+            DeleteSchedulerItemsMode = DeleteSchedulerItemsMode.Confirm;
             NotificationsWindowPosition = NotificationsWindowPosition.RightBottom;
+            RingtoneMode = RingtoneMode.Default;
+            LaunchWithWindows = true;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Scheduler.ViewModels
         {
         }
 
-        protected void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             if (_propertyChanged != null)
                 _propertyChanged(this, new PropertyChangedEventArgs(propertyName));

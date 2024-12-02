@@ -20,7 +20,8 @@ namespace Scheduler.ViewModels
         private string _validationWarning;
         private ConfirmDeleteViewModel _confirmDelete;
         private SchedulerItemViewModel _editingItem;
-
+        private SettingsViewModel _settings;
+        
         private AlarmGroup Alarms
         {
             get { return (AlarmGroup)Groups[0]; }
@@ -40,6 +41,7 @@ namespace Scheduler.ViewModels
                 if (SelectedGroup == value) return;
                 SearchText = string.Empty;
                 OnCancelEditItem();
+                Settings = null;
                 _selectedGroup = value;
                 OnPropertyChanged(nameof(SelectedGroup));
             }
@@ -114,6 +116,16 @@ namespace Scheduler.ViewModels
             }
         }
 
+        public SettingsViewModel Settings
+        {
+            get { return _settings; }
+            set
+            {
+                if (Settings == value) return;
+                _settings = value;
+                OnPropertyChanged(nameof(Settings));
+            }
+        }
 
         public ICommand AddItemCommand { get; }
         public ICommand SaveItemCommand { get; }
@@ -240,6 +252,7 @@ namespace Scheduler.ViewModels
         {
             ConfirmDelete = null;
             OnCancelEditItem();
+            Settings = new SettingsViewModel(SchedulerModel.Instance.Settings);
         }
 
         private void FilterSchedulerGroupItems()

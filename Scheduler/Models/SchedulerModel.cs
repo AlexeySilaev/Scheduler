@@ -121,7 +121,7 @@ namespace Scheduler.Models
             try
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Data));
-                using (FileStream fs = new FileStream(FilePath, FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream(FilePath, FileMode.Create))
                 {
                     Data data = new Data
                     {

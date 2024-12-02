@@ -89,6 +89,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\AlarmTimeToStringConverter.cs" />
     <Compile Include="Converters\CharactersEnteredConverter.cs" />
+    <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\EnumToStringConverter.cs" />
     <Compile Include="Converters\EventDateToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
@@ -115,6 +116,10 @@
       <DependentUpon>ConfirmDeleteControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ConfirmDeleteViewModel.cs" />
+    <Compile Include="UI\SettingsControl.xaml.cs">
+      <DependentUpon>SettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SettingsViewModel.cs" />
     <Compile Include="UI\ShiftControl.cs" />
     <Compile Include="UI\ReminderWindow.xaml.cs">
       <DependentUpon>ReminderWindow.xaml</DependentUpon>
@@ -153,6 +158,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\ReminderWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\SettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
