@@ -132,7 +132,7 @@ namespace Scheduler.UI
                     initialFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }
             openFileDialog.InitialDirectory = initialFolder;
-            openFileDialog.Filter = "Звуковые файлы|*.mp3;*wav";
+            openFileDialog.Filter = "Звуковые файлы (mp3, wav)|*.mp3;*.wav";
             if (openFileDialog.ShowDialog() == true)
                 CustomSoundFilePath = openFileDialog.FileName;
         }

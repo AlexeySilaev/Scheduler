@@ -47,17 +47,7 @@
                              Content="В центре экрана" GroupName="NotificationPosition" Margin="0,5,0,0"/>
             </StackPanel>
         </GroupBox>
-        <GroupBox Grid.Row="2" Header="Подтверждение удаления напоминаний" Margin="{StaticResource GroupMargin}">
-            <StackPanel Margin="{StaticResource StackPanelMargin}">
-                <RadioButton IsChecked="{Binding DeleteSchedulerItemsMode, Converter={StaticResource EnumToBoolConverter},
-                    ConverterParameter={x:Static models:DeleteSchedulerItemsMode.Immediately}}" 
-                             Content="Без подтверждения" GroupName="DeleteMode"/>
-                <RadioButton IsChecked="{Binding DeleteSchedulerItemsMode, Converter={StaticResource EnumToBoolConverter},
-                    ConverterParameter={x:Static models:DeleteSchedulerItemsMode.Confirm}}"
-                             Content="С подтверждением" GroupName="DeleteMode" Margin="0,5,0,0"/>
-            </StackPanel>
-        </GroupBox>
-        <GroupBox Grid.Row="3" Header="Звуковое сопровождение напоминаний" Margin="{StaticResource GroupMargin}">
+        <GroupBox Grid.Row="2" Header="Звуковое сопровождение напоминаний" Margin="{StaticResource GroupMargin}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -95,6 +85,16 @@
                     <MediaElement LoadedBehavior="Manual" x:Name="Media"/>
                 </StackPanel>
             </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="3" Header="Подтверждение удаления напоминаний" Margin="{StaticResource GroupMargin}">
+            <StackPanel Margin="{StaticResource StackPanelMargin}">
+                <RadioButton IsChecked="{Binding DeleteSchedulerItemsMode, Converter={StaticResource EnumToBoolConverter},
+                    ConverterParameter={x:Static models:DeleteSchedulerItemsMode.Immediately}}" 
+                             Content="Без подтверждения" GroupName="DeleteMode"/>
+                <RadioButton IsChecked="{Binding DeleteSchedulerItemsMode, Converter={StaticResource EnumToBoolConverter},
+                    ConverterParameter={x:Static models:DeleteSchedulerItemsMode.Confirm}}"
+                             Content="С подтверждением" GroupName="DeleteMode" Margin="0,5,0,0"/>
+            </StackPanel>
         </GroupBox>
     </Grid>
 </UserControl>

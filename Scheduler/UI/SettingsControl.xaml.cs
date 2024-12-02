@@ -13,7 +13,6 @@ namespace Scheduler.UI
             InitializeComponent();
         }
 
-
         private void SettingsControl_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             SettingsViewModel viewModel = DataContext as SettingsViewModel;

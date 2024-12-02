@@ -8,7 +8,7 @@ namespace Scheduler.Models
     internal class SchedulerModel
     {
         public static SchedulerModel Instance { get; }
-        private static string AppDataPath 
+        internal static string AppDataPath 
         {
             get
             {

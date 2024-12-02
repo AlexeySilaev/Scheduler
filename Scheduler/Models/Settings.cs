@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Scheduler.Models
 {
@@ -41,5 +44,20 @@ namespace Scheduler.Models
             RingtoneMode = RingtoneMode.Default;
             LaunchWithWindows = true;
         }
+
+        public string GetDefaultRingtoneFile()
+        {
+            const string resourceName = "bell.mp3";
+            string result = Path.Combine(SchedulerModel.AppDataPath, resourceName);
+            if (File.Exists(result))
+                return result;
+            using (FileStream fileStream = File.Create(result))
+            {
+                string appName = Path.GetFileNameWithoutExtension(Application.ResourceAssembly.Location);
+                Assembly.GetExecutingAssembly().GetManifestResourceStream($"{appName}.Resources.{resourceName}").CopyTo(fileStream);
+            }
+            return result;
+        }
+
     }
 }
