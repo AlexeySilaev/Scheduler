@@ -62,8 +62,8 @@ namespace Scheduler.Models
             catch (InvalidOperationException)
             {
             }
-            /*
-            Alarms.AddRange(new[]
+            
+  /*          Alarms.AddRange(new[]
                {
                    new AlarmItem { Text = "Через 20 минут", AlarmTime = TimeSpan.FromMinutes(20) },
                    new AlarmItem { Text = "Через 15 минут" }

@@ -9,7 +9,8 @@
         mc:Ignorable="d" 
         WindowStyle="ToolWindow"
         ShowInTaskbar="False"
-        Title="Уведомление" Height="285" Width="460" Topmost="True">
+        Title="Уведомление" Height="285" Width="460" 
+        Topmost="{Binding TopMost, Mode=OneTime}">
     <Window.DataContext>
         <ui:ReminderWindowViewModel/>
     </Window.DataContext>
@@ -27,10 +28,12 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Column="1" Margin="10,10" TextAlignment="Center" Foreground="{StaticResource GrayText}"
-                   Text="Вновь возникающие уведомления будут добавлены в общий список."  TextWrapping="Wrap"/> 
+        <MediaElement LoadedBehavior="Manual" x:Name="Media"/>
 
-        <ui:GifImage Grid.Row="1" Stretch="None" Margin="12,12,0,0" 
+        <TextBlock Grid.Row="0"  Grid.Column="1" Margin="10,10" Foreground="{StaticResource GrayText}"
+                   Text="Вновь возникающие уведомления будут добавлены в общий список." TextAlignment="Center"  TextWrapping="Wrap"/>
+
+        <ui:GifImage Grid.Row="1" Grid.Column="0" Stretch="None" Margin="12,12,0,0" 
                           GifSource="/Resources/reminder.gif" AutoStart="True"/>
         <ScrollViewer Grid.Column="1"  Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                       VerticalAlignment="Center">

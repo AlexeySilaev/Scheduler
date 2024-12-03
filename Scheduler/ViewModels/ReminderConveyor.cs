@@ -80,7 +80,7 @@ namespace Scheduler.ViewModels
         {
             Reconstruct();
             // если все одноразовые элементы отложены, просматривать больше нечего
-            if (_reminderWindowViewModel.IsAllOneTineItemsPostponed())
+            if (_reminderWindowViewModel.IsAllOneTimeItemsPostponed())
             {
                 _reminderWindowViewModel.View.Close();
                 _reminderWindowViewModel = null;

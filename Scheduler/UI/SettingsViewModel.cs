@@ -39,6 +39,17 @@ namespace Scheduler.UI
             }
         }
 
+        public bool TopMostNotificationsWindow
+        {
+            get { return _settings.TopMostNotificationsWindow; }
+            set
+            {
+                if (TopMostNotificationsWindow == value) return;
+                _settings.TopMostNotificationsWindow = value;
+                OnPropertyChanged(nameof(TopMostNotificationsWindow));
+            }
+        }
+
         public RingtoneMode RingtoneMode
         {
             get { return _settings.RingtoneMode; }
