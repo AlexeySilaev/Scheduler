@@ -65,10 +65,6 @@ namespace Scheduler.ViewModels
         /// </summary>
         public void Stop()
         {
-            lock (_lockQueue)
-            {
-                _queueTimer.Enabled = false;
-            }
             if (_reminderWindowViewModel?.View != null)
             {
                 _reminderWindowViewModel.View.Close();

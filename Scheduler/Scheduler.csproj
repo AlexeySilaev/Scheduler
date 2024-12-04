@@ -226,12 +226,13 @@
     <Resource Include="Resources\save.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\bell.mp3" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Scheduler.Launch\Scheduler.Launch.csproj">
       <Project>{12514632-d030-4853-b78a-9d359587f83b}</Project>
       <Name>Scheduler.Launch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Scheduler.Resources\Scheduler.Resources.csproj">
+      <Project>{13a7e7b9-d51c-4f2b-b955-027294610b47}</Project>
+      <Name>Scheduler.Resources</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

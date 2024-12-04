@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Scheduler.Resources;
 
 namespace Scheduler.Models
 {
@@ -42,7 +43,7 @@ namespace Scheduler.Models
         {
             DeleteSchedulerItemsMode = DeleteSchedulerItemsMode.Confirm;
             NotificationsWindowPosition = NotificationsWindowPosition.RightBottom;
-            RingtoneMode = RingtoneMode.NoSound;
+            RingtoneMode = RingtoneMode.Default;
             LaunchWithWindows = true;
             TopMostNotificationsWindow = true;
         }
@@ -56,7 +57,7 @@ namespace Scheduler.Models
             using (FileStream fileStream = File.Create(result))
             {
                 string appName = Path.GetFileNameWithoutExtension(Application.ResourceAssembly.Location);
-                Assembly.GetExecutingAssembly().GetManifestResourceStream($"{appName}.Resources.{resourceName}").CopyTo(fileStream);
+                EmbeddedResource.GetDefaultRingtoneFile().CopyTo(fileStream);
             }
             return result;
         }

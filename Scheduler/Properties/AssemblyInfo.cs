@@ -10,9 +10,8 @@ using System.Windows;
 [assembly: AssemblyTitle("Scheduler")]
 [assembly: AssemblyDescription("Напоминалка")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Алексей Силаев, flownder@mail.ru")]
 [assembly: AssemblyProduct("Scheduler")]
-[assembly: AssemblyCopyright("Copyright ©  2024")]
+[assembly: AssemblyCopyright("Алексей Силаев, flownder@mail.ru, Copyright ©  2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
