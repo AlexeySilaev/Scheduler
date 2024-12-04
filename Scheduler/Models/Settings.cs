@@ -42,7 +42,7 @@ namespace Scheduler.Models
         {
             DeleteSchedulerItemsMode = DeleteSchedulerItemsMode.Confirm;
             NotificationsWindowPosition = NotificationsWindowPosition.RightBottom;
-            RingtoneMode = RingtoneMode.Default;
+            RingtoneMode = RingtoneMode.NoSound;
             LaunchWithWindows = true;
             TopMostNotificationsWindow = true;
         }

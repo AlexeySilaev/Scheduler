@@ -34,6 +34,7 @@ namespace Scheduler.Models
         public List<EventItem> Events { get; }
         public List<NoteItem> Notes { get; }
         public Settings Settings { get; private set; }
+        public bool IsLoaded { get; private set; }
 
         private SchedulerModel()
         {
@@ -45,7 +46,7 @@ namespace Scheduler.Models
 
         public void Load()
         {
-            if (File.Exists(FilePath) == false)
+        /*    if (File.Exists(FilePath) == false)
                 return;
             try
             {
@@ -61,9 +62,9 @@ namespace Scheduler.Models
             }
             catch (InvalidOperationException)
             {
-            }
+            }*/
             
-  /*          Alarms.AddRange(new[]
+            Alarms.AddRange(new[]
                {
                    new AlarmItem { Text = "Через 20 минут", AlarmTime = TimeSpan.FromMinutes(20) },
                    new AlarmItem { Text = "Через 15 минут" }
@@ -113,7 +114,8 @@ namespace Scheduler.Models
                });
                Alarms[0].AlarmTime = TimeSpan.FromSeconds(2);
                Alarms[1].AlarmTime = TimeSpan.FromSeconds(3);
-               Events.ForEach(e => e.EventDate = DateTime.Now.AddSeconds(3));*/
+               Events.ForEach(e => e.EventDate = DateTime.Now.AddSeconds(3));
+               IsLoaded = true;
         }
 
         public void Save()

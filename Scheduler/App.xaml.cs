@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using Scheduler.Launch;
 using Scheduler.Models;
 using Scheduler.ViewModels;
 
@@ -13,6 +14,12 @@ namespace Scheduler
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (LaunchChecker.IsRunning())
+            {
+                Current.Shutdown();
+                return;
+            }
+
             base.OnStartup(e);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
