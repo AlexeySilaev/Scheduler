@@ -84,14 +84,16 @@ namespace Scheduler.UI
             }
         }
 
-        public bool MinimizeInTrayOnStart
+        public bool MinimizeToTray
         {
-            get { return _settings.MinimizeInTrayOnStart; }
+            get { return _settings.MinimizeToTray; }
             set
             {
-                if (MinimizeInTrayOnStart == value) return;
-                _settings.MinimizeInTrayOnStart = value;
-                OnPropertyChanged(nameof(MinimizeInTrayOnStart));
+                if (MinimizeToTray == value) return;
+                _settings.MinimizeToTray = value;
+                OnPropertyChanged(nameof(MinimizeToTray));
+                MainViewModel mainViewModel = MainViewModel.FindInstance();
+                mainViewModel.NotifyIconHandler.IsIconVisible = MinimizeToTray;
             }
         }
 

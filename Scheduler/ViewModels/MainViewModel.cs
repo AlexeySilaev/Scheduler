@@ -132,6 +132,9 @@ namespace Scheduler.ViewModels
         public ICommand CancelEditItemCommand { get; }
         public ICommand SettingsCommand { get; }
 
+        public NotifyIconHandler NotifyIconHandler { get; }
+
+
         public MainViewModel()
         {
             _searchText = string.Empty;
@@ -142,11 +145,11 @@ namespace Scheduler.ViewModels
             SaveItemCommand = new Command(OnEndEditItem);
             CancelEditItemCommand = new Command(OnCancelEditItem);
             SettingsCommand = new Command(OnSettingsCommand);
+            NotifyIconHandler = new NotifyIconHandler();
         }
 
         public void InitializeAsync(Dispatcher dispather)
         {
-            WindowPositioning.DefinePrimaryMonitor();
             Task.Factory.StartNew(() =>
             {
                 Groups.ForEach(group => group.Initialize());
@@ -253,6 +256,7 @@ namespace Scheduler.ViewModels
             ConfirmDelete = null;
             OnCancelEditItem();
             Settings = new SettingsViewModel(SchedulerModel.Instance.Settings);
+            NotifyIconHandler.NotifyCommand.Execute(null);
         }
 
         private void FilterSchedulerGroupItems()

@@ -17,6 +17,11 @@ namespace Scheduler
             get { return (MainViewModel)base.DataContext; }
         }
 
+        private SchedulerModel SchedulerModel
+        {
+            get { return SchedulerModel.Instance; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -24,22 +29,39 @@ namespace Scheduler
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (SchedulerModel.Instance.IsLoaded == false) return;
+            if (SchedulerModel.IsLoaded == false) return;
             LaunchChecker.RegisterClientProcess(this);
             DataContext.InitializeAsync(Dispatcher);
+            // TODO MinimizeToTray: первый запусе развернутым
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+           if(SchedulerModel.Settings.MinimizeToTray && WindowState == WindowState.Minimized)
+               Hide();
+           base.OnStateChanged(e);
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (SchedulerModel.Instance.IsLoaded == false) return;
+            if (SchedulerModel.Settings.MinimizeToTray)
+            {
+                e.Cancel = true;
+                Hide();
+            }
+            else
+            {
+                if (SchedulerModel.IsLoaded == false) return;
+                DataContext.OnClosing();
+            }
             base.OnClosing(e);
-            DataContext.OnClosing();
         }
 
         void ISchedulerClientProcess.ShowMainWindow()
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
+                Show();
                 if (WindowState == WindowState.Minimized)
                     WindowState = WindowState.Normal;
                 Activate();

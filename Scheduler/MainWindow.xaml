@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Scheduler"
         xmlns:vm="clr-namespace:Scheduler.ViewModels"
         xmlns:templateSelectors="clr-namespace:Scheduler.TemplateSelectors"
         xmlns:ui="clr-namespace:Scheduler.UI"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="Напоминалка" Height="450" MinWidth="730" MaxWidth="730"
         Loaded="MainWindow_OnLoaded">
@@ -37,8 +37,19 @@
         <Grid Grid.Column="1" Background="OrangeRed">
             <TextBlock Text="{Binding Error}" Visibility="{Binding Error, Converter={StaticResource StringToVisibilityConverter}}"
                        TextAlignment="Center" TextWrapping="Wrap" Margin="10"/>
+            <ui:FrameworkNotifyIcon NotifyRequest="{Binding NotifyIconHandler.NotifyRequest}"
+                                    IconVisible="{Binding NotifyIconHandler.IsIconVisible}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="OpenSelected">
+                        <b:InvokeCommandAction Command="{Binding NotifyIconHandler.NotifyIconOpenCommand}"/>
+                    </b:EventTrigger>
+                    <b:EventTrigger EventName="ExitSelected">
+                        <b:InvokeCommandAction Command="{Binding NotifyIconHandler.NotifyIconExitCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </ui:FrameworkNotifyIcon>
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto"/>

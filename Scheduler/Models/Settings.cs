@@ -36,7 +36,7 @@ namespace Scheduler.Models
         public RingtoneMode RingtoneMode { get; set; }
         public string CustomSoundFilePath { get; set; }
         public bool LaunchWithWindows { get; set; }
-        public bool MinimizeInTrayOnStart { get; set; }
+        public bool MinimizeToTray { get; set; }
         public bool TopMostNotificationsWindow { get; set; }
 
         public Settings()
@@ -45,6 +45,7 @@ namespace Scheduler.Models
             NotificationsWindowPosition = NotificationsWindowPosition.RightBottom;
             RingtoneMode = RingtoneMode.Default;
             LaunchWithWindows = true;
+            MinimizeToTray = true;
             TopMostNotificationsWindow = true;
         }
 
