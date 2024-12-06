@@ -88,6 +88,9 @@
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Converters\PeriodicityToDataTemplateConverter.cs" />
     <Compile Include="TemplateSelectors\SchedulerItemTemplateSelector.cs" />
+    <Compile Include="UI\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\AnimatedImage.cs" />
     <Compile Include="UI\ConfirmDeleteControl.xaml.cs">
       <DependentUpon>ConfirmDeleteControl.xaml</DependentUpon>
@@ -132,6 +135,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UI\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ConfirmDeleteControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -212,6 +219,9 @@
       <Project>{13a7e7b9-d51c-4f2b-b955-027294610b47}</Project>
       <Name>Scheduler.Resources</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\app.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

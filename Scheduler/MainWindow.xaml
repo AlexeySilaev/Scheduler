@@ -43,6 +43,9 @@
                     <b:EventTrigger EventName="OpenSelected">
                         <b:InvokeCommandAction Command="{Binding NotifyIconHandler.NotifyIconOpenCommand}"/>
                     </b:EventTrigger>
+                    <b:EventTrigger EventName="AboutSelected">
+                        <b:InvokeCommandAction Command="{Binding NotifyIconHandler.NotifyIconAboutCommand}"/>
+                    </b:EventTrigger>
                     <b:EventTrigger EventName="ExitSelected">
                         <b:InvokeCommandAction Command="{Binding NotifyIconHandler.NotifyIconExitCommand}"/>
                     </b:EventTrigger>

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using Scheduler.UI;
 using Scheduler.Models;
+using System;
 
 namespace Scheduler.ViewModels
 {
@@ -10,6 +11,7 @@ namespace Scheduler.ViewModels
     {
         private FrameworkNotifyIcon.NotifyRequestRecord _notifyRequest;
         private bool _isIconVisible;
+        private bool _aboutShown;
 
         public FrameworkNotifyIcon.NotifyRequestRecord NotifyRequest
         {
@@ -36,6 +38,7 @@ namespace Scheduler.ViewModels
 
         public ICommand NotifyCommand { get; }
         public ICommand NotifyIconOpenCommand { get; }
+        public ICommand NotifyIconAboutCommand { get; }
         public ICommand NotifyIconExitCommand { get; }
 
         public NotifyIconHandler()
@@ -43,6 +46,7 @@ namespace Scheduler.ViewModels
             IsIconVisible = SchedulerModel.Instance.Settings.MinimizeToTray;
             NotifyCommand = new Command(() => Notify("Приложение продолжает работать"));
             NotifyIconOpenCommand = new Command(OnOpen);
+            NotifyIconAboutCommand = new Command(OnAbout);
             NotifyIconExitCommand = new Command(OnExit);
         }
 
@@ -60,6 +64,15 @@ namespace Scheduler.ViewModels
         {
             ISchedulerClientProcess win = Application.Current.MainWindow as ISchedulerClientProcess;
             win?.ShowMainWindow();
+        }
+
+        private void OnAbout()
+        {
+            if (_aboutShown) return;
+            AboutWindow about = new AboutWindow();
+            about.Closed += (o, e) => _aboutShown = false;
+            about.Show();
+            _aboutShown = true;
         }
 
         private void OnExit()

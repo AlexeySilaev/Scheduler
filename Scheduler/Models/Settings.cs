@@ -27,6 +27,7 @@ namespace Scheduler.Models
         NoSound,
         Default,
         Custom
+        // TODO синтезатор речи
     }
 
     public class Settings
@@ -38,6 +39,8 @@ namespace Scheduler.Models
         public bool LaunchWithWindows { get; set; }
         public bool MinimizeToTray { get; set; }
         public bool TopMostNotificationsWindow { get; set; }
+        // служебные настройки, наружу не видны
+        public bool IsFirstLaunch { get; set; }
 
         public Settings()
         {
@@ -47,6 +50,7 @@ namespace Scheduler.Models
             LaunchWithWindows = true;
             MinimizeToTray = true;
             TopMostNotificationsWindow = true;
+            IsFirstLaunch = true;
         }
 
         public string GetDefaultRingtoneFile()

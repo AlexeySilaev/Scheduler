@@ -42,6 +42,9 @@ namespace Scheduler.UI
         private static readonly RoutedEvent OpenSelectedEvent = EventManager.RegisterRoutedEvent("OpenSelected",
             RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkNotifyIcon));
 
+        private static readonly RoutedEvent AboutSelectedEvent = EventManager.RegisterRoutedEvent("AboutSelected",
+            RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkNotifyIcon));
+
         private static readonly RoutedEvent ExitSelectedEvent = EventManager.RegisterRoutedEvent("ExitSelected",
             RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkNotifyIcon));
 
@@ -90,6 +93,12 @@ namespace Scheduler.UI
             remove => RemoveHandler(OpenSelectedEvent, value);
         }
 
+        public event RoutedEventHandler AboutSelected
+        {
+            add => AddHandler(AboutSelectedEvent, value);
+            remove => RemoveHandler(AboutSelectedEvent, value);
+        }
+
         public event RoutedEventHandler ExitSelected
         {
             add => AddHandler(ExitSelectedEvent, value);
@@ -98,17 +107,28 @@ namespace Scheduler.UI
 
         private ContextMenuStrip CreateContextMenu()
         {
-            var openItem = new ToolStripMenuItem("Open");
+            ToolStripMenuItem openItem = new ToolStripMenuItem("Открыть");
             openItem.Click += OpenItemOnClick;
-            var exitItem = new ToolStripMenuItem("Exit");
+            ToolStripMenuItem about = new ToolStripMenuItem("О программе");
+            about.Click += AboutItemOnClick;
+            ToolStripMenuItem exitItem = new ToolStripMenuItem("Выход");
             exitItem.Click += ExitItemOnClick;
-            var contextMenu = new ContextMenuStrip { Items = { openItem, exitItem } };
-            return contextMenu;
+            ContextMenuStrip result = new ContextMenuStrip
+            {
+                Items = { openItem, about, new ToolStripSeparator(), exitItem }
+            };
+            return result;
         }
 
         private void OpenItemOnClick(object sender, EventArgs eventArgs)
         {
             var args = new RoutedEventArgs(OpenSelectedEvent);
+            RaiseEvent(args);
+        }
+
+        private void AboutItemOnClick(object sender, EventArgs eventArgs)
+        {
+            var args = new RoutedEventArgs(AboutSelectedEvent);
             RaiseEvent(args);
         }
 

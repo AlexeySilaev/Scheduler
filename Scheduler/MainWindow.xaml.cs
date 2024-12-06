@@ -32,7 +32,15 @@ namespace Scheduler
             if (SchedulerModel.IsLoaded == false) return;
             LaunchChecker.RegisterClientProcess(this);
             DataContext.InitializeAsync(Dispatcher);
-            // TODO MinimizeToTray: первый запусе развернутым
+            if (SchedulerModel.Instance.Settings.IsFirstLaunch)
+            {
+                SchedulerModel.Instance.Settings.IsFirstLaunch = false;
+                SchedulerModel.Instance.Save();
+            }
+            else if (SchedulerModel.Instance.Settings.MinimizeToTray)
+            {
+                WindowState = WindowState.Minimized;
+            }
         }
 
         protected override void OnStateChanged(EventArgs e)

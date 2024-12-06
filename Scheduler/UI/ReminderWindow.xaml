@@ -8,6 +8,7 @@
         xmlns:converters="clr-namespace:Scheduler.Converters"
         mc:Ignorable="d" 
         WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
         ShowInTaskbar="False"
         Title="Уведомление" Height="285" Width="460" 
         Topmost="{Binding TopMost, Mode=OneTime}">
