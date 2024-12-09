@@ -7,6 +7,7 @@
              xmlns:converters="clr-namespace:Scheduler.Converters"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:ui="clr-namespace:Scheduler.UI"
+             xmlns:models="clr-namespace:Scheduler.Models"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
@@ -16,10 +17,12 @@
         <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
         <converters:EventDateToStringConverter x:Key="EventDateToStringConverter"/>
         <converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
+        <converters:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter"/>
         <converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
         <converters:CharactersEnteredConverter x:Key="CharactersEnteredConverter"/>
         <converters:StaticResourceToIntConverter x:Key="StaticResourceToIntConverter"/>
         <converters:PeriodicityToDataTemplateConverter x:Key="PeriodicityToDataTemplateConverter"/>
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
         <SolidColorBrush x:Key="GrayText" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
         <Thickness x:Key="DetailsMargin" Left="5" Top="5" Right="5" Bottom="5" />
         <Thickness x:Key="ImagePanelMargin" Left="5" Top="5" Right="5" Bottom="5" />
@@ -200,9 +203,25 @@
         </DataTemplate>
 
         <!-- Шаблоны для редактирования элементов SchedulerItemViewModel -->
+        <DataTemplate x:Key="RingtoneItemTemplate" DataType="{x:Type viewModels:ReminderItemViewModel}" >
+            <StackPanel Orientation="Horizontal" >
+                <TextBlock Text="Звуковое сопровождение" VerticalAlignment="Center"/>
+                <CheckBox IsChecked="{Binding IsSettingsRingtone}" VerticalAlignment="Center"
+                             Margin="10,0,25,0"
+                             Content="Из настроек" />
+                <TextBlock Margin="10,0,10,0" Text="Выбрать" VerticalAlignment="Center"
+                          Visibility="{Binding IsSettingsRingtone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}" />
+                <ComboBox VerticalAlignment="Center" ItemsSource="{x:Static extensions:EnumExtensions.RingtoneInfos}"
+                          SelectedValue="{Binding Ringtone}" SelectedValuePath="Member" DisplayMemberPath="Description"
+                          IsEditable="False" MinWidth="115"
+                          Visibility="{Binding IsSettingsRingtone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"/>
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="EditAlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
             <Grid Margin="10" FocusManager.FocusedElement="{Binding ElementName=AlarmText}" >
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -221,6 +240,8 @@
                     <ui:TimeTextBox Time="{Binding AlarmTime}" Margin="5,0,0,0" 
                                     VerticalContentAlignment="Center" Padding="2,0"/>
                 </StackPanel>
+                <ContentControl Grid.Row="4" ContentTemplate="{StaticResource RingtoneItemTemplate}"
+                                Content="{Binding}"/>
             </Grid>
         </DataTemplate>
 
@@ -247,6 +268,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="Описание" Margin="0,5"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -267,6 +289,9 @@
                                     VerticalContentAlignment="Center" Padding="2,0"/>
                     <ContentControl Content="{Binding}" ContentTemplate="{Binding Periodicity, Converter={StaticResource PeriodicityToDataTemplateConverter}}"/>
                 </StackPanel>
+                <ContentControl Grid.Row="4" ContentTemplate="{StaticResource RingtoneItemTemplate}"
+                                Content="{Binding}"/>
+
             </Grid>
         </DataTemplate>
 

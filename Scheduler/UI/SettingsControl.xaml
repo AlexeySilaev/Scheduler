@@ -12,7 +12,6 @@
              d:DataContext="{d:DesignInstance local:SettingsViewModel}"
              DataContextChanged="SettingsControl_OnDataContextChanged">
     <UserControl.Resources>
-        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
         <Thickness x:Key="GroupMargin" Left="5" Top="5" Right="5" Bottom="5" />
         <Thickness x:Key="StackPanelMargin" Left="10" Top="10" Right="10" Bottom="10" />
         <PathGeometry x:Key="Triangle">
@@ -62,18 +61,27 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Margin="{StaticResource StackPanelMargin}">
-                    <RadioButton IsChecked="{Binding RingtoneMode, Converter={StaticResource EnumToBoolConverter},
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <RadioButton IsChecked="{Binding RingtoneMode, Converter={StaticResource EnumToBoolConverter},
                     ConverterParameter={x:Static models:RingtoneMode.NoSound}}" 
-                             Content="Выключить звук" GroupName="RingtoneMode"/>
+                             Content="Выключить звук" GroupName="RingtoneMode" Margin="{StaticResource StackPanelMargin}"/>
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="{StaticResource StackPanelMargin}" Orientation="Horizontal">
                     <RadioButton IsChecked="{Binding RingtoneMode, Converter={StaticResource EnumToBoolConverter},
                     ConverterParameter={x:Static models:RingtoneMode.Default}}"
-                             Content="По умолчанию" GroupName="RingtoneMode" Margin="0,5,0,5"/>
+                             Content="По умолчанию" GroupName="RingtoneMode" />
                     <RadioButton IsChecked="{Binding RingtoneMode, Converter={StaticResource EnumToBoolConverter},
-                    ConverterParameter={x:Static models:RingtoneMode.Custom}}" 
-                             Content="Выбрать файл" GroupName="RingtoneMode"/>
+                    ConverterParameter={x:Static models:RingtoneMode.SpeechSynthesizer}}" 
+                             Content="Озвучить текст" GroupName="RingtoneMode"
+                             Margin="15,0,0,0"/>
                 </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5,0,0,8"
+                <RadioButton Grid.Row="1" IsChecked="{Binding RingtoneMode, Converter={StaticResource EnumToBoolConverter},
+                    ConverterParameter={x:Static models:RingtoneMode.Custom}}" 
+                             Margin="10,0,0,5"
+                             Content="Выбрать файл" GroupName="RingtoneMode"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5,-2,0,10"
                             IsEnabled="{Binding RingtoneMode, Converter={StaticResource EnumToBoolConverter},
                             ConverterParameter={x:Static models:RingtoneMode.Custom}}" 
                             VerticalAlignment="Bottom" >

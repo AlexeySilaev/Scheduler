@@ -3,28 +3,17 @@ using System.ComponentModel;
 
 namespace Scheduler.Models
 {
-    /// <summary>
-    /// Периодичность.
-    /// </summary>
-    public enum Periodicity
-    {
-        [Description("Один раз")] Once,
-        [Description("Ежедневно")] Daily,
-        [Description("Еженедельно")] Weekly,
-        [Description("Ежемесячно")] Monthly,
-        [Description("Ежеквартально")] Quarterly,
-        [Description("Ежегодно")] Annually
-    }
-
     public class EventItem : SchedulerItem
     {
         public DateTime EventDate { get; set; }
         public Periodicity Periodicity { get; set; }
+        public ReminderRingtone Ringtone { get; set; }
 
         public EventItem()
         {
             EventDate = DateTime.Today.AddDays(1).AddHours(12);
             Periodicity = Periodicity.Once;
+            Ringtone = ReminderRingtone.AsIs;
         }
 
         public DateTime GetNearestEventDate()

@@ -168,8 +168,9 @@ namespace Scheduler.ViewModels
 
         }
 
-        public void OnClosing()
+        public void OnClosed()
         {
+            if (SchedulerModel.Instance.IsLoaded == false) return;
             _reminderConveyor.Stop();
             SaveToModel();
         }
@@ -254,6 +255,7 @@ namespace Scheduler.ViewModels
         private void OnSettingsCommand()
         {
             ConfirmDelete = null;
+            SelectedGroup = null;
             OnCancelEditItem();
             Settings = new SettingsViewModel(SchedulerModel.Instance.Settings);
             NotifyIconHandler.NotifyCommand.Execute(null);
@@ -267,8 +269,11 @@ namespace Scheduler.ViewModels
 
         public void SaveToModel()
         {
-            Groups.ForEach(group => group.Save());
-            SchedulerModel.Instance.Save();
+            if (SchedulerModel.Instance.IsLoaded)
+            {
+                Groups.ForEach(group => group.Save());
+                SchedulerModel.Instance.Save();
+            }
         }
     }
 }

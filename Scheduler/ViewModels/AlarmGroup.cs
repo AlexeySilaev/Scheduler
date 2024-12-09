@@ -98,7 +98,7 @@ namespace Scheduler.ViewModels
             }
 
             AlarmItem item = new AlarmItem();
-            item.AlarmTime = TimeSpan.FromMinutes(postponeMinutes);
+            item.AlarmTimeMinutes = postponeMinutes;
             item.Text = postponed.Text;
             _allItems.Add(new AlarmItemViewModel(item));
             UpdateRemainTime();

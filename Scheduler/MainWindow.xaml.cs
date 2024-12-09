@@ -57,12 +57,13 @@ namespace Scheduler
                 e.Cancel = true;
                 Hide();
             }
-            else
-            {
-                if (SchedulerModel.IsLoaded == false) return;
-                DataContext.OnClosing();
-            }
             base.OnClosing(e);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            DataContext.OnClosed();
+            base.OnClosed(e);
         }
 
         void ISchedulerClientProcess.ShowMainWindow()

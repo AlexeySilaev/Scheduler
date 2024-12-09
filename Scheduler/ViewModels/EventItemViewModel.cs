@@ -1,9 +1,6 @@
 ﻿using Scheduler.Models;
 using System;
-using System.Globalization;
-using Scheduler.Converters;
 using Scheduler.Extensions;
-using System.ComponentModel;
 
 namespace Scheduler.ViewModels
 {
@@ -89,6 +86,7 @@ namespace Scheduler.ViewModels
             _eventDate = item.EventDate.Date;
             _eventTime = item.EventDate.TimeOfDay;
             _periodicity = item.Periodicity;
+            _ringtone = item.Ringtone;
         }
 
         public override DateTime GetReminderDateTime()
@@ -119,6 +117,7 @@ namespace Scheduler.ViewModels
             base.EndEdit();
             EventItem.EventDate = FullEventDate;
             EventItem.Periodicity = Periodicity;
+            EventItem.Ringtone = Ringtone;
         }
 
         public override void CancelEdit()
@@ -126,6 +125,7 @@ namespace Scheduler.ViewModels
             base.CancelEdit();
             EventDate = EventItem.EventDate.Date;
             EventTime = EventItem.EventDate.TimeOfDay;
+            Ringtone = EventItem.Ringtone;
         }
 
         public override void Save()

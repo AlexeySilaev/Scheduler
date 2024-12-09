@@ -15,6 +15,7 @@ namespace Scheduler.ViewModels
     {
         private ReminderState _state;
         private PostponeItem _postpone;
+        protected ReminderRingtone _ringtone;
 
         public ReminderState State
         {
@@ -25,6 +26,30 @@ namespace Scheduler.ViewModels
                 _state = value;
                 OnPropertyChanged(nameof(State));
                 Edit.RaiseCanExecuteChanged();
+            }
+        }
+
+        public ReminderRingtone Ringtone
+        {
+            get { return _ringtone; }
+            set
+            {
+                if (Ringtone == value) return;
+                _ringtone = value;
+                OnPropertyChanged(nameof(Ringtone));
+                OnPropertyChanged(nameof(IsSettingsRingtone));
+            }
+        }
+
+        public bool IsSettingsRingtone
+        {
+            get { return Ringtone == ReminderRingtone.AsIs; }
+            set
+            {
+                if (value)
+                    Ringtone = ReminderRingtone.AsIs;
+                else
+                    Ringtone = ReminderRingtone.Default;
             }
         }
 
@@ -54,6 +79,7 @@ namespace Scheduler.ViewModels
         protected ReminderItemViewModel(SchedulerItem item) : base(item)
         {
             _state = ReminderState.Active;
+            _ringtone = ReminderRingtone.AsIs;
             _postpone = CompleteItem.Instance;
         }
 

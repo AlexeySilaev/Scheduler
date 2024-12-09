@@ -1,35 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows;
 using Scheduler.Resources;
 
 namespace Scheduler.Models
 {
-    public enum DeleteSchedulerItemsMode
-    {
-        Confirm,
-        Immediately
-    }
-
-    public enum NotificationsWindowPosition
-    {
-        Center,
-        RightBottom
-    }
-
-    public enum RingtoneMode
-    {
-        NoSound,
-        Default,
-        Custom
-        // TODO синтезатор речи
-    }
-
     public class Settings
     {
         public DeleteSchedulerItemsMode DeleteSchedulerItemsMode { get; set; }

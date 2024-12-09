@@ -17,7 +17,6 @@
     </Window.DataContext>
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <converters:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>

@@ -27,6 +27,24 @@ namespace Scheduler.Extensions
             }
         }
 
+        private static List<EnumInfo> _ringtoneInfos;
+        public static List<EnumInfo> RingtoneInfos
+        {
+            get
+            {
+                if (_ringtoneInfos == null)
+                {
+                    _ringtoneInfos = new List<EnumInfo>
+                    {
+                        new EnumInfo(ReminderRingtone.Default, GetDescription(ReminderRingtone.Default)),
+                        new EnumInfo(ReminderRingtone.SpeechSynthesizer, GetDescription(ReminderRingtone.SpeechSynthesizer)),
+                        new EnumInfo(ReminderRingtone.NoSound, GetDescription(ReminderRingtone.NoSound)),
+                    };
+                }
+                return _ringtoneInfos;
+            }
+        }
+
         private static List<EnumInfo> GetEnumInfos<TEnum>() where TEnum : Enum
         {
             TEnum[] array = (TEnum[])Enum.GetValues(typeof(TEnum));

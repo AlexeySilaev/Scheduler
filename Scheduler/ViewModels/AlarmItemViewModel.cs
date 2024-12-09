@@ -67,9 +67,10 @@ namespace Scheduler.ViewModels
 
         public AlarmItemViewModel(AlarmItem item) : base(item)
         {
-            _alarmTime = item.AlarmTime;
-            _remainTime = item.AlarmTime;
+            _alarmTime = TimeSpan.FromMinutes(item.AlarmTimeMinutes);
+            _remainTime = TimeSpan.FromMinutes(item.AlarmTimeMinutes);
             _nowDate = item.NowDate;
+            _ringtone = item.Ringtone;
             UpdateRemainTime();
         }
 
@@ -88,16 +89,19 @@ namespace Scheduler.ViewModels
         public override void EndEdit()
         {
             base.EndEdit();
-            AlarmItem.AlarmTime = AlarmTime;
+            AlarmItem.AlarmTimeMinutes = Convert.ToInt32(AlarmTime.TotalMinutes);
             NowDate = DateTime.Now;
             AlarmItem.NowDate = NowDate;
+            AlarmItem.Ringtone = Ringtone;
             UpdateRemainTime();
         }
 
         public override void CancelEdit()
         {
             base.CancelEdit();
-            AlarmItem.AlarmTime = AlarmTime;
+            AlarmTime = TimeSpan.FromMinutes(AlarmItem.AlarmTimeMinutes);
+            NowDate = AlarmItem.NowDate;
+            Ringtone = AlarmItem.Ringtone;
         }
 
         public override void Save()
