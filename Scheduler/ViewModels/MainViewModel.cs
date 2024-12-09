@@ -258,7 +258,6 @@ namespace Scheduler.ViewModels
             SelectedGroup = null;
             OnCancelEditItem();
             Settings = new SettingsViewModel(SchedulerModel.Instance.Settings);
-            NotifyIconHandler.NotifyCommand.Execute(null);
         }
 
         private void FilterSchedulerGroupItems()

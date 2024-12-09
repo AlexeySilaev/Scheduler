@@ -14,7 +14,7 @@ namespace Scheduler.Models
         public bool MinimizeToTray { get; set; }
         public bool TopMostNotificationsWindow { get; set; }
         // служебные настройки, наружу не видны
-        public bool IsFirstLaunch { get; set; }
+        public bool IsFirstMinimize { get; set; }
 
         public Settings()
         {
@@ -24,13 +24,12 @@ namespace Scheduler.Models
             LaunchWithWindows = true;
             MinimizeToTray = true;
             TopMostNotificationsWindow = true;
-            IsFirstLaunch = true;
+            IsFirstMinimize = true;
         }
 
         public string GetDefaultRingtoneFile()
         {
-            const string resourceName = "bell.mp3";
-            string result = Path.Combine(SchedulerModel.AppDataPath, resourceName);
+            string result = Path.Combine(SchedulerModel.AppDataPath, EmbeddedResource.DefaultRingtoneFileName);
             if (File.Exists(result))
                 return result;
             using (FileStream fileStream = File.Create(result))

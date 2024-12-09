@@ -8,8 +8,7 @@
         xmlns:ui="clr-namespace:Scheduler.UI"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="Напоминалка" Height="450" MinWidth="730" MaxWidth="730"
-        Loaded="MainWindow_OnLoaded">
+        Title="Напоминалка" Height="450" MinWidth="730" MaxWidth="730">
     <Window.DataContext>
         <vm:MainViewModel></vm:MainViewModel>
     </Window.DataContext>
