@@ -9,7 +9,7 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen"
-        Title="О программе" Height="185" Width="300"
+        Title="О программе" Height="185" Width="335"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -22,22 +22,23 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" Source="/Resources/app.png"
-                   Width="90" Height="80" Margin="5,5,5,15"/>
-            <TextBlock Grid.Column="1" Grid.Row="0" Text="Scheduler" FontSize="18"/>
+            <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Source="/Resources/About.png"
+                   Width="110" Height="115" Margin="5,5,15,15" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="Scheduler" FontSize="18" TextAlignment="Center"/>
             <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Version, Mode=OneTime}"/>
             <TextBlock Grid.Column="1" Grid.Row="2" Text="Автор: Силаев Алексей"/>
             <TextBlock Grid.Column="1" Grid.Row="3">
                 Поддержка:
                 <Hyperlink NavigateUri="mailto:flownder@mail.ru" RequestNavigate="Hyperlink_OnRequestNavigate">flownder@mail.ru</Hyperlink>
             </TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="4" Text="2024 г."/>
         </Grid>
-        <TextBlock Grid.Row="1" Text="2024 г."/>
     </Grid>
 </Window>

@@ -8,7 +8,7 @@
         xmlns:ui="clr-namespace:Scheduler.UI"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="Напоминалка" Height="450" MinWidth="730" MaxWidth="730">
+        Title="Напоминалка" Height="450" MinWidth="730" MaxWidth="730" Icon="/Resources/About.png">
     <Window.DataContext>
         <vm:MainViewModel></vm:MainViewModel>
     </Window.DataContext>
@@ -37,7 +37,7 @@
             <TextBlock Text="{Binding Error}" Visibility="{Binding Error, Converter={StaticResource StringToVisibilityConverter}}"
                        TextAlignment="Center" TextWrapping="Wrap" Margin="10"/>
             <ui:FrameworkNotifyIcon NotifyRequest="{Binding NotifyIconHandler.NotifyRequest}"
-                                    IconVisible="{Binding NotifyIconHandler.IsIconVisible}">
+                                    IconVisible="{Binding NotifyIconHandler.IsIconVisible}" Text="Напоминалка">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="OpenSelected">
                         <b:InvokeCommandAction Command="{Binding NotifyIconHandler.NotifyIconOpenCommand}"/>
