@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scheduler", "Scheduler\Scheduler.csproj", "{01C9BA82-791F-4FEC-BA60-CB63CCCE6813}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reminder", "Scheduler\Reminder.csproj", "{01C9BA82-791F-4FEC-BA60-CB63CCCE6813}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scheduler.Launch", "Scheduler.Launch\Scheduler.Launch.csproj", "{12514632-D030-4853-B78A-9D359587F83B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reminder.Launch", "Scheduler.Launch\Reminder.Launch.csproj", "{12514632-D030-4853-B78A-9D359587F83B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scheduler.Resources", "Scheduler.Resources\Scheduler.Resources.csproj", "{13A7E7B9-D51C-4F2B-B955-027294610B47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reminder.Resources", "Scheduler.Resources\Reminder.Resources.csproj", "{13A7E7B9-D51C-4F2B-B955-027294610B47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

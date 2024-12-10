@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 
-namespace Scheduler.Launch
+namespace Reminder.Launch
 {
-    class SchedulerClientProcess : ISchedulerClientProcess
+    class ReminderClientProcess : IReminderClientProcess
     {
         public void ShowMainWindow()
         {

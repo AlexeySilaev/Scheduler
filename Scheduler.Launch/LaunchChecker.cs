@@ -1,12 +1,12 @@
 ﻿using System.Security.Policy;
 using System.ServiceModel;
 
-namespace Scheduler.Launch
+namespace Reminder.Launch
 {
     public static class LaunchChecker
     {
         private static ClientProcessServiceHost _processHost;
-        public static ISchedulerClientProcess ThisClientProcess { get; private set; }
+        public static IReminderClientProcess ThisClientProcess { get; private set; }
 
         public static bool IsRunning()
         {
@@ -28,7 +28,7 @@ namespace Scheduler.Launch
             return false;
         }
 
-        public static void RegisterClientProcess(ISchedulerClientProcess thisClientProcess)
+        public static void RegisterClientProcess(IReminderClientProcess thisClientProcess)
         {
             ThisClientProcess = thisClientProcess;
         }

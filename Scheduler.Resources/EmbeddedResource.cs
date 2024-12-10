@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace Scheduler.Resources
+namespace Reminder.Resources
 {
     public static class EmbeddedResource
     {
@@ -9,9 +9,8 @@ namespace Scheduler.Resources
 
         public static Stream GetDefaultRingtoneFile()
         {
-            var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
             return Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                $"Scheduler.Resources.{DefaultRingtoneFileName}");
+                $"Reminder.Resources.{DefaultRingtoneFileName}");
         }
     }
 }

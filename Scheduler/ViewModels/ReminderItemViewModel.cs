@@ -1,8 +1,8 @@
-﻿using Scheduler.Models;
-using System;
+﻿using System;
 using System.ComponentModel;
+using Reminder.Models;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     public enum ReminderState
     {
@@ -76,7 +76,7 @@ namespace Scheduler.ViewModels
         public abstract bool IsOneTimeReminder { get; }
         public abstract string PeriodicityDescription { get; }
 
-        protected ReminderItemViewModel(SchedulerItem item) : base(item)
+        protected ReminderItemViewModel(ReminderItem item) : base(item)
         {
             _state = ReminderState.Active;
             _ringtone = ReminderRingtone.AsIs;

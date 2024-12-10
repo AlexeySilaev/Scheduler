@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Scheduler.Extensions
+namespace Reminder.Extensions
 {
     internal static class EnumerableExtensions
     {

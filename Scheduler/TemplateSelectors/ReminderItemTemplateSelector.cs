@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using Scheduler.ViewModels;
+using Reminder.ViewModels;
 
-namespace Scheduler.TemplateSelectors
+namespace Reminder.TemplateSelectors
 {
-    public class SchedulerItemTemplateSelector : DataTemplateSelector
+    public class ReminderItemTemplateSelector : DataTemplateSelector
     {
         public DataTemplate AlarmTemplate { get; set; }
         public DataTemplate EventTemplate { get; set; }
@@ -18,11 +18,11 @@ namespace Scheduler.TemplateSelectors
             
             switch (item.Type)
             {
-                case SchedulerItemType.Alarm:
+                case ReminderItemType.Alarm:
                     return AlarmTemplate;
-                case SchedulerItemType.Event:
+                case ReminderItemType.Event:
                     return EventTemplate;
-                case SchedulerItemType.Note:
+                case ReminderItemType.Note:
                     return NoteTemplate;
             }
             return null;

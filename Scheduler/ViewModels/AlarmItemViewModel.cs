@@ -1,7 +1,7 @@
 ﻿using System;
-using Scheduler.Models;
+using Reminder.Models;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     internal class AlarmItemViewModel : ReminderItemViewModel
     {
@@ -50,9 +50,9 @@ namespace Scheduler.ViewModels
             }
         }
 
-        public override SchedulerItemType Type
+        public override ReminderItemType Type
         {
-            get { return SchedulerItemType.Alarm; }
+            get { return ReminderItemType.Alarm; }
         }
 
         public override bool IsOneTimeReminder
@@ -107,7 +107,7 @@ namespace Scheduler.ViewModels
         public override void Save()
         {
             if (State == ReminderState.Active)
-                SchedulerModel.Instance.Alarms.Add(AlarmItem);
+                ReminderModel.Instance.Alarms.Add(AlarmItem);
         }
     }
 }

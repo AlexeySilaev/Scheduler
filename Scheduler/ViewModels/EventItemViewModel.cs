@@ -1,8 +1,8 @@
-﻿using Scheduler.Models;
-using System;
-using Scheduler.Extensions;
+﻿using System;
+using Reminder.Models;
+using Reminder.Extensions;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     internal class EventItemViewModel : ReminderItemViewModel
     {
@@ -56,9 +56,9 @@ namespace Scheduler.ViewModels
             }
         }
 
-        public override SchedulerItemType Type
+        public override ReminderItemType Type
         {
-            get { return SchedulerItemType.Event; }
+            get { return ReminderItemType.Event; }
         }
 
         public override bool IsOneTimeReminder
@@ -131,7 +131,7 @@ namespace Scheduler.ViewModels
         public override void Save()
         {
             if (State == ReminderState.Active)
-                SchedulerModel.Instance.Events.Add(EventItem);
+                ReminderModel.Instance.Events.Add(EventItem);
         }
     }
 }

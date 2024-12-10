@@ -1,12 +1,12 @@
 ﻿using System.IO;
 using System.Windows;
-using Scheduler.Resources;
+using Reminder.Resources;
 
-namespace Scheduler.Models
+namespace Reminder.Models
 {
     public class Settings
     {
-        public DeleteSchedulerItemsMode DeleteSchedulerItemsMode { get; set; }
+        public DeleteReminderItemsMode DeleteReminderItemsMode { get; set; }
         public NotificationsWindowPosition NotificationsWindowPosition { get; set; }
         public RingtoneMode RingtoneMode { get; set; }
         public string CustomSoundFilePath { get; set; }
@@ -18,7 +18,7 @@ namespace Scheduler.Models
 
         public Settings()
         {
-            DeleteSchedulerItemsMode = DeleteSchedulerItemsMode.Confirm;
+            DeleteReminderItemsMode = DeleteReminderItemsMode.Confirm;
             NotificationsWindowPosition = NotificationsWindowPosition.RightBottom;
             RingtoneMode = RingtoneMode.Default;
             LaunchWithWindows = true;
@@ -29,7 +29,7 @@ namespace Scheduler.Models
 
         public string GetDefaultRingtoneFile()
         {
-            string result = Path.Combine(SchedulerModel.AppDataPath, EmbeddedResource.DefaultRingtoneFileName);
+            string result = Path.Combine(ReminderModel.AppDataPath, EmbeddedResource.DefaultRingtoneFileName);
             if (File.Exists(result))
                 return result;
             using (FileStream fileStream = File.Create(result))

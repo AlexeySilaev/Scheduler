@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Data;
-using Scheduler.Models;
 using System;
 using System.Globalization;
+using Reminder.Models;
 
-namespace Scheduler.Converters
+namespace Reminder.Converters
 {
     internal class PeriodicityToDataTemplateConverter : IValueConverter
     {

@@ -1,13 +1,13 @@
 ﻿using System.ServiceModel;
 
-namespace Scheduler.Launch
+namespace Reminder.Launch
 {
     class ClientProcessServiceHost : ServiceHost
     {
         public ClientProcessServiceHost()
-            : base(typeof(SchedulerClientProcess))
+            : base(typeof(ReminderClientProcess))
         {
-            AddServiceEndpoint(typeof(ISchedulerClientProcess), new NetNamedPipeBinding(), ServiceUri);
+            AddServiceEndpoint(typeof(IReminderClientProcess), new NetNamedPipeBinding(), ServiceUri);
         }
 
         public const string ServiceUri = "net.pipe://localhost/ISchedulerClientProcess/";

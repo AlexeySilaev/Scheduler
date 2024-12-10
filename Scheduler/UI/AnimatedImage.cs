@@ -4,7 +4,7 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Scheduler.UI
+namespace Reminder.UI
 {
     public class GifImage : Image
     {

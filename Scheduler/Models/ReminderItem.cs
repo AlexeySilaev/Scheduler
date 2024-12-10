@@ -1,10 +1,10 @@
-﻿namespace Scheduler.Models
+﻿namespace Reminder.Models
 {
-    public abstract class SchedulerItem 
+    public abstract class ReminderItem 
     {
         public string Text { get; set; }
 
-        protected SchedulerItem()
+        protected ReminderItem()
         {
         }
 

@@ -1,12 +1,12 @@
-﻿using Scheduler.Models;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Reminder.Models;
 using Size = System.Windows.Size;
 
-namespace Scheduler.Extensions
+namespace Reminder.Extensions
 {
     internal static class WindowPositioning
     {

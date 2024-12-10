@@ -1,11 +1,11 @@
-﻿using Scheduler.Launch;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using Scheduler.UI;
-using Scheduler.Models;
 using System;
+using Reminder.Launch;
+using Reminder.Models;
+using Reminder.UI;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     public class NotifyIconHandler : BaseViewModel
     {
@@ -43,7 +43,7 @@ namespace Scheduler.ViewModels
 
         public NotifyIconHandler()
         {
-            IsIconVisible = SchedulerModel.Instance.Settings.MinimizeToTray;
+            IsIconVisible = ReminderModel.Instance.Settings.MinimizeToTray;
             NotifyCommand = new Command(() => Notify("Приложение продолжает работать"));
             NotifyIconOpenCommand = new Command(OnOpen);
             NotifyIconAboutCommand = new Command(OnAbout);
@@ -62,7 +62,7 @@ namespace Scheduler.ViewModels
 
         private void OnOpen()
         {
-            ISchedulerClientProcess win = Application.Current.MainWindow as ISchedulerClientProcess;
+            IReminderClientProcess win = Application.Current.MainWindow as IReminderClientProcess;
             win?.ShowMainWindow();
         }
 

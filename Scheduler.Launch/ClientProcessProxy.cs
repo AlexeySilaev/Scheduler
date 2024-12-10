@@ -1,8 +1,8 @@
 ﻿using System.ServiceModel;
 
-namespace Scheduler.Launch
+namespace Reminder.Launch
 {
-    class ClientProcessProxy : ClientBase<ISchedulerClientProcess>, ISchedulerClientProcess
+    class ClientProcessProxy : ClientBase<IReminderClientProcess>, IReminderClientProcess
     {
         public ClientProcessProxy() : 
             base(new NetNamedPipeBinding(), new EndpointAddress(ClientProcessServiceHost.ServiceUri))

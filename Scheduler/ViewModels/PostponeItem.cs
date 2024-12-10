@@ -1,4 +1,4 @@
-﻿namespace Scheduler.ViewModels
+﻿namespace Reminder.ViewModels
 {
     public class PostponeItem
     {

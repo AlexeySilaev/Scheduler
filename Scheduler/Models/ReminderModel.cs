@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace Scheduler.Models
+namespace Reminder.Models
 {
-    internal class SchedulerModel
+    internal class ReminderModel
     {
-        public static SchedulerModel Instance { get; }
+        public static ReminderModel Instance { get; }
         internal static string AppDataPath 
         {
             get
             {
                 string result =
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Scheduler");
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AV Reminder");
                 if (Directory.Exists(result) == false)
                     Directory.CreateDirectory(result);
                 return result;
@@ -25,9 +25,9 @@ namespace Scheduler.Models
             get { return Path.Combine(AppDataPath, "data.xml"); }
         }
 
-        static SchedulerModel()
+        static ReminderModel()
         {
-            Instance = new SchedulerModel();
+            Instance = new ReminderModel();
         }
 
         public List<AlarmItem> Alarms { get; }
@@ -36,7 +36,7 @@ namespace Scheduler.Models
         public Settings Settings { get; private set; }
         public bool IsLoaded { get; private set; }
 
-        private SchedulerModel()
+        private ReminderModel()
         {
             Alarms = new List<AlarmItem>();
             Events = new List<EventItem>();

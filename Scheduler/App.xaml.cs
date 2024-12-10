@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
-using Scheduler.Launch;
-using Scheduler.Models;
-using Scheduler.ViewModels;
+using Reminder.Launch;
+using Reminder.Models;
+using Reminder.ViewModels;
 
-namespace Scheduler
+namespace Reminder
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -23,7 +23,7 @@ namespace Scheduler
             base.OnStartup(e);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
-            SchedulerModel.Instance.Load();
+            ReminderModel.Instance.Load();
         }
 
         private static void CurrentDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)

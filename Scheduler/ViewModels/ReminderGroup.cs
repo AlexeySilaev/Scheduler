@@ -1,10 +1,7 @@
-﻿using Scheduler.Models;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Security.Policy;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     public abstract class SchedulerGroup : BaseViewModel
     {

@@ -1,11 +1,11 @@
-﻿using Scheduler.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Scheduler.Models;
-using Scheduler.ViewModels;
+using Reminder.Converters;
+using Reminder.Models;
+using Reminder.ViewModels;
 
-namespace Scheduler.Extensions
+namespace Reminder.Extensions
 {
     internal static class EnumExtensions
     {

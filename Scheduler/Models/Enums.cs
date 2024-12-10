@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Scheduler.Models
+namespace Reminder.Models
 {
     /// <summary>
     /// Периодичность.
@@ -37,7 +37,7 @@ namespace Scheduler.Models
         [Description("Озвучить текст")] SpeechSynthesizer = RingtoneMode.SpeechSynthesizer
     }
 
-    public enum DeleteSchedulerItemsMode
+    public enum DeleteReminderItemsMode
     {
         Confirm,
         Immediately

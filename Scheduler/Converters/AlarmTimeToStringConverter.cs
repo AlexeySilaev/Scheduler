@@ -1,11 +1,11 @@
-﻿using Scheduler.Extensions;
-using Scheduler.ViewModels;
+﻿using Reminder.Extensions;
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using Reminder.ViewModels;
 
-namespace Scheduler.Converters
+namespace Reminder.Converters
 {
     internal class AlarmTimeToStringConverter : IMultiValueConverter
     {

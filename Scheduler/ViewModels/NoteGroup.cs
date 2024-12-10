@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using Scheduler.Models;
+using Reminder.Models;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     public class NoteGroup : SchedulerGroup, IComparer<NoteItemViewModel>
     {
@@ -29,7 +29,7 @@ namespace Scheduler.ViewModels
 
         public override void Initialize()
         {
-            _allItems = SchedulerModel.Instance.Notes.Select(n => new NoteItemViewModel(n))
+            _allItems = ReminderModel.Instance.Notes.Select(n => new NoteItemViewModel(n))
                 .OrderByDescending(n => n.CreationDate)
                 .ToList();
             _items = new ObservableCollection<NoteItemViewModel>(_allItems);
@@ -37,7 +37,7 @@ namespace Scheduler.ViewModels
 
         public override void Save()
         {
-            SchedulerModel.Instance.Notes.Clear();
+            ReminderModel.Instance.Notes.Clear();
             _allItems.ForEach(item => item.Save());
         }
 
@@ -50,7 +50,7 @@ namespace Scheduler.ViewModels
 
         public override void Remove(SchedulerItemViewModel item)
         {
-            Debug.Assert(item.Type == SchedulerItemType.Note);
+            Debug.Assert(item.Type == ReminderItemType.Note);
             NoteItemViewModel noteItem = (NoteItemViewModel)item;
             _allItems.Remove(noteItem);
             _items.Remove(noteItem);
@@ -63,7 +63,7 @@ namespace Scheduler.ViewModels
 
         public override void CheckAddNew(SchedulerItemViewModel item)
         {
-            Debug.Assert(item.Type == SchedulerItemType.Note);
+            Debug.Assert(item.Type == ReminderItemType.Note);
             if (_allItems.Contains(item) == false)
                 _allItems.Add((NoteItemViewModel)item);
             _allItems.Sort(this);

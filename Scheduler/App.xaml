@@ -1,13 +1,13 @@
-﻿<Application x:Class="Scheduler.App"
+﻿<Application x:Class="Reminder.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Scheduler"
-             xmlns:extensions="clr-namespace:Scheduler.Extensions"
-             xmlns:viewModels="clr-namespace:Scheduler.ViewModels"
-             xmlns:converters="clr-namespace:Scheduler.Converters"
+             xmlns:local="clr-namespace:Reminder"
+             xmlns:extensions="clr-namespace:Reminder.Extensions"
+             xmlns:viewModels="clr-namespace:Reminder.ViewModels"
+             xmlns:converters="clr-namespace:Reminder.Converters"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             xmlns:ui="clr-namespace:Scheduler.UI"
-             xmlns:models="clr-namespace:Scheduler.Models"
+             xmlns:ui="clr-namespace:Reminder.UI"
+             xmlns:models="clr-namespace:Reminder.Models"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
@@ -29,7 +29,7 @@
         <system:Int32 x:Key="MaxReminderLength">500</system:Int32>
         <system:Int32 x:Key="MaxNoteLength">1000</system:Int32>
 
-        <Style x:Key="SchedulerItemText" TargetType="{x:Type TextBlock}">
+        <Style x:Key="ReminderItemText" TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property ="FontSize" Value="14"/>
             <Setter Property ="FontWeight" Value="DemiBold"/>
@@ -71,7 +71,7 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
-        <!-- Шаблоны для элементов SchedulerItemViewModel в списке -->
+        <!-- Шаблоны для элементов ReminderItemViewModel в списке -->
         <DataTemplate x:Key="AlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
                 <Grid Margin="2" >
@@ -83,7 +83,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="{Binding Text}" Style="{StaticResource SchedulerItemText}" />
+                    <TextBlock Text="{Binding Text}" Style="{StaticResource ReminderItemText}" />
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
                         <TextBlock Text="Сработает через:" Foreground="{StaticResource GrayText}" Margin="0,0,5,0"/>
                         <TextBlock Foreground="{StaticResource GrayText}">
@@ -127,7 +127,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="{Binding Text}" Style="{StaticResource SchedulerItemText}"/>
+                    <TextBlock Text="{Binding Text}" Style="{StaticResource ReminderItemText}"/>
                     <DockPanel Grid.Row="1" LastChildFill="False">
                         <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
                             <TextBlock Text="Сработает:" Foreground="{StaticResource GrayText}" Margin="0,0,5,0"/>
@@ -176,7 +176,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="{Binding Text}" Style="{StaticResource SchedulerItemText}"/>
+                    <TextBlock Text="{Binding Text}" Style="{StaticResource ReminderItemText}"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
                         <TextBlock Text="Изменено:" Foreground="{StaticResource GrayText}" Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding CreationDate, StringFormat='dd.MM.yyyy HH:mm'}" Foreground="{StaticResource GrayText}"/>
@@ -202,7 +202,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <!-- Шаблоны для редактирования элементов SchedulerItemViewModel -->
+        <!-- Шаблоны для редактирования элементов ReminderItemViewModel -->
         <DataTemplate x:Key="RingtoneItemTemplate" DataType="{x:Type viewModels:ReminderItemViewModel}" >
             <StackPanel Orientation="Horizontal" >
                 <TextBlock Text="Звуковое сопровождение" VerticalAlignment="Center"/>

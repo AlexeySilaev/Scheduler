@@ -5,10 +5,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
-using Scheduler.Models;
-using Scheduler.ViewModels;
+using Reminder.Models;
+using Reminder.ViewModels;
 
-namespace Scheduler.UI
+namespace Reminder.UI
 {
     public class SettingsViewModel :  BaseViewModel
     {
@@ -17,14 +17,14 @@ namespace Scheduler.UI
         private bool _isMediaPlaying;
         private bool _isErrorTestPlay;
 
-        public DeleteSchedulerItemsMode DeleteSchedulerItemsMode
+        public DeleteReminderItemsMode DeleteReminderItemsMode
         {
-            get { return _settings.DeleteSchedulerItemsMode; }
+            get { return _settings.DeleteReminderItemsMode; }
             set
             {
-                if (DeleteSchedulerItemsMode == value) return;
-                _settings.DeleteSchedulerItemsMode = value;
-                OnPropertyChanged(nameof(DeleteSchedulerItemsMode));
+                if (DeleteReminderItemsMode == value) return;
+                _settings.DeleteReminderItemsMode = value;
+                OnPropertyChanged(nameof(DeleteReminderItemsMode));
             }
         }
 
@@ -127,7 +127,7 @@ namespace Scheduler.UI
         protected override void OnPropertyChanged(string propertyName)
         {
             base.OnPropertyChanged(propertyName);
-            SchedulerModel.Instance.Save();
+            ReminderModel.Instance.Save();
         }
 
         #region Commands

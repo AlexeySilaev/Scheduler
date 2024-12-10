@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Input;
-using Scheduler.Extensions;
-using Scheduler.ViewModels;
+using Reminder.ViewModels;
+using Reminder.Extensions;
 
-namespace Scheduler.UI
+namespace Reminder.UI
 {
     public class ConfirmDeleteViewModel : BaseViewModel
     {
@@ -15,7 +15,7 @@ namespace Scheduler.UI
             get { return $"Удалить элемент «{_schedulerItem.Type.GetDescription()}»?"; }
         }
 
-        public string SchedulerText
+        public string ReminderText
         {
             get { return _schedulerItem.Text; }
         }

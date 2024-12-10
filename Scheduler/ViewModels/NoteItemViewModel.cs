@@ -1,7 +1,7 @@
-﻿using Scheduler.Models;
-using System;
+﻿using System;
+using Reminder.Models;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     internal class NoteItemViewModel : SchedulerItemViewModel
     {
@@ -18,9 +18,9 @@ namespace Scheduler.ViewModels
             }
         }
 
-        public override SchedulerItemType Type
+        public override ReminderItemType Type
         {
-            get { return SchedulerItemType.Note; }
+            get { return ReminderItemType.Note; }
         }
 
         public NoteItemViewModel(NoteItem item) : base(item)
@@ -43,7 +43,7 @@ namespace Scheduler.ViewModels
 
         public override void Save()
         {
-            SchedulerModel.Instance.Notes.Add((NoteItem)_item);
+            ReminderModel.Instance.Notes.Add((NoteItem)_item);
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿<Window x:Class="Scheduler.MainWindow"
+﻿<Window x:Class="Reminder.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:Scheduler.ViewModels"
-        xmlns:templateSelectors="clr-namespace:Scheduler.TemplateSelectors"
-        xmlns:ui="clr-namespace:Scheduler.UI"
+        xmlns:vm="clr-namespace:Reminder.ViewModels"
+        xmlns:templateSelectors="clr-namespace:Reminder.TemplateSelectors"
+        xmlns:ui="clr-namespace:Reminder.UI"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="Напоминалка" Height="450" MinWidth="730" MaxWidth="730" Icon="/Resources/About.png">
@@ -13,12 +13,12 @@
         <vm:MainViewModel></vm:MainViewModel>
     </Window.DataContext>
     <Window.Resources>
-        <templateSelectors:SchedulerItemTemplateSelector
+        <templateSelectors:ReminderItemTemplateSelector
             AlarmTemplate="{StaticResource AlarmItemTemplate}"
             EventTemplate="{StaticResource EventItemTemplate}"
             NoteTemplate="{StaticResource NoteItemTemplate}"
-            x:Key="SchedulerItemTemplateSelector"/>
-        <templateSelectors:SchedulerItemTemplateSelector
+            x:Key="ReminderItemTemplateSelector"/>
+        <templateSelectors:ReminderItemTemplateSelector
             AlarmTemplate="{StaticResource EditAlarmItemTemplate}"
             EventTemplate="{StaticResource EditEventItemTemplate}"
             NoteTemplate="{StaticResource EditNoteItemTemplate}"
@@ -100,7 +100,7 @@
                     <ListBox Grid.Row="1" Margin="5" 
                              ItemsSource="{Binding SelectedGroup.Items}"
                              SelectedValue="{Binding SelectedItem}"
-                             ItemTemplateSelector="{StaticResource SchedulerItemTemplateSelector}"
+                             ItemTemplateSelector="{StaticResource ReminderItemTemplateSelector}"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">

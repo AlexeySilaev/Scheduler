@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Navigation;
 
-namespace Scheduler.UI
+namespace Reminder.UI
 {
     /// <summary>
     /// Interaction logic for AboutWindow.xaml

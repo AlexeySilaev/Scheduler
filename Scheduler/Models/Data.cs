@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Scheduler.Models
+namespace Reminder.Models
 {
     [Serializable]
     public class Data

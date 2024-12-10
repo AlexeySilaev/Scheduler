@@ -1,16 +1,14 @@
 ﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Scheduler")]
+[assembly: AssemblyTitle("AV Reminder")]
 [assembly: AssemblyDescription("Напоминалка")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("Scheduler")]
+[assembly: AssemblyProduct("Av Reminder")]
 [assembly: AssemblyCopyright("Алексей Силаев, flownder@mail.ru, Copyright ©  2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

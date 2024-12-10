@@ -1,16 +1,16 @@
 ﻿using System;
-using Scheduler.Launch;
-using Scheduler.ViewModels;
 using System.ComponentModel;
 using System.Windows;
-using Scheduler.Models;
+using Reminder.Launch;
+using Reminder.Models;
+using Reminder.ViewModels;
 
-namespace Scheduler
+namespace Reminder
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ISchedulerClientProcess
+    public partial class MainWindow : Window, IReminderClientProcess
     {
         private bool _firstResize;
 
@@ -19,9 +19,9 @@ namespace Scheduler
             get { return (MainViewModel)base.DataContext; }
         }
 
-        private SchedulerModel SchedulerModel
+        private ReminderModel ReminderModel
         {
-            get { return SchedulerModel.Instance; }
+            get { return ReminderModel.Instance; }
         }
 
         public MainWindow()
@@ -33,26 +33,26 @@ namespace Scheduler
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
-            if (SchedulerModel.IsLoaded == false || _firstResize == false) return;
+            if (ReminderModel.IsLoaded == false || _firstResize == false) return;
             _firstResize = false;
             LaunchChecker.RegisterClientProcess(this);
             DataContext.InitializeAsync(Dispatcher);
 
-            if (SchedulerModel.Instance.Settings.MinimizeToTray
-                && SchedulerModel.Instance.Settings.IsFirstMinimize == false)
+            if (ReminderModel.Instance.Settings.MinimizeToTray
+                && ReminderModel.Instance.Settings.IsFirstMinimize == false)
                 WindowState = WindowState.Minimized;
         }
 
         protected override void OnStateChanged(EventArgs e)
        {
-            if (SchedulerModel.Settings.MinimizeToTray && WindowState == WindowState.Minimized)
+            if (ReminderModel.Settings.MinimizeToTray && WindowState == WindowState.Minimized)
                 HideAndNotifyMinimized();
             base.OnStateChanged(e);
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (SchedulerModel.Settings.MinimizeToTray)
+            if (ReminderModel.Settings.MinimizeToTray)
             {
                 e.Cancel = true;
                 HideAndNotifyMinimized();
@@ -63,10 +63,10 @@ namespace Scheduler
         private void HideAndNotifyMinimized()
         {
             Hide();
-            if (SchedulerModel.Instance.Settings.IsFirstMinimize)
+            if (ReminderModel.Instance.Settings.IsFirstMinimize)
             {
-                SchedulerModel.Instance.Settings.IsFirstMinimize = false;
-                SchedulerModel.Instance.Save();
+                ReminderModel.Instance.Settings.IsFirstMinimize = false;
+                ReminderModel.Instance.Save();
                 DataContext.NotifyIconHandler.NotifyCommand.Execute(null);
             }
         }
@@ -77,7 +77,7 @@ namespace Scheduler
             base.OnClosed(e);
         }
 
-        void ISchedulerClientProcess.ShowMainWindow()
+        void IReminderClientProcess.ShowMainWindow()
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {

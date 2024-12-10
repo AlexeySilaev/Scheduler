@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Scheduler.Converters
+namespace Reminder.Converters
 {
     internal class NotNullToBoolConverter : IValueConverter
     {

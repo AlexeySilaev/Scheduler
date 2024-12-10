@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
 
-namespace Scheduler.Converters
+namespace Reminder.Converters
 {
     internal class EnumToStringConverter : IValueConverter
     {

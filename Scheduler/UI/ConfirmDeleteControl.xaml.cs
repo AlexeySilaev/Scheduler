@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Scheduler.UI
+namespace Reminder.UI
 {
     /// <summary>
     /// Interaction logic for ConfirmDeleteControl.xaml

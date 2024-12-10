@@ -1,11 +1,10 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Input;
-using Scheduler.Models;
+using Reminder.Models;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
-    public enum SchedulerItemType
+    public enum ReminderItemType
     {
         [Description("Будильник")] Alarm,
         [Description("Событие")] Event,
@@ -14,7 +13,7 @@ namespace Scheduler.ViewModels
 
     public abstract class SchedulerItemViewModel : BaseViewModel
     {
-        protected readonly SchedulerItem _item;
+        protected readonly ReminderItem _item;
         private string _text;
 
         public string Text
@@ -28,12 +27,12 @@ namespace Scheduler.ViewModels
             }
         }
 
-        public abstract SchedulerItemType Type { get; }
+        public abstract ReminderItemType Type { get; }
 
         public Command Edit { get; }
         public ICommand Delete { get; }
 
-        protected SchedulerItemViewModel(SchedulerItem item)
+        protected SchedulerItemViewModel(ReminderItem item)
         {
             _item = item;
             _text = item.Text;

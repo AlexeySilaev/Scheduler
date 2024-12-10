@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using Scheduler.Models;
+using Reminder.Models;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     public class AlarmGroup : ReminderGroup
     {
@@ -30,7 +30,7 @@ namespace Scheduler.ViewModels
 
         public override void Initialize()
         {
-            _allItems = SchedulerModel.Instance.Alarms.Select(a => new AlarmItemViewModel(a))
+            _allItems = ReminderModel.Instance.Alarms.Select(a => new AlarmItemViewModel(a))
                 .OrderBy(a => a.AlarmTime)
                 .ToList();
             _items = new ObservableCollection<AlarmItemViewModel>(_allItems);
@@ -38,7 +38,7 @@ namespace Scheduler.ViewModels
 
         public override void Save()
         {
-            SchedulerModel.Instance.Alarms.Clear();
+            ReminderModel.Instance.Alarms.Clear();
             _allItems.ForEach(item => item.Save());
         }
 
@@ -51,7 +51,7 @@ namespace Scheduler.ViewModels
 
         public override void Remove(SchedulerItemViewModel item)
         {
-            Debug.Assert(item.Type == SchedulerItemType.Alarm);
+            Debug.Assert(item.Type == ReminderItemType.Alarm);
             AlarmItemViewModel alarmItem = (AlarmItemViewModel)item;
             _allItems.Remove(alarmItem);
             _items.Remove(alarmItem);
@@ -64,7 +64,7 @@ namespace Scheduler.ViewModels
 
         public override void CheckAddNew(SchedulerItemViewModel item)
         {
-            Debug.Assert(item.Type == SchedulerItemType.Alarm);
+            Debug.Assert(item.Type == ReminderItemType.Alarm);
             if (_allItems.Contains(item) == false)
                 _allItems.Add((AlarmItemViewModel)item);
         }
@@ -86,9 +86,9 @@ namespace Scheduler.ViewModels
         {
             switch (postponed.Type)
             {
-                case SchedulerItemType.Alarm:
+                case ReminderItemType.Alarm:
                     break;
-                case SchedulerItemType.Event:
+                case ReminderItemType.Event:
                     EventItemViewModel postponedEvent = (EventItemViewModel)postponed;
                     if (postponedEvent.IsOneTimeReminder == false)
                         throw new InvalidOperationException();

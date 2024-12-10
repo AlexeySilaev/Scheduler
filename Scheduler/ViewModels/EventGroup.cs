@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using Scheduler.Models;
+using Reminder.Models;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     public class EventGroup : ReminderGroup
     {
@@ -29,7 +29,7 @@ namespace Scheduler.ViewModels
 
         public override void Initialize()
         {
-            _allItems = SchedulerModel.Instance.Events.Select(e => new EventItemViewModel(e))
+            _allItems = ReminderModel.Instance.Events.Select(e => new EventItemViewModel(e))
                 .OrderBy(item => item.NearestEventDate)
                 .ToList();
             _items = new ObservableCollection<EventItemViewModel>(_allItems);
@@ -37,7 +37,7 @@ namespace Scheduler.ViewModels
 
         public override void Save()
         {
-            SchedulerModel.Instance.Events.Clear();
+            ReminderModel.Instance.Events.Clear();
             _allItems.ForEach(item => item.Save());
         }
 
@@ -50,7 +50,7 @@ namespace Scheduler.ViewModels
 
         public override void Remove(SchedulerItemViewModel item)
         {
-            Debug.Assert(item.Type == SchedulerItemType.Event);
+            Debug.Assert(item.Type == ReminderItemType.Event);
             EventItemViewModel eventItem = (EventItemViewModel)item;
             _allItems.Remove(eventItem);
             _items.Remove(eventItem);
@@ -63,7 +63,7 @@ namespace Scheduler.ViewModels
 
         public override void CheckAddNew(SchedulerItemViewModel item)
         {
-            Debug.Assert(item.Type == SchedulerItemType.Event);
+            Debug.Assert(item.Type == ReminderItemType.Event);
             if (_allItems.Contains(item) == false)
                 _allItems.Add((EventItemViewModel)item);
         }

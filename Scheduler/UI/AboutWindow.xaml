@@ -1,9 +1,9 @@
-﻿<Window x:Class="Scheduler.UI.AboutWindow"
+﻿<Window x:Class="Reminder.UI.AboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ui="clr-namespace:Scheduler.UI"
+        xmlns:ui="clr-namespace:Reminder.UI"
         mc:Ignorable="d"
         WindowStyle="ToolWindow"
         ResizeMode="NoResize"
@@ -31,7 +31,7 @@
 
             <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Source="/Resources/About.png"
                    Width="110" Height="115" Margin="5,5,15,15" VerticalAlignment="Center"/>
-            <TextBlock Grid.Column="1" Grid.Row="0" Text="Scheduler" FontSize="18" TextAlignment="Center"/>
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="AV Reminder" FontSize="18" TextAlignment="Center"/>
             <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Version, Mode=OneTime}"/>
             <TextBlock Grid.Column="1" Grid.Row="2" Text="Автор: Силаев Алексей"/>
             <TextBlock Grid.Column="1" Grid.Row="3">

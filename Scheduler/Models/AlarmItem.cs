@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Scheduler.Models
+namespace Reminder.Models
 {
-    public class AlarmItem : SchedulerItem
+    public class AlarmItem : ReminderItem
     {
         /// <summary>
         /// Время срабатывания будильника в минутах.

@@ -3,11 +3,11 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Scheduler.Extensions;
-using Scheduler.Models;
-using Scheduler.UI;
+using Reminder.Models;
+using Reminder.UI;
+using Reminder.Extensions;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
@@ -170,7 +170,7 @@ namespace Scheduler.ViewModels
 
         public void OnClosed()
         {
-            if (SchedulerModel.Instance.IsLoaded == false) return;
+            if (ReminderModel.Instance.IsLoaded == false) return;
             _reminderConveyor.Stop();
             SaveToModel();
         }
@@ -196,12 +196,12 @@ namespace Scheduler.ViewModels
         {
             try
             {
-                if(SchedulerModel.Instance.Settings.DeleteSchedulerItemsMode == DeleteSchedulerItemsMode.Immediately)
+                if(ReminderModel.Instance.Settings.DeleteReminderItemsMode == DeleteReminderItemsMode.Immediately)
                     DeleteItem(schedulerItemViewModel);
                 else
                 {
                     Debug.Assert(
-                        SchedulerModel.Instance.Settings.DeleteSchedulerItemsMode == DeleteSchedulerItemsMode.Confirm);
+                        ReminderModel.Instance.Settings.DeleteReminderItemsMode == DeleteReminderItemsMode.Confirm);
                     ConfirmDelete = new ConfirmDeleteViewModel(schedulerItemViewModel,
                         confirmed =>
                         {
@@ -257,7 +257,7 @@ namespace Scheduler.ViewModels
             ConfirmDelete = null;
             SelectedGroup = null;
             OnCancelEditItem();
-            Settings = new SettingsViewModel(SchedulerModel.Instance.Settings);
+            Settings = new SettingsViewModel(ReminderModel.Instance.Settings);
         }
 
         private void FilterSchedulerGroupItems()
@@ -268,10 +268,10 @@ namespace Scheduler.ViewModels
 
         public void SaveToModel()
         {
-            if (SchedulerModel.Instance.IsLoaded)
+            if (ReminderModel.Instance.IsLoaded)
             {
                 Groups.ForEach(group => group.Save());
-                SchedulerModel.Instance.Save();
+                ReminderModel.Instance.Save();
             }
         }
     }

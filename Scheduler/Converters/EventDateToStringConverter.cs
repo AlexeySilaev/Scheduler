@@ -1,10 +1,10 @@
-﻿using Scheduler.ViewModels;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using Scheduler.Extensions;
+using Reminder.ViewModels;
+using Reminder.Extensions;
 
-namespace Scheduler.Converters
+namespace Reminder.Converters
 {
     internal class EventDateToStringConverter : IMultiValueConverter
     {

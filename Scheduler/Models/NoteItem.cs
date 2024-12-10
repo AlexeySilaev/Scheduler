@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Scheduler.Models
+namespace Reminder.Models
 {
-    public class NoteItem : SchedulerItem
+    public class NoteItem : ReminderItem
     {
         public DateTime CreationDate { get; set; }
 

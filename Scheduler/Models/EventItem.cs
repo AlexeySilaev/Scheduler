@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Scheduler.Models
+namespace Reminder.Models
 {
-    public class EventItem : SchedulerItem
+    public class EventItem : ReminderItem
     {
         public DateTime EventDate { get; set; }
         public Periodicity Periodicity { get; set; }

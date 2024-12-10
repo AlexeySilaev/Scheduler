@@ -1,13 +1,13 @@
-﻿using Scheduler.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using System.Windows;
-using Scheduler.Extensions;
-using Scheduler.Models;
+using Reminder.Models;
+using Reminder.UI;
+using Reminder.Extensions;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
  /* Работа алгоритма.
     Для будильников и событий вычисляется ближайшее время срабатывания (в случае будильников и одноразовых событий
@@ -145,7 +145,7 @@ namespace Scheduler.ViewModels
                 ReminderWindowViewModel context = (ReminderWindowViewModel)window.DataContext;
                 context.View = window;
                 expired.ForEach(reminder => context.Items.Add(reminder));
-                window.SetPosition(SchedulerModel.Instance.Settings.NotificationsWindowPosition);
+                window.SetPosition(ReminderModel.Instance.Settings.NotificationsWindowPosition);
                 window.Show();
                 _reminderWindowViewModel = context;
             }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Scheduler.UI
+namespace Reminder.UI
 {
     /// <summary>
     /// Interaction logic for ReminderWindow.xaml

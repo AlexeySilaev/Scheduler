@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace Scheduler.ViewModels
+namespace Reminder.ViewModels
 {
     /// <summary>
     /// События, отслеживаемые при срабатывании таймера.

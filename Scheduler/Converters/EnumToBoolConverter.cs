@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using System.Windows;
 
-namespace Scheduler.Converters
+namespace Reminder.Converters
 {
     internal class EnumToBoolConverter : IValueConverter
     {

@@ -6,10 +6,10 @@ using System.Linq;
 using System.Speech.Synthesis;
 using System.Windows;
 using System.Windows.Controls;
-using Scheduler.Models;
-using Scheduler.ViewModels;
+using Reminder.Models;
+using Reminder.ViewModels;
 
-namespace Scheduler.UI
+namespace Reminder.UI
 {
     internal class ReminderWindowViewModel : BaseViewModel
     {
@@ -20,7 +20,7 @@ namespace Scheduler.UI
 
         private Settings Settings
         {
-            get { return SchedulerModel.Instance.Settings; }
+            get { return ReminderModel.Instance.Settings; }
         }
 
         public ObservableCollection<ReminderItemViewModel> Items { get; }
@@ -52,7 +52,7 @@ namespace Scheduler.UI
 
         public bool TopMost
         {
-            get { return SchedulerModel.Instance.Settings.TopMostNotificationsWindow; }
+            get { return ReminderModel.Instance.Settings.TopMostNotificationsWindow; }
         }
 
         public ReminderWindowViewModel()

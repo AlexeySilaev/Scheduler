@@ -1,9 +1,9 @@
 ﻿using System.ServiceModel;
 
-namespace Scheduler.Launch
+namespace Reminder.Launch
 {
     [ServiceContract]
-    public interface ISchedulerClientProcess
+    public interface IReminderClientProcess
     {
         [OperationContract(IsOneWay = true)]
         void ShowMainWindow();

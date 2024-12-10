@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Windows;
 
-namespace Scheduler.UI
+namespace Reminder.UI
 {
     public class FrameworkNotifyIcon : FrameworkElement, IDisposable
     {
