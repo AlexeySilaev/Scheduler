@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -81,6 +82,7 @@ namespace Reminder.UI
                 if (LaunchWithWindows == value) return;
                 _settings.LaunchWithWindows = value;
                 OnPropertyChanged(nameof(LaunchWithWindows));
+                SetRegistryLaunchWithWindows();
             }
         }
 
@@ -128,6 +130,20 @@ namespace Reminder.UI
         {
             base.OnPropertyChanged(propertyName);
             ReminderModel.Instance.Save();
+        }
+
+        private void SetRegistryLaunchWithWindows()
+        {
+            using (RegistryKey rk = Registry.CurrentUser.OpenSubKey
+                       ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                string appName = asm.GetName().Name;
+                if (LaunchWithWindows)
+                    rk.SetValue(appName, asm.Location);
+                else
+                    rk.DeleteValue(appName, false);
+            }
         }
 
         #region Commands

@@ -8,9 +8,9 @@ using System.Windows;
 [assembly: AssemblyTitle("AV Reminder")]
 [assembly: AssemblyDescription("Напоминалка")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("Av Reminder")]
+[assembly: AssemblyProduct("AV Reminder")]
 [assembly: AssemblyCopyright("Алексей Силаев, flownder@mail.ru, Copyright ©  2024")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("Alexey Vyacheslavovich")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
