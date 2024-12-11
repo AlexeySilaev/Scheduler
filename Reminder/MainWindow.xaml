@@ -8,7 +8,10 @@
         xmlns:ui="clr-namespace:Reminder.UI"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="Напоминалка" Height="450" MinWidth="730" MaxWidth="730" Icon="/Resources/About.png">
+        Title="Напоминалка" Height="450" 
+        MinWidth="730" MaxWidth="730"
+        MinHeight="405"
+        Icon="/Resources/About.png">
     <Window.DataContext>
         <vm:MainViewModel></vm:MainViewModel>
     </Window.DataContext>

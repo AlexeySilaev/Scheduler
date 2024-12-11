@@ -216,11 +216,11 @@
     <Resource Include="Resources\save.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Scheduler.Launch\Reminder.Launch.csproj">
+    <ProjectReference Include="..\Reminder.Launch\Reminder.Launch.csproj">
       <Project>{12514632-d030-4853-b78a-9d359587f83b}</Project>
       <Name>Reminder.Launch</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Scheduler.Resources\Reminder.Resources.csproj">
+    <ProjectReference Include="..\Reminder.Resources\Reminder.Resources.csproj">
       <Project>{13a7e7b9-d51c-4f2b-b955-027294610b47}</Project>
       <Name>Reminder.Resources</Name>
     </ProjectReference>
