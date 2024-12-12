@@ -21,7 +21,7 @@ namespace Reminder.Models
             DeleteReminderItemsMode = DeleteReminderItemsMode.Confirm;
             NotificationsWindowPosition = NotificationsWindowPosition.RightBottom;
             RingtoneMode = RingtoneMode.Default;
-            LaunchWithWindows = true;
+        //    LaunchWithWindows = true;
             MinimizeToTray = true;
             TopMostNotificationsWindow = true;
             IsFirstMinimize = true;

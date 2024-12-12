@@ -46,8 +46,6 @@ namespace Reminder.Models
 
         public void Load()
         {
-            if (File.Exists(FilePath) == false)
-                return;
             try
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Data));
@@ -64,9 +62,9 @@ namespace Reminder.Models
             {
             }
             
-           /* Alarms.AddRange(new[]
+            /*Alarms.AddRange(new[]
                {
-                   new AlarmItem { Text = "Через 20 минут", AlarmTime = TimeSpan.FromMinutes(20) },
+                   new AlarmItem { Text = "Через 20 минут", AlarmTimeMinutes = 20 },
                    new AlarmItem { Text = "Через 15 минут" }
                });
                Events.AddRange(new[]
@@ -112,7 +110,7 @@ namespace Reminder.Models
                            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo"
                    }
                });
-               Alarms[0].AlarmTime = TimeSpan.FromSeconds(2);
+               /*Alarms[0].AlarmTime = TimeSpan.FromSeconds(2);
                Alarms[1].AlarmTime = TimeSpan.FromSeconds(3);
                Events.ForEach(e => e.EventDate = DateTime.Now.AddSeconds(3));*/
                IsLoaded = true;
