@@ -1,0 +1,22 @@
+﻿<Page x:Class="Reminder.Installer.Wizard.FinishPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Reminder.Installer"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Завершение установки"
+      d:DataContext="{d:DesignInstance local:MainWindowViewModel}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <CheckBox Grid.Row="0" IsChecked="{Binding LaunchApplication}" Content="Запустить приложение" VerticalAlignment="Center"/>
+        <Button Grid.Row="1" Command="{Binding CompleteCommand}" Content="Завершить" IsDefault="True" HorizontalAlignment="Right"
+                Padding="{StaticResource ButtonPadding}"/>
+    </Grid>
+</Page>

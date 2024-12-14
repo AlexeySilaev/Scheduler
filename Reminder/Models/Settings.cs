@@ -15,13 +15,14 @@ namespace Reminder.Models
         public bool TopMostNotificationsWindow { get; set; }
         // служебные настройки, наружу не видны
         public bool IsFirstMinimize { get; set; }
+        public string InstalledFolder { get; set; } // если приложение уже установлено, инсталлятор покажет эту папку
 
         public Settings()
         {
             DeleteReminderItemsMode = DeleteReminderItemsMode.Confirm;
             NotificationsWindowPosition = NotificationsWindowPosition.RightBottom;
             RingtoneMode = RingtoneMode.Default;
-        //    LaunchWithWindows = true;
+            LaunchWithWindows = true;
             MinimizeToTray = true;
             TopMostNotificationsWindow = true;
             IsFirstMinimize = true;

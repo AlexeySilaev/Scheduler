@@ -41,6 +41,11 @@ namespace Reminder
             if (ReminderModel.Instance.Settings.MinimizeToTray
                 && ReminderModel.Instance.Settings.IsFirstMinimize == false)
                 WindowState = WindowState.Minimized;
+            if (string.IsNullOrEmpty(ReminderModel.Instance.Settings.InstalledFolder))
+            {
+                ReminderModel.Instance.Settings.InstalledFolder = System.Windows.Forms.Application.StartupPath;
+                ReminderModel.Instance.Save();
+            }
         }
 
         protected override void OnStateChanged(EventArgs e)
