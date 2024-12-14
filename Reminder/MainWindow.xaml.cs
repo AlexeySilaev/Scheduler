@@ -30,6 +30,8 @@ namespace Reminder
             InitializeComponent();
         }
 
+        // Это событие вынуждено используется вместо OnLoad.
+        // На OnLoad в WPF окно уже видно на экране и автоматическое сворачивание приведет к мельканию.
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
             base.OnRenderSizeChanged(sizeInfo);
@@ -45,11 +47,14 @@ namespace Reminder
             {
                 ReminderModel.Instance.Settings.InstalledFolder = System.Windows.Forms.Application.StartupPath;
                 ReminderModel.Instance.Save();
+                // фича для удобства: на первом запуске все группы пусты
+                // одарим пользователя кастомизацией настроек
+                DataContext.SettingsCommand.Execute(null);
             }
         }
 
         protected override void OnStateChanged(EventArgs e)
-       {
+        {
             if (ReminderModel.Settings.MinimizeToTray && WindowState == WindowState.Minimized)
                 HideAndNotifyMinimized();
             base.OnStateChanged(e);

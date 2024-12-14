@@ -94,9 +94,12 @@ namespace Reminder.UI
                 PromptBuilder prompt = new PromptBuilder();
                 PromptStyle timeStyle = new PromptStyle();
                 timeStyle.Volume = PromptVolume.Soft;
-                timeStyle.Rate = PromptRate.Medium;
+                timeStyle.Rate = PromptRate.NotSet;
                 prompt.StartStyle(timeStyle);
+                prompt.AppendText("Уведомление напониналки");
+                prompt.AppendBreak(TimeSpan.FromMilliseconds(1000));
                 prompt.AppendTextWithHint(DateTime.Now.ToString("HH:mm"), SayAs.Time24);
+                prompt.AppendBreak(TimeSpan.FromMilliseconds(1500));
                 prompt.EndStyle();
                 prompt.AppendText(reminder.Text);
                 _synthesizer.Rate = Convert.ToInt32(PromptRate.Medium);

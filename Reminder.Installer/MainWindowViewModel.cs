@@ -231,7 +231,7 @@ namespace Reminder.Installer
                         foreach (PackagePart part in zip.GetParts())
                         {
                             string target = Path.GetFullPath(Path.Combine(InstallFolderPath, part.Uri.OriginalString.TrimStart('/')));
-                            if(File.Exists(target))
+                            if(File.Exists(target)) // отработать случай повторной установки в ту же папку
                                 File.Delete(target);
 
                             using (Stream source = part.GetStream(FileMode.Open, FileAccess.Read))
