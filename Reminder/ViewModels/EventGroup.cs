@@ -66,6 +66,7 @@ namespace Reminder.ViewModels
             Debug.Assert(item.Type == ReminderItemType.Event);
             if (_allItems.Contains(item) == false)
                 _allItems.Add((EventItemViewModel)item);
+            _allItems.Sort(this);
         }
 
         public override List<TimerReminderItem> GetTimerReminderItems()
@@ -75,5 +76,14 @@ namespace Reminder.ViewModels
                 .Select(a => new TimerReminderItem(a))
                 .ToList();
         }
+
+        // сортировка по возрастанию времени срабатывания
+        protected override int Compare(SchedulerItemViewModel x, SchedulerItemViewModel y)
+        {
+            EventItemViewModel x1 = (EventItemViewModel)x;
+            EventItemViewModel y1 = (EventItemViewModel)y;
+            return x1.FullEventDate.CompareTo(y1.FullEventDate);
+        }
+
     }
 }

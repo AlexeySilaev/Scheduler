@@ -89,7 +89,7 @@
                     <DockPanel LastChildFill="False" Margin="5"
                        FocusManager.FocusedElement="{Binding ElementName=FilterBox}">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                            <TextBlock Text="Поиск вхождений" Margin="5,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Поиск по тексту" Margin="5,0" VerticalAlignment="Center"/>
                             <TextBox Text="{Binding SearchText, Delay=500, UpdateSourceTrigger=PropertyChanged}" MinWidth="300"
                              VerticalContentAlignment="Center" x:Name="FilterBox"/>
                         </StackPanel>

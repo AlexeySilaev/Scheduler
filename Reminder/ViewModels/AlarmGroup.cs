@@ -15,7 +15,7 @@ namespace Reminder.ViewModels
 
         public override string Name
         {
-            get { return "Будильники"; }
+            get { return "Напоминания"; }
         }
 
         public override string ImagePath
@@ -67,6 +67,7 @@ namespace Reminder.ViewModels
             Debug.Assert(item.Type == ReminderItemType.Alarm);
             if (_allItems.Contains(item) == false)
                 _allItems.Add((AlarmItemViewModel)item);
+            _allItems.Sort(this);
         }
 
         public override List<TimerReminderItem> GetTimerReminderItems()
@@ -103,5 +104,14 @@ namespace Reminder.ViewModels
             _allItems.Add(new AlarmItemViewModel(item));
             UpdateRemainTime();
         }
+
+        // сортировка по возрастанию времени срабатывания
+        protected override int Compare(SchedulerItemViewModel x, SchedulerItemViewModel y)
+        {
+            AlarmItemViewModel x1 = (AlarmItemViewModel)x;
+            AlarmItemViewModel y1 = (AlarmItemViewModel)y;
+            return x1.RemainTime.CompareTo(y1.RemainTime);
+        }
+
     }
 }

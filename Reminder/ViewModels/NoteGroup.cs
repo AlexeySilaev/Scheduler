@@ -7,7 +7,7 @@ using Reminder.Models;
 
 namespace Reminder.ViewModels
 {
-    public class NoteGroup : SchedulerGroup, IComparer<NoteItemViewModel>
+    public class NoteGroup : SchedulerGroup
     {
         private List<NoteItemViewModel> _allItems;
         private ObservableCollection<NoteItemViewModel> _items;
@@ -70,9 +70,11 @@ namespace Reminder.ViewModels
         }
 
         // сортировка по убыванию даты создания
-        int IComparer<NoteItemViewModel>.Compare(NoteItemViewModel x, NoteItemViewModel y)
+        protected override int Compare(SchedulerItemViewModel x, SchedulerItemViewModel y)
         {
-            return y.CreationDate.CompareTo(x.CreationDate);
+            NoteItemViewModel x1 = (NoteItemViewModel)x;
+            NoteItemViewModel y1 = (NoteItemViewModel)y;
+            return y1.CreationDate.CompareTo(x1.CreationDate);
         }
     }
 }

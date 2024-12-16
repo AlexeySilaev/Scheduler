@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Reminder.ViewModels
 {
-    public abstract class SchedulerGroup : BaseViewModel
+    public abstract class SchedulerGroup : BaseViewModel, IComparer<SchedulerItemViewModel>
     {
         public abstract string Name { get; }
         public abstract string ImagePath { get; }
@@ -21,6 +21,13 @@ namespace Reminder.ViewModels
         {
             OnPropertyChanged(nameof(Items));
         }
+
+        int IComparer<SchedulerItemViewModel>.Compare(SchedulerItemViewModel x, SchedulerItemViewModel y)
+        {
+            return Compare(x, y);
+        }
+
+        protected abstract int Compare(SchedulerItemViewModel x, SchedulerItemViewModel y);
 
         public override string ToString()
         {
