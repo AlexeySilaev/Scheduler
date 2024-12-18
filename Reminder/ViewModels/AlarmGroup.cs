@@ -101,6 +101,7 @@ namespace Reminder.ViewModels
             AlarmItem item = new AlarmItem();
             item.AlarmTimeMinutes = postponeMinutes;
             item.Text = postponed.Text;
+            item.Ringtone = postponed.Ringtone;
             _allItems.Add(new AlarmItemViewModel(item));
             UpdateRemainTime();
         }
