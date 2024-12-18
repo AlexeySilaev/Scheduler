@@ -10,7 +10,7 @@ using Reminder.Extensions;
 namespace Reminder.ViewModels
 {
  /* Работа алгоритма.
-    Для будильников и событий вычисляется ближайшее время срабатывания (в случае будильников и одноразовых событий
+    Для напоминаний и событий вычисляется ближайшее время срабатывания (в случае напоминаний и одноразовых событий
     оно единственно). Это вреия инкапсулируется элементами TimerReminderItem, они сортируются по возрастанию времени
     срабатывания ReminderDateTime и ставятся на конвейер _timerReminderQueue. После того, как наступает ближайшее
     срабатывание, очередь перестраивается, чтобы обновить ближайшее время срабатывания для периодических событий.
@@ -22,13 +22,13 @@ namespace Reminder.ViewModels
         private const double FAST_TIMER_INTERVAL = 1000 * 0.5;
 
         private readonly AlarmGroup _alarms;
-        private readonly EventGroup _events;
+        private readonly ReminderGroup _events;
         private readonly Timer _queueTimer;
         private readonly object _lockQueue;
 
         private Queue<TimerReminderItem> _timerReminderQueue;
         private ReminderWindowViewModel _reminderWindowViewModel;
-        // флаг для определения устаревших напоминаний при первом разборе очереди - за запуске
+        // флаг для определения устаревших напоминаний при первом разборе очереди - на запуске
         private bool _isInitializingCheckExpired;
 
 
@@ -153,6 +153,18 @@ namespace Reminder.ViewModels
             {
                 expired.ForEach(reminder => _reminderWindowViewModel.Items.Add(reminder));
             }
+
+            if (ReminderModel.Instance.Settings.DeleteCompletedReminders)
+                expired.ForEach(reminder =>
+                {
+                    if (reminder.IsOneTimeReminder)
+                    {
+                        ReminderGroup group = reminder.Type == ReminderItemType.Alarm ? _alarms : _events;
+                        group.Remove(reminder);
+                        MainViewModel mainViewModel = MainViewModel.FindInstance();
+                        mainViewModel.SaveToModel();
+                    }
+                });
         }
     }
 }

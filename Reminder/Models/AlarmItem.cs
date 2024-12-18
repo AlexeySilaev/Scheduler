@@ -5,7 +5,7 @@ namespace Reminder.Models
     public class AlarmItem : ReminderItem
     {
         /// <summary>
-        /// Время срабатывания будильника в минутах.
+        /// Время срабатывания напоминания в минутах.
         /// </summary>
         public int AlarmTimeMinutes { get; set; }
 

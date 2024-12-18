@@ -13,6 +13,7 @@ namespace Reminder.Models
         public bool LaunchWithWindows { get; set; }
         public bool MinimizeToTray { get; set; }
         public bool TopMostNotificationsWindow { get; set; }
+        public bool DeleteCompletedReminders { get; set; }
         // служебные настройки, наружу не видны
         public bool IsFirstMinimize { get; set; }
         public string InstalledFolder { get; set; } // если приложение уже установлено, инсталлятор покажет эту папку
@@ -24,6 +25,7 @@ namespace Reminder.Models
             RingtoneMode = RingtoneMode.Default;
             LaunchWithWindows = true;
             MinimizeToTray = true;
+            DeleteCompletedReminders = true;
             TopMostNotificationsWindow = true;
             IsFirstMinimize = true;
         }

@@ -18,17 +18,6 @@ namespace Reminder.UI
         private bool _isMediaPlaying;
         private bool _isErrorTestPlay;
 
-        public DeleteReminderItemsMode DeleteReminderItemsMode
-        {
-            get { return _settings.DeleteReminderItemsMode; }
-            set
-            {
-                if (DeleteReminderItemsMode == value) return;
-                _settings.DeleteReminderItemsMode = value;
-                OnPropertyChanged(nameof(DeleteReminderItemsMode));
-            }
-        }
-
         public NotificationsWindowPosition NotificationsWindowPosition
         {
             get { return _settings.NotificationsWindowPosition; }
@@ -39,6 +28,20 @@ namespace Reminder.UI
                 OnPropertyChanged(nameof(NotificationsWindowPosition));
             }
         }
+
+        public bool MinimizeToTray
+        {
+            get { return _settings.MinimizeToTray; }
+            set
+            {
+                if (MinimizeToTray == value) return;
+                _settings.MinimizeToTray = value;
+                OnPropertyChanged(nameof(MinimizeToTray));
+                MainViewModel mainViewModel = MainViewModel.FindInstance();
+                mainViewModel.NotifyIconHandler.IsIconVisible = MinimizeToTray;
+            }
+        }
+
 
         public bool TopMostNotificationsWindow
         {
@@ -86,18 +89,28 @@ namespace Reminder.UI
             }
         }
 
-        public bool MinimizeToTray
+        public DeleteReminderItemsMode DeleteReminderItemsMode
         {
-            get { return _settings.MinimizeToTray; }
+            get { return _settings.DeleteReminderItemsMode; }
             set
             {
-                if (MinimizeToTray == value) return;
-                _settings.MinimizeToTray = value;
-                OnPropertyChanged(nameof(MinimizeToTray));
-                MainViewModel mainViewModel = MainViewModel.FindInstance();
-                mainViewModel.NotifyIconHandler.IsIconVisible = MinimizeToTray;
+                if (DeleteReminderItemsMode == value) return;
+                _settings.DeleteReminderItemsMode = value;
+                OnPropertyChanged(nameof(DeleteReminderItemsMode));
             }
         }
+
+        public bool DeleteCompletedReminders
+        {
+            get { return _settings.DeleteCompletedReminders; }
+            set
+            {
+                if (DeleteCompletedReminders == value) return;
+                _settings.DeleteCompletedReminders = value;
+                OnPropertyChanged(nameof(DeleteCompletedReminders));
+            }
+        }
+
 
         public bool IsErrorTestPlay
         {
