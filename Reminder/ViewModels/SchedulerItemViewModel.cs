@@ -6,8 +6,8 @@ namespace Reminder.ViewModels
 {
     public enum ReminderItemType
     {
-        [Description("Напоминание")] Alarm,
         [Description("Событие")] Event,
+        [Description("Напоминание")] Alarm,
         [Description("Заметка")] Note
     }
 

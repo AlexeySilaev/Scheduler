@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using System;
 using Reminder.Launch;
 using Reminder.Models;
 using Reminder.UI;
