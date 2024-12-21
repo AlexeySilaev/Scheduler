@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ namespace Reminder.Installer
 {
     internal class MainWindowViewModel : INotifyPropertyChanged
     {
-        private const string INSTALL_SUBFOLDER = "AV Reminder";
+        private const string APP_NAME = "AV Reminder";
 
         private string _title;
         private string _installFolderPath;
@@ -123,7 +124,7 @@ namespace Reminder.Installer
         private string GetInstallFolderPath()
         {
             string appDataFolderPath =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), INSTALL_SUBFOLDER);
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APP_NAME);
             string dataPath = Path.Combine(appDataFolderPath, "data.xml");
             if (File.Exists(dataPath))
             {
@@ -139,7 +140,7 @@ namespace Reminder.Installer
                 }
             }
 
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), INSTALL_SUBFOLDER);
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), APP_NAME);
         }
 
         private void ExecuteBrowseFolder()
@@ -158,14 +159,14 @@ namespace Reminder.Installer
 
         private string AppendSubFolder(string path)
         {
-            if (Path.GetFileName(path) != INSTALL_SUBFOLDER)
-                path = Path.Combine(path, INSTALL_SUBFOLDER);
+            if (Path.GetFileName(path) != APP_NAME)
+                path = Path.Combine(path, APP_NAME);
             return path;
         }
 
         private string RemoveSubFolder(string path)
         {
-            if (Path.GetFileName(path) == INSTALL_SUBFOLDER)
+            if (Path.GetFileName(path) == APP_NAME)
                 path = Path.GetDirectoryName(path);
             return path;
         }
@@ -196,12 +197,16 @@ namespace Reminder.Installer
             try
             {
                 await UnzipContentAsync();
+                string icoPath = await PrepareAppDataFolder();
+                await PrepareUninstaller(icoPath);
+                await SetAutoRun();
                 CheckCreateShortcut();
                 NavigationService.Navigate(new Uri("/Wizard/FinishPage.xaml", UriKind.Relative));
             }
             catch (Exception x)
             {
                 InstallError = x.Message;
+                Directory.Delete(InstallFolderPath, true);
             }
             finally
             {
@@ -251,9 +256,64 @@ namespace Reminder.Installer
             if (!Directory.Exists(folderPath))
             {
                 string parentFolderPath = Path.GetDirectoryName(folderPath);
-                EnsureFolderExists(parentFolderPath);
+                EnsureFolderExists(parentFolderPath); // для возможного понижения версии .NET
                 Directory.CreateDirectory(folderPath);
             }
+        }
+
+        /// <summary>
+        /// Минимальная подготовка. Папка есть - хорошо, нет - будет. Перенесем иконку для деинсталлятора.
+        /// Остальное выполнит само приложение.
+        /// </summary>
+        private Task<string> PrepareAppDataFolder()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                string appDataFolder =
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APP_NAME);
+                EnsureFolderExists(appDataFolder);
+
+                const string icoName = "App.ico";
+                string icoPath = Path.Combine(InstallFolderPath, icoName);
+                string result = Path.Combine(appDataFolder, icoName);
+                if (File.Exists(result) == false)
+                    File.Move(icoPath, result);
+                else
+                    File.Delete(icoPath);
+                return result;
+            });
+        }
+
+        private Task PrepareUninstaller(string icoPath)
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                using (RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", true))
+                {
+                    using (RegistryKey av = rk.CreateSubKey(APP_NAME))
+                    {
+                        av.SetValue("DisplayName", APP_NAME, RegistryValueKind.String);
+                        av.SetValue("DisplayIcon", InQuotation(icoPath), RegistryValueKind.String);
+                        av.SetValue("UninstallString", InQuotation(Path.Combine(InstallFolderPath, "uninst000.exe")), RegistryValueKind.String);
+                    }
+                }
+            });
+        }
+
+        private Task SetAutoRun()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                using (RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                {
+                    rk.SetValue("AvReminder", InQuotation(Path.Combine(InstallFolderPath, "AvReminder.exe")), RegistryValueKind.String);
+                }
+            });
+        }
+
+        private static string InQuotation(string content)
+        {
+            return $"\"{content}\"";
         }
 
         private void CheckCreateShortcut()
@@ -264,7 +324,7 @@ namespace Reminder.Installer
             IWshRuntimeLibrary.IWshShortcut shortcut = (IWshRuntimeLibrary.IWshShortcut)wsh.CreateShortcut(Path.Combine(desktopFolder, "AvReminder.lnk"));
             shortcut.WindowStyle = 1; //for default window, 3 for maximize, 7 for minimize
             shortcut.TargetPath = Path.Combine(InstallFolderPath, "AvReminder.exe");
-            shortcut.Description = "AV Reminder";
+            shortcut.Description = APP_NAME;
             shortcut.Save();
         }
 

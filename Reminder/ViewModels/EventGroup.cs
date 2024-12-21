@@ -82,7 +82,7 @@ namespace Reminder.ViewModels
         {
             EventItemViewModel x1 = (EventItemViewModel)x;
             EventItemViewModel y1 = (EventItemViewModel)y;
-            return x1.FullEventDate.CompareTo(y1.FullEventDate);
+            return x1.NearestEventDate.CompareTo(y1.NearestEventDate);
         }
 
     }
