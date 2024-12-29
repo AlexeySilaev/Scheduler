@@ -55,7 +55,7 @@
                           Content="Поверх всех окон"/>
             </Grid>
         </GroupBox>
-        <GroupBox Grid.Row="2" Header="Звуковое сопровождение напоминаний" Margin="{StaticResource GroupMargin}">
+        <GroupBox Grid.Row="2" Header="Звуковое сопровождение уведомлений" Margin="{StaticResource GroupMargin}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -103,7 +103,7 @@
                 </StackPanel>
             </Grid>
         </GroupBox>
-        <GroupBox Grid.Row="3" Header="Удаление напоминаний" Margin="{StaticResource GroupMargin}">
+        <GroupBox Grid.Row="3" Header="Удаление уведомлений" Margin="{StaticResource GroupMargin}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*"/>
