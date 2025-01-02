@@ -36,7 +36,7 @@ namespace Reminder.Extensions
             window.WindowStartupLocation = WindowStartupLocation.Manual;
         }
 
-        public static Size GetElementPixelSize(FrameworkElement element)
+        private static Size GetElementPixelSize(FrameworkElement element)
         {
             Matrix matrix;
             var source = PresentationSource.FromVisual(element);
@@ -58,5 +58,24 @@ namespace Reminder.Extensions
                 Height = (int)(matrix.M22 * element.Height)
             };
         }
+
+        public static Rect GetRightBottomBounds(Size elementSize)
+        {
+            using (var src = new HwndSource(new HwndSourceParameters()))
+            {
+                Matrix matrix = src.CompositionTarget.TransformToDevice;
+                Size pixelSize = new Size
+                {
+                    Width = (int)(matrix.M11 * elementSize.Width),
+                    Height = (int)(matrix.M22 * elementSize.Height)
+                };
+
+                var workingArea = Screen.PrimaryScreen.WorkingArea;
+                double left = workingArea.Left + workingArea.Width - pixelSize.Width - 5;
+                double top = workingArea.Top + workingArea.Height - pixelSize.Height - 5;
+                return new Rect(left, top, pixelSize.Width, pixelSize.Height);
+            }
+        }
+
     }
 }

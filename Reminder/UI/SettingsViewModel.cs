@@ -123,6 +123,17 @@ namespace Reminder.UI
             }
         }
 
+        public bool ShowComingDayAboutEvents
+        {
+            get { return _settings.ShowComingDayAboutEvents; }
+            set
+            {
+                if (ShowComingDayAboutEvents == value) return;
+                _settings.ShowComingDayAboutEvents = value;
+                OnPropertyChanged(nameof(ShowComingDayAboutEvents));
+            }
+        }
+
         public MediaElement Media { get; set; }
 
         public ICommand SelectCustomFileCommand { get; }

@@ -80,6 +80,7 @@
     <Compile Include="Converters\StaticResourceToIntConverter.cs" />
     <Compile Include="Converters\StringIsNullOrEmptyConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
+    <Compile Include="Converters\SubstringConverter.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\WindowPositioning.cs" />
@@ -97,6 +98,10 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\AnimatedImage.cs" />
+    <Compile Include="UI\ComingDayEventsControl.xaml.cs">
+      <DependentUpon>ComingDayEventsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ComingDayEventsViewModel.cs" />
     <Compile Include="UI\ConfirmDeleteControl.xaml.cs">
       <DependentUpon>ConfirmDeleteControl.xaml</DependentUpon>
     </Compile>
@@ -141,6 +146,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\ComingDayEventsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

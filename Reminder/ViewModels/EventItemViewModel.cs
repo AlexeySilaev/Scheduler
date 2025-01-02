@@ -4,7 +4,7 @@ using Reminder.Extensions;
 
 namespace Reminder.ViewModels
 {
-    internal class EventItemViewModel : ReminderItemViewModel
+    public class EventItemViewModel : ReminderItemViewModel
     {
         private DateTime _eventDate;
         private TimeSpan _eventTime;

@@ -27,6 +27,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <GroupBox Grid.Row="0" Header="Запуск приложения" Margin="{StaticResource GroupMargin}">
             <StackPanel Margin="{StaticResource StackPanelMargin}">
@@ -121,6 +122,10 @@
                 <CheckBox Grid.Column="1" IsChecked="{Binding DeleteCompletedReminders}" Margin="0,10,0,0"
                           Content="Автоматически удалять завершенные"/>
             </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="4" Header="Предупреждение о событиях заранее" Margin="{StaticResource GroupMargin}">
+            <CheckBox  IsChecked="{Binding ShowComingDayAboutEvents}" Margin="{StaticResource StackPanelMargin}"
+                      Content="За сутки предупредить о наступлении"/>
         </GroupBox>
     </Grid>
 </UserControl>

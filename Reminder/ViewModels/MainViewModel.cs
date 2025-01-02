@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -6,11 +7,16 @@ using System.Windows.Threading;
 using Reminder.Models;
 using Reminder.UI;
 using Reminder.Extensions;
+using System.Windows;
+using System.Collections.ObjectModel;
 
 namespace Reminder.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
+        private const double
+            POPUP_WIDTH = 350,
+            POPUP_HEIGHT = 215;
         private readonly ReminderConveyor _reminderConveyor;
 
         private SchedulerGroup _selectedGroup;
@@ -18,7 +24,10 @@ namespace Reminder.ViewModels
         private string _searchText;
         private string _error;
         private string _validationWarning;
+        private bool _isShowComingDayAboutEvents;
+        private Rect _popupRect;
         private ConfirmDeleteViewModel _confirmDelete;
+        private ComingDayEventsViewModel _comingDayEvents;
         private SchedulerItemViewModel _editingItem;
         private SettingsViewModel _settings;
 
@@ -47,6 +56,7 @@ namespace Reminder.ViewModels
                 OnPropertyChanged(nameof(SelectedGroup));
             }
         }
+
         public string SearchText
         {
             get { return _searchText; }
@@ -77,7 +87,7 @@ namespace Reminder.ViewModels
             set
             {
                 if (Error == value) return;
-                _error= value;
+                _error = value;
                 OnPropertyChanged(nameof(Error));
             }
         }
@@ -101,6 +111,17 @@ namespace Reminder.ViewModels
                 if (ConfirmDelete == value) return;
                 _confirmDelete = value;
                 OnPropertyChanged(nameof(ConfirmDelete));
+            }
+        }
+
+        public ComingDayEventsViewModel ComingDayEvents
+        {
+            get { return _comingDayEvents; }
+            set
+            {
+                if (ComingDayEvents == value) return;
+                _comingDayEvents = value;
+                OnPropertyChanged(nameof(ComingDayEvents));
             }
         }
 
@@ -128,6 +149,34 @@ namespace Reminder.ViewModels
             }
         }
 
+        /// <summary>
+        /// Показывать всплывающее окно о грядущих за сутки событиях.
+        /// Относится только к событиям, до наступления которых не меньше суток.
+        /// </summary>
+        public bool IsShowComingDayAboutEvents
+        {
+            get { return _isShowComingDayAboutEvents; }
+            set
+            {
+                if (IsShowComingDayAboutEvents == value) return;
+                _isShowComingDayAboutEvents = value;
+                OnPropertyChanged(nameof(IsShowComingDayAboutEvents));
+                if (IsShowComingDayAboutEvents == false)
+                    ComingDayEvents = null;
+            }
+        }
+
+        public Rect PopupRect
+        {
+            get { return _popupRect; }
+            set
+            {
+                if (PopupRect == value) return;
+                _popupRect = value;
+                OnPropertyChanged(nameof(PopupRect));
+            }
+        }
+
         public ICommand AddItemCommand { get; }
         public ICommand SaveItemCommand { get; }
         public ICommand CancelEditItemCommand { get; }
@@ -140,7 +189,8 @@ namespace Reminder.ViewModels
         {
             _searchText = string.Empty;
             Groups = new[] { new EventGroup(), new AlarmGroup(), (SchedulerGroup)new NoteGroup() };
-            _reminderConveyor = new ReminderConveyor(Alarms, Events);
+            _reminderConveyor = new ReminderConveyor(Alarms, Events, OnConveyorRefresh);
+            _popupRect = Rect.Empty;
             SelectedGroup = Groups[0];
             AddItemCommand = new Command(OnAddItem);
             SaveItemCommand = new Command(OnEndEditItem);
@@ -259,6 +309,21 @@ namespace Reminder.ViewModels
             SelectedGroup = null;
             OnCancelEditItem();
             Settings = new SettingsViewModel(ReminderModel.Instance.Settings);
+        }
+
+        private void OnConveyorRefresh(EventItemViewModel[] newDayAboutEvents)
+        {
+            Alarms.UpdateRemainTime();
+            if (ReminderModel.Instance.Settings.ShowComingDayAboutEvents == false
+                || newDayAboutEvents.IsEmpty())
+                return;
+
+            PopupRect = WindowPositioning.GetRightBottomBounds(new Size(POPUP_WIDTH, POPUP_HEIGHT));
+            if (ComingDayEvents == null)
+                ComingDayEvents = new ComingDayEventsViewModel(newDayAboutEvents, POPUP_WIDTH, POPUP_HEIGHT);
+            else
+                newDayAboutEvents.ForEach(dayAbout => ComingDayEvents.Items.Add(dayAbout));
+            IsShowComingDayAboutEvents = true;
         }
 
         private void FilterSchedulerGroupItems()

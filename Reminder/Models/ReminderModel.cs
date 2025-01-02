@@ -53,7 +53,7 @@ namespace Reminder.Models
                 {
                     Data data = xmlSerializer.Deserialize(fs) as Data;
                     Alarms.AddRange(data.Alarms);
-                    Events.AddRange(data.Events);
+                   // Events.AddRange(data.Events);
                     Notes.AddRange(data.Notes);
                     Settings = data.Settings;
                 }
@@ -62,7 +62,7 @@ namespace Reminder.Models
             {
             }
             
-            /*Alarms.AddRange(new[]
+           Alarms.AddRange(new[]
                {
                    new AlarmItem { Text = "Через 20 минут", AlarmTimeMinutes = 20 },
                    new AlarmItem { Text = "Через 15 минут" }
@@ -110,9 +110,10 @@ namespace Reminder.Models
                            "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo"
                    }
                });
-               /*Alarms[0].AlarmTime = TimeSpan.FromSeconds(2);
-               Alarms[1].AlarmTime = TimeSpan.FromSeconds(3);
-               Events.ForEach(e => e.EventDate = DateTime.Now.AddSeconds(3));*/
+               //Alarms[0].AlarmTimeMinutes = 1;
+              // Alarms[1].AlarmTimeMinutes = 1;
+              for (int i = 0; i < Events.Count; ++i)
+                  Events[i].EventDate = DateTime.Now.AddSeconds((i + 1) * 15).AddDays(1);
                IsLoaded = true;
         }
 

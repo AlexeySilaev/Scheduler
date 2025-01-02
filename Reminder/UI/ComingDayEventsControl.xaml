@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="Reminder.UI.ComingDayEventsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Reminder.UI"
+             xmlns:viewModels="clr-namespace:Reminder.ViewModels"
+             xmlns:converters="clr-namespace:Reminder.Converters"
+             mc:Ignorable="d" 
+             Width="{Binding PopupWidth}"
+             Height="{Binding PopupHeight}"
+             Background="{x:Static SystemColors.InfoBrush}"
+             d:DataContext="{d:DesignInstance local:ComingDayEventsViewModel}">
+    <UserControl.Resources>
+        <converters:SubstringConverter x:Key="SubstringConverter"/>
+    </UserControl.Resources>
+    <Border BorderBrush="Black" BorderThickness="1">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="До наступления следующих событий остались сутки" HorizontalAlignment="Center"/>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                          VerticalAlignment="Center" Margin="10">
+                <ItemsControl ItemsSource="{Binding Items}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type viewModels:EventItemViewModel}">
+                            <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
+                                <Grid Margin="5" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="{Binding Text, Converter={StaticResource SubstringConverter}, ConverterParameter=40}"
+                                           FontSize="14" FontWeight="DemiBold"  Margin="0,0,10,0"
+                                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding PeriodicityDescription}" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource GrayText}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <Button Grid.Row="2" Content="Закрыть" Click="OnCloseClick" MaxWidth="80" Margin="0,10,0,0"/>
+        </Grid>
+    </Border>
+</UserControl>

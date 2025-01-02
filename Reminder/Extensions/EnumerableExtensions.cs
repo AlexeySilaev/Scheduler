@@ -10,5 +10,11 @@ namespace Reminder.Extensions
             foreach (T element in source)
                 action(element);
         }
+
+        public static bool IsEmpty<T>(this T[] source)
+        {
+            if (source == null) return true;
+            return source.Length == 0;
+        }
     }
 }

@@ -23,24 +23,28 @@ namespace Reminder.ViewModels
 
         private readonly AlarmGroup _alarms;
         private readonly ReminderGroup _events;
+        private readonly Action<EventItemViewModel[]> _onConveyorRefresh;
         private readonly Timer _queueTimer;
         private readonly object _lockQueue;
+        private readonly List<EventItemViewModel> _dayAboutEvents; // события, которые сработают через сутки
 
         private Queue<TimerReminderItem> _timerReminderQueue;
         private ReminderWindowViewModel _reminderWindowViewModel;
+
         // флаг для определения устаревших напоминаний при первом разборе очереди - на запуске
         private bool _isInitializingCheckExpired;
 
-
-        public ReminderConveyor(AlarmGroup alarms, EventGroup events)
+        public ReminderConveyor(AlarmGroup alarms, EventGroup events, Action<EventItemViewModel[]> onConveyorRefresh)
         {
             _alarms = alarms;
             _events = events;
+            _onConveyorRefresh = onConveyorRefresh;
             _timerReminderQueue = new Queue<TimerReminderItem>();
             _queueTimer = new Timer();
             _queueTimer.AutoReset = false;
             _queueTimer.Elapsed += QueueTimer_Elapsed;
             _lockQueue = new object();
+            _dayAboutEvents = new List<EventItemViewModel>();
             _isInitializingCheckExpired = true;
         }
 
@@ -131,10 +135,38 @@ namespace Reminder.ViewModels
 
                 _isInitializingCheckExpired = false;
 
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                    _alarms.UpdateRemainTime()));
-
+                bool updated = UpdateDayAboutEvents(e.SignalTime);
+                EventItemViewModel[] newDayAboutEvents =
+                    updated ? _dayAboutEvents.ToArray() : Array.Empty<EventItemViewModel>();
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => _onConveyorRefresh(newDayAboutEvents)));
             }
+        }
+
+        // Отслеживаем события, которые отработают ровно через сутки
+        // Если событие отработает минутой меньше, чем через сутки, оно устарело, удаляем его,
+        // оно уже отправлено во всплывающее окно подсказки.
+        // Если событии уже имеется в коллекции, ничего не делаем, оно было добавлено чуть ранее,
+        // потому что таймер конвейера тикаеет чаще раза в минуту.
+        private bool UpdateDayAboutEvents(DateTime signalTime)
+        {
+            List<EventItemViewModel> currentDayEvents = GetDayAboutEvents(signalTime.AddDays(1));
+            bool result = Enumerable.SequenceEqual(_dayAboutEvents, currentDayEvents) == false;
+            _dayAboutEvents.Clear();
+            _dayAboutEvents.AddRange(currentDayEvents);
+            return result;
+        }
+
+        private List<EventItemViewModel> GetDayAboutEvents(DateTime dayAboutTime)
+        {
+            // выравниваем время срабатывания по границе минуты
+            DateTime from = dayAboutTime.Date.AddHours(dayAboutTime.Hour).AddMinutes(dayAboutTime.Minute);
+            DateTime to = from.AddSeconds(59);
+            List<EventItemViewModel> result = _timerReminderQueue
+                .Where(reminder => reminder.Source.Type == ReminderItemType.Event
+                && from <= reminder.ReminderDateTime && reminder.ReminderDateTime <= to)
+                .Select(reminder => (EventItemViewModel)reminder.Source)
+                .ToList();
+            return result;
         }
 
         private void OnReminderActivated(List<ReminderItemViewModel> expired)

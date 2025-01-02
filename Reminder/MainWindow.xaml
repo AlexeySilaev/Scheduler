@@ -8,9 +8,9 @@
         xmlns:ui="clr-namespace:Reminder.UI"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="Напоминалка" Height="450" 
+        Title="Напоминалка" Height="485" 
         MinWidth="730" MaxWidth="730"
-        MinHeight="405"
+        MinHeight="485"
         Icon="/Resources/About.png">
     <Window.DataContext>
         <vm:MainViewModel></vm:MainViewModel>
@@ -39,6 +39,7 @@
         <Grid Grid.Column="1" Background="OrangeRed">
             <TextBlock Text="{Binding Error}" Visibility="{Binding Error, Converter={StaticResource StringToVisibilityConverter}}"
                        TextAlignment="Center" TextWrapping="Wrap" Margin="10"/>
+            <!-- Системный лоток -->
             <ui:FrameworkNotifyIcon NotifyRequest="{Binding NotifyIconHandler.NotifyRequest}"
                                     IconVisible="{Binding NotifyIconHandler.IsIconVisible}" Text="Напоминалка">
                 <b:Interaction.Triggers>
@@ -53,6 +54,11 @@
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
             </ui:FrameworkNotifyIcon>
+            <!-- Предупреждения о грядущих событиях -->
+            <Popup StaysOpen="True" Placement="Absolute" PlacementRectangle="{Binding PopupRect}"
+                   IsOpen="{Binding IsShowComingDayAboutEvents}" >
+                <ui:ComingDayEventsControl DataContext="{Binding ComingDayEvents}"/>
+            </Popup>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>

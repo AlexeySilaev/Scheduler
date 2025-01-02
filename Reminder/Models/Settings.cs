@@ -14,6 +14,12 @@ namespace Reminder.Models
         public bool MinimizeToTray { get; set; }
         public bool TopMostNotificationsWindow { get; set; }
         public bool DeleteCompletedReminders { get; set; }
+        /// <summary>
+        /// Для событий, наступление которых от текущего момента больше суток, предупредить за день
+        /// об их наступлении.
+        /// </summary>
+        public bool ShowComingDayAboutEvents { get; set; }
+
         // служебные настройки, наружу не видны
         public bool IsFirstMinimize { get; set; }
         public string InstalledFolder { get; set; } // если приложение уже установлено, инсталлятор покажет эту папку
