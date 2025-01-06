@@ -62,11 +62,12 @@ namespace Reminder.Models
             {
             }
             
-           /*Alarms.AddRange(new[]
-               {
-                   new AlarmItem { Text = "Через 20 минут", AlarmTimeMinutes = 20 },
-                   new AlarmItem { Text = "Через 15 минут" }
-               });
+/*            Events.Clear();
+        //   Alarms.AddRange(new[]
+         //      {
+         //          new AlarmItem { Text = "Через 20 минут", AlarmTimeMinutes = 20 },
+        //           new AlarmItem { Text = "Через 15 минут" }
+         //      });
                Events.AddRange(new[]
                {
                    new EventItem
@@ -113,32 +114,32 @@ namespace Reminder.Models
                //Alarms[0].AlarmTimeMinutes = 1;
               // Alarms[1].AlarmTimeMinutes = 1;
               for (int i = 0; i < Events.Count; ++i)
-                  Events[i].EventDate = DateTime.Now.AddSeconds((i + 1) * 15).AddDays(1);*/
-               IsLoaded = true;
-        }
+                  Events[i].EventDate = DateTime.Now.AddSeconds(i + 5);//*.AddDays(1);*/
+             IsLoaded = true;
+      }
 
-        public void Save()
-        {
-            try
-            {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Data));
-                using (FileStream fs = new FileStream(FilePath, FileMode.Create))
-                {
-                    Data data = new Data
-                    {
-                        Alarms = Alarms.ToArray(),
-                        Events = Events.ToArray(),
-                        Notes = Notes.ToArray(),
-                        Settings = Settings
-                    };
+      public void Save()
+      {
+          try
+          {
+              XmlSerializer xmlSerializer = new XmlSerializer(typeof(Data));
+              using (FileStream fs = new FileStream(FilePath, FileMode.Create))
+              {
+                  Data data = new Data
+                  {
+                      Alarms = Alarms.ToArray(),
+                      Events = Events.ToArray(),
+                      Notes = Notes.ToArray(),
+                      Settings = Settings
+                  };
 
-                    xmlSerializer.Serialize(fs, data);
+                  xmlSerializer.Serialize(fs, data);
 
-                }
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-    }
+              }
+          }
+          catch (InvalidOperationException)
+          {
+          }
+      }
+  }
 }

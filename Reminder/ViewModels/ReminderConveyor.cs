@@ -80,7 +80,7 @@ namespace Reminder.ViewModels
         {
             Reconstruct();
             // если все одноразовые элементы отложены, просматривать больше нечего
-            if (_reminderWindowViewModel.IsAllOneTimeItemsPostponed())
+            if (_reminderWindowViewModel.IsAllItemsPostponed())
             {
                 _reminderWindowViewModel.View.Close();
                 _reminderWindowViewModel = null;
@@ -162,10 +162,13 @@ namespace Reminder.ViewModels
             DateTime from = dayAboutTime.Date.AddHours(dayAboutTime.Hour).AddMinutes(dayAboutTime.Minute);
             DateTime to = from.AddSeconds(59);
             List<EventItemViewModel> result = _timerReminderQueue
-                .Where(reminder => reminder.Source.Type == ReminderItemType.Event
+                .Where(reminder => reminder.Source.Type == ReminderItemType.Event 
                 && from <= reminder.ReminderDateTime && reminder.ReminderDateTime <= to)
                 .Select(reminder => (EventItemViewModel)reminder.Source)
                 .ToList();
+            // ежедневные события покажутся в окне уведомлений. Чтобы не накладывать окно предупреждений на окно уведомлений,
+            // не показываем их. И так видно в уведомлениях. Но стоит проверить, что такие события показаны в уведомлениях
+            result.RemoveAll(ev => ev.Periodicity == Periodicity.Daily && ev.EventDate < dayAboutTime.Date);
             return result;
         }
 

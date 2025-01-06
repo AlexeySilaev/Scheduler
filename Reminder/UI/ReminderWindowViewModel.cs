@@ -73,10 +73,9 @@ namespace Reminder.UI
             _synthesizer.SetOutputToDefaultAudioDevice();
         }
 
-        public bool IsAllOneTimeItemsPostponed()
+        public bool IsAllItemsPostponed()
         {
-            return Items.Count(item => item.IsOneTimeReminder)
-                   == Items.Count(item => item.IsOneTimeReminder && item.AllowPostpone);
+            return Items.Count == Items.Count(item => item.AllowPostpone);
         }
 
         private void ItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

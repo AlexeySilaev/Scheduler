@@ -88,11 +88,7 @@ namespace Reminder.ViewModels
             switch (postponed.Type)
             {
                 case ReminderItemType.Alarm:
-                    break;
                 case ReminderItemType.Event:
-                    EventItemViewModel postponedEvent = (EventItemViewModel)postponed;
-                    if (postponedEvent.IsOneTimeReminder == false)
-                        throw new InvalidOperationException();
                     break;
                 default:
                     throw new NotSupportedException();

@@ -55,8 +55,7 @@
                                            LineHeight="18" MaxHeight="36" TextWrapping="Wrap" VerticalAlignment="Center" />
                                 <TextBlock Grid.Row="1" Text="{Binding Type, Converter={StaticResource EnumToStringConverter}}"
                                        Foreground="{StaticResource GrayText}" Margin="5" TextTrimming="CharacterEllipsis"/>
-                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5"
-                                                    Visibility="{Binding IsOneTimeReminder, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}">
+                                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">
                                     <TextBlock Text ="Повтор" VerticalAlignment="Center" IsEnabled="{Binding AllowPostpone}"/>
                                     <Grid Width="70" Margin="5,0">
                                         <ComboBox IsEditable="False"  
@@ -68,9 +67,6 @@
 
                                     </Grid>
                                 </StackPanel>
-                                <TextBlock Grid.Column="1" Grid.RowSpan="2" Text="{Binding PeriodicityDescription}" 
-                                               Visibility="{Binding IsOneTimeReminder, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
-                                               HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource GrayText}"/>
                             </Grid>
                         </Border>
                     </DataTemplate>
