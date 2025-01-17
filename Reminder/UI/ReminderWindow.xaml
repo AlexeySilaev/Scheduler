@@ -17,6 +17,7 @@
     </Window.DataContext>
     <Window.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:DateTimeMethodToValueConverter x:Key="MethodToValueConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -53,8 +54,12 @@
                                 </Grid.RowDefinitions>
                                 <TextBlock Text="{Binding Text}" FontSize="14" FontWeight="DemiBold"
                                            LineHeight="18" MaxHeight="36" TextWrapping="Wrap" VerticalAlignment="Center" />
-                                <TextBlock Grid.Row="1" Text="{Binding Type, Converter={StaticResource EnumToStringConverter}}"
-                                       Foreground="{StaticResource GrayText}" Margin="5" TextTrimming="CharacterEllipsis"/>
+                                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5">
+                                    <TextBlock Text="{Binding Type, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"
+                                           VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding  Converter={StaticResource MethodToValueConverter}, ConverterParameter='GetReminderDateTime'}"
+                                           Foreground="{StaticResource GrayText}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">
                                     <TextBlock Text ="Повтор" VerticalAlignment="Center" IsEnabled="{Binding AllowPostpone}"/>
                                     <Grid Width="70" Margin="5,0">

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using Reminder.ViewModels;
 using Reminder.Extensions;
+using System.Threading;
 
 namespace Reminder.Converters
 {
@@ -16,7 +17,8 @@ namespace Reminder.Converters
                 return state.GetDescription().ToLower();
 
             DateTime eventDate = (DateTime)values[1];
-            return eventDate.ToString("dd.MM.yyyy HH:mm", new CultureInfo("RU-ru"));
+            culture = Thread.CurrentThread.CurrentCulture;
+            return eventDate.ToString("dd.MM.yyyy HH:mm", culture);
         }
 
         public object[] ConvertBack(

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Threading;
 using Reminder.Launch;
@@ -21,6 +22,7 @@ namespace Reminder
             }
 
             base.OnStartup(e);
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("RU-ru");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
             ReminderModel.Instance.Load();

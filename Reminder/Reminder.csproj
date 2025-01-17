@@ -75,6 +75,7 @@
     <Compile Include="Converters\EventDateToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\InvertBoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\DateTimeMethodToValueConverter.cs" />
     <Compile Include="Converters\NotNullToBoolConverter.cs" />
     <Compile Include="Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Converters\StaticResourceToIntConverter.cs" />
