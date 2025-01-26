@@ -20,23 +20,23 @@ namespace Reminder.Extensions
 
         private static void SetCentered(Window window)
         {
-            Size winSize = GetElementPixelSize(window);
+            Size factor = GetScaleFactor(window);
             Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
-            window.Left = workingArea.Left + (workingArea.Width - winSize.Width) / 2;
-            window.Top = workingArea.Top + (workingArea.Height - winSize.Height) / 2;
+            window.Left = workingArea.Left + (workingArea.Width - window.Width * factor.Width) / factor.Width / 2;
+            window.Top = workingArea.Top + (workingArea.Height - window.Height * factor.Height) / factor.Height / 2;
             window.WindowStartupLocation = WindowStartupLocation.Manual;
         }
 
         private static void SetRightBottom(Window window)
         {
-            Size winSize = GetElementPixelSize(window);
+            Size factor = GetScaleFactor(window);
             Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
-            window.Left = workingArea.Left + workingArea.Width - winSize.Width;
-            window.Top = workingArea.Top + workingArea.Height - winSize.Height;
+            window.Left = workingArea.Left + (workingArea.Width  - window.Width * factor.Width) / factor.Width;
+            window.Top = workingArea.Top + (workingArea.Height  - window.Height * factor.Height) / factor.Height;
             window.WindowStartupLocation = WindowStartupLocation.Manual;
         }
 
-        private static Size GetElementPixelSize(FrameworkElement element)
+        private static Size GetScaleFactor(FrameworkElement element)
         {
             Matrix matrix;
             var source = PresentationSource.FromVisual(element);
@@ -54,8 +54,7 @@ namespace Reminder.Extensions
 
             return new Size
             {
-                Width = (int)(matrix.M11 * element.Width),
-                Height = (int)(matrix.M22 * element.Height)
+                Width = matrix.M11, Height = matrix.M22
             };
         }
 
@@ -64,16 +63,11 @@ namespace Reminder.Extensions
             using (var src = new HwndSource(new HwndSourceParameters()))
             {
                 Matrix matrix = src.CompositionTarget.TransformToDevice;
-                Size pixelSize = new Size
-                {
-                    Width = (int)(matrix.M11 * elementSize.Width),
-                    Height = (int)(matrix.M22 * elementSize.Height)
-                };
 
                 var workingArea = Screen.PrimaryScreen.WorkingArea;
-                double left = workingArea.Left + workingArea.Width - pixelSize.Width - 5;
-                double top = workingArea.Top + workingArea.Height - pixelSize.Height - 5;
-                return new Rect(left, top, pixelSize.Width, pixelSize.Height);
+                double left = workingArea.Left + (workingArea.Width - elementSize.Width * matrix.M11) / matrix.M11 - 5;
+                double top = workingArea.Top + (workingArea.Height - elementSize.Height * matrix.M22) / matrix.M22 - 5;
+                return new Rect(left, top, elementSize.Width * matrix.M11, elementSize.Height * matrix.M22);
             }
         }
 
