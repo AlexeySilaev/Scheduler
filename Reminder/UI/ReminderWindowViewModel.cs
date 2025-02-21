@@ -23,7 +23,7 @@ namespace Reminder.UI
             get { return ReminderModel.Instance.Settings; }
         }
 
-        public ObservableCollection<ReminderItemViewModel> Items { get; }
+        public ObservableCollection<TimerReminderItem> Items { get; }
         public PostponeItem[] PostponeItems { get; }
 
         public ReminderWindow View
@@ -57,7 +57,7 @@ namespace Reminder.UI
 
         public ReminderWindowViewModel()
         {
-            Items = new ObservableCollection<ReminderItemViewModel>();
+            Items = new ObservableCollection<TimerReminderItem>();
             Items.CollectionChanged += ItemsOnCollectionChanged;
             PostponeItems = new[]
             {
@@ -75,7 +75,7 @@ namespace Reminder.UI
 
         public bool IsAllItemsPostponed()
         {
-            return Items.Count == Items.Count(item => item.AllowPostpone);
+            return Items.Count == Items.Count(item => item.Source.AllowPostpone);
         }
 
         private void ItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -83,9 +83,9 @@ namespace Reminder.UI
             if (e.Action != NotifyCollectionChangedAction.Add) return;
             if (_isPlaying) return;
             RingtoneMode ringtoneMode = Settings.RingtoneMode;
-            ReminderItemViewModel reminder = (ReminderItemViewModel)e.NewItems[0];
-            if (reminder.Ringtone != ReminderRingtone.AsIs)
-                ringtoneMode = (RingtoneMode)Convert.ToInt32(reminder.Ringtone);
+            TimerReminderItem reminder = (TimerReminderItem)e.NewItems[0];
+            if (reminder.Source.Ringtone != ReminderRingtone.AsIs)
+                ringtoneMode = (RingtoneMode)Convert.ToInt32(reminder.Source.Ringtone);
             if (ringtoneMode == RingtoneMode.NoSound) return;
 
             if (ringtoneMode == RingtoneMode.SpeechSynthesizer)
@@ -100,7 +100,7 @@ namespace Reminder.UI
                 prompt.AppendTextWithHint(DateTime.Now.ToString("HH:mm"), SayAs.Time24);
                 prompt.AppendBreak(TimeSpan.FromMilliseconds(1500));
                 prompt.EndStyle();
-                prompt.AppendText(reminder.Text);
+                prompt.AppendText(reminder.Source.Text);
                 _synthesizer.Rate = Convert.ToInt32(PromptRate.Medium);
                 _isPlaying = true;
                 _synthesizer.SpeakAsync(prompt);

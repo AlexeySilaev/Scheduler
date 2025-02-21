@@ -114,11 +114,11 @@ namespace Reminder.ViewModels
                 // пробежимся по голове очереди, где может быть серия просроченных
                 if (nearestReminderItem.CheckExpired(e.SignalTime, _isInitializingCheckExpired))
                 {
-                    List<ReminderItemViewModel> expired = new List<ReminderItemViewModel>();
+                    List<TimerReminderItem> expired = new List<TimerReminderItem>();
                     while (nearestReminderItem.CheckExpired(e.SignalTime, _isInitializingCheckExpired))
                     {
                         _timerReminderQueue.Dequeue();
-                        expired.Add(nearestReminderItem.Source);
+                        expired.Add(nearestReminderItem);
 
                         if (_timerReminderQueue.Any())
                             nearestReminderItem = _timerReminderQueue.Peek();
@@ -172,7 +172,7 @@ namespace Reminder.ViewModels
             return result;
         }
 
-        private void OnReminderActivated(List<ReminderItemViewModel> expired)
+        private void OnReminderActivated(List<TimerReminderItem> expired)
         {
             if (_reminderWindowViewModel == null || _reminderWindowViewModel.View == null)
             {
@@ -192,10 +192,10 @@ namespace Reminder.ViewModels
             if (ReminderModel.Instance.Settings.DeleteCompletedReminders)
                 expired.ForEach(reminder =>
                 {
-                    if (reminder.IsOneTimeReminder)
+                    if (reminder.Source.IsOneTimeReminder)
                     {
-                        ReminderGroup group = reminder.Type == ReminderItemType.Alarm ? _alarms : _events;
-                        group.Remove(reminder);
+                        ReminderGroup group = reminder.Source.Type == ReminderItemType.Alarm ? _alarms : _events;
+                        group.Remove(reminder.Source);
                         MainViewModel mainViewModel = MainViewModel.FindInstance();
                         mainViewModel.SaveToModel();
                     }

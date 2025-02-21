@@ -40,7 +40,7 @@
                       VerticalAlignment="Center">
             <ItemsControl ItemsSource="{Binding Items}" Margin="10" >
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type viewModels:ReminderItemViewModel}">
+                    <DataTemplate DataType="{x:Type viewModels:TimerReminderItem}">
                         <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
                             <Grid Margin="5" >  
                                 <Grid.ColumnDefinitions>
@@ -52,23 +52,23 @@
                                     <RowDefinition/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="{Binding Text}" FontSize="14" FontWeight="DemiBold"
+                                <TextBlock Text="{Binding Source.Text}" FontSize="14" FontWeight="DemiBold"
                                            LineHeight="18" MaxHeight="36" TextWrapping="Wrap" VerticalAlignment="Center" />
                                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5">
-                                    <TextBlock Text="{Binding Type, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"
+                                    <TextBlock Text="{Binding Source.Type, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"
                                            VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding  Converter={StaticResource MethodToValueConverter}, ConverterParameter='GetReminderDateTime'}"
+                                    <TextBlock Text="{Binding  ReminderDateTime,  StringFormat='dd.MM HH:mm'}"
                                            Foreground="{StaticResource GrayText}" Margin="10,0,0,0" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                    <TextBlock Text ="Повтор" VerticalAlignment="Center" IsEnabled="{Binding AllowPostpone}"/>
+                                    <TextBlock Text ="Повтор" VerticalAlignment="Center" IsEnabled="{Binding Source.AllowPostpone}"/>
                                     <Grid Width="70" Margin="5,0">
                                         <ComboBox IsEditable="False"  
-                                                  Visibility="{Binding AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
+                                                  Visibility="{Binding Source.AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
                                                   ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, 
-                                                           Path=DataContext.PostponeItems}" SelectedItem="{Binding Postpone}"/>
-                                        <TextBlock Text="{Binding PostponeDescription}" VerticalAlignment="Center"
-                                            Visibility="{Binding AllowPostpone, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
+                                                           Path=DataContext.PostponeItems}" SelectedItem="{Binding Source.Postpone}"/>
+                                        <TextBlock Text="{Binding Source.PostponeDescription}" VerticalAlignment="Center"
+                                            Visibility="{Binding Source.AllowPostpone, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
 
                                     </Grid>
                                 </StackPanel>
