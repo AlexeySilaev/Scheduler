@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace Reminder.Models
 {
@@ -24,7 +23,7 @@ namespace Reminder.Models
                 case Periodicity.Daily:
                     DateTime currentDaily = nearestDate.AddHours(EventDate.Hour).AddMinutes(EventDate.Minute)
                         .AddSeconds(EventDate.Second);
-                    if(currentDaily > DateTime.Now)
+                    if (currentDaily > DateTime.Now)
                         return currentDaily;
                     return currentDaily.AddDays(1);
                 case Periodicity.Weekly:
@@ -37,19 +36,11 @@ namespace Reminder.Models
                         shiftWeekly = shiftWeekly.AddDays(7);
                     return shiftWeekly;
                 case Periodicity.Monthly:
-                    DateTime currentMonthly = new DateTime(nearestDate.Year, nearestDate.Month,
-                        Math.Min(EventDate.Day, DateTime.DaysInMonth(nearestDate.Year, nearestDate.Month)),
-                        EventDate.Hour, EventDate.Minute, EventDate.Second);
-                    if (currentMonthly > DateTime.Now)
-                        return currentMonthly;
-                    return currentMonthly.AddMonths(1);
+                    return GetPeriodicalMothDate(nearestDate, 1);
                 case Periodicity.Quarterly:
-                    DateTime currentQuarterly = new DateTime(nearestDate.Year, EventDate.Month,
-                        Math.Min(EventDate.Day, DateTime.DaysInMonth(nearestDate.Year, nearestDate.Month)),
-                        EventDate.Hour, EventDate.Minute, EventDate.Second);
-                    if (currentQuarterly > DateTime.Now)
-                        return currentQuarterly;
-                    return currentQuarterly.AddMonths(3);
+                    return GetPeriodicalMothDate(nearestDate, 3);
+                case Periodicity.EverySixMonths:
+                    return GetPeriodicalMothDate(nearestDate, 6);
                 case Periodicity.Annually:
                     DateTime currentAnnually = new DateTime(nearestDate.Year, EventDate.Month,
                         Math.Min(EventDate.Day, DateTime.DaysInMonth(nearestDate.Year, nearestDate.Month)),
@@ -58,7 +49,18 @@ namespace Reminder.Models
                         return currentAnnually;
                     return currentAnnually.AddYears(1);
             }
+
             return EventDate;
+        }
+
+        private DateTime GetPeriodicalMothDate(DateTime nearestDate, int months)
+        {
+            DateTime currentNearest = new DateTime(nearestDate.Year, nearestDate.Month,
+                Math.Min(EventDate.Day, DateTime.DaysInMonth(nearestDate.Year, nearestDate.Month)),
+                EventDate.Hour, EventDate.Minute, EventDate.Second);
+            if (currentNearest > DateTime.Now)
+                return currentNearest;
+            return currentNearest.AddMonths(months);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Reminder.Models
         [Description("Еженедельно")] Weekly,
         [Description("Ежемесячно")] Monthly,
         [Description("Ежеквартально")] Quarterly,
+        [Description("Полугодично")] EverySixMonths,
         [Description("Ежегодно")] Annually
     }
 
