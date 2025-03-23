@@ -77,6 +77,13 @@ namespace Reminder.ViewModels
                 .ToList();
         }
 
+        public void OnEventActivated(string searchText)
+        {
+            _allItems = _allItems.OrderBy(item => item.NearestEventDate)
+                .ToList();
+            Filter(searchText);
+        }
+
         // сортировка по возрастанию времени срабатывания
         protected override int Compare(SchedulerItemViewModel x, SchedulerItemViewModel y)
         {

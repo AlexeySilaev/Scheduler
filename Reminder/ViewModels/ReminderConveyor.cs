@@ -200,6 +200,11 @@ namespace Reminder.ViewModels
                         mainViewModel.SaveToModel();
                     }
                 });
+            if (expired.Any(item => item.Source.Type == ReminderItemType.Event))
+            {
+                MainViewModel mainViewModel = MainViewModel.FindInstance();
+                mainViewModel.OnEventActivated();
+            }
         }
     }
 }

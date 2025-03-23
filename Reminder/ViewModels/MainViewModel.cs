@@ -326,12 +326,6 @@ namespace Reminder.ViewModels
             IsShowComingDayAboutEvents = true;
         }
 
-        private void FilterSchedulerGroupItems()
-        {
-            if (SelectedGroup != null)
-                SelectedGroup.Filter(SearchText);
-        }
-
         public void SaveToModel()
         {
             if (ReminderModel.Instance.IsLoaded)
@@ -340,5 +334,17 @@ namespace Reminder.ViewModels
                 ReminderModel.Instance.Save();
             }
         }
+
+        public void OnEventActivated()
+        {
+            Events.OnEventActivated(SearchText);
+        }
+
+        private void FilterSchedulerGroupItems()
+        {
+            if (SelectedGroup != null)
+                SelectedGroup.Filter(SearchText);
+        }
+
     }
 }
