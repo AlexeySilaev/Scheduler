@@ -61,7 +61,7 @@
                                            Foreground="{StaticResource GrayText}" Margin="10,0,0,0" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">
-                                    <TextBlock Text ="Повтор" VerticalAlignment="Center" IsEnabled="{Binding Source.AllowPostpone}"/>
+                                    <TextBlock Text ="Повтор" VerticalAlignment="Center"/>
                                     <Grid Width="70" Margin="5,0">
                                         <ComboBox IsEditable="False"  
                                                   Visibility="{Binding Source.AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
