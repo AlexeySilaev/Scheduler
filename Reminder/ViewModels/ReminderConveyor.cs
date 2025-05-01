@@ -69,9 +69,9 @@ namespace Reminder.ViewModels
         /// </summary>
         public void Stop()
         {
-            if (_reminderWindowViewModel?.View != null)
+            if (_reminderWindowViewModel?.Window != null)
             {
-                _reminderWindowViewModel.View.Close();
+                _reminderWindowViewModel.Window.Close();
                 _reminderWindowViewModel = null;
             }
         }
@@ -82,7 +82,7 @@ namespace Reminder.ViewModels
             // если все одноразовые элементы отложены, просматривать больше нечего
             if (_reminderWindowViewModel.IsAllItemsPostponed())
             {
-                _reminderWindowViewModel.View.Close();
+                _reminderWindowViewModel.Window.Close();
                 _reminderWindowViewModel = null;
             }
         }
@@ -174,11 +174,11 @@ namespace Reminder.ViewModels
 
         private void OnReminderActivated(List<TimerReminderItem> expired)
         {
-            if (_reminderWindowViewModel == null || _reminderWindowViewModel.View == null)
+            if (_reminderWindowViewModel == null || _reminderWindowViewModel.Window == null)
             {
                 ReminderWindow window = new ReminderWindow();
                 ReminderWindowViewModel context = (ReminderWindowViewModel)window.DataContext;
-                context.View = window;
+                context.Window = window;
                 expired.ForEach(reminder => context.Items.Add(reminder));
                 window.SetPosition(ReminderModel.Instance.Settings.NotificationsWindowPosition);
                 window.Show();

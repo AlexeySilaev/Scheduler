@@ -17,7 +17,7 @@ namespace Reminder.UI
         {
             base.OnClosed(e);
             ReminderWindowViewModel context = (ReminderWindowViewModel)DataContext;
-            context.View = null;
+            context.OnWindowClosed();
         }
     }
 }

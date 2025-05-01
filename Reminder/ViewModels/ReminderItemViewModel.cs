@@ -14,7 +14,6 @@ namespace Reminder.ViewModels
     public abstract class ReminderItemViewModel : SchedulerItemViewModel
     {
         private ReminderState _state;
-        private PostponeItem _postpone;
         protected ReminderRingtone _ringtone;
 
         public ReminderState State
@@ -53,26 +52,6 @@ namespace Reminder.ViewModels
             }
         }
 
-        public PostponeItem Postpone
-        {
-            get { return _postpone; }
-            set
-            {
-                if (Postpone == value) return;
-                _postpone = value;
-                OnPostponeChanged();
-            }
-        }
-
-        public bool AllowPostpone
-        {
-            get { return Postpone != CompleteItem.Instance; }
-        }
-        public string PostponeDescription
-        {
-            get { return Postpone.Description; }
-        }
-
         public abstract bool IsOneTimeReminder { get; }
         public abstract string PeriodicityDescription { get; }
 
@@ -80,7 +59,6 @@ namespace Reminder.ViewModels
         {
             _state = ReminderState.Active;
             _ringtone = ReminderRingtone.AsIs;
-            _postpone = CompleteItem.Instance;
         }
 
         public abstract DateTime GetReminderDateTime();
@@ -105,18 +83,6 @@ namespace Reminder.ViewModels
                     result = "Сохранение неактивных напоминаний запрещено.";
             }
             return result;
-        }
-
-        private void OnPostponeChanged()
-        {
-            OnPropertyChanged(nameof(Postpone));
-            OnPropertyChanged(nameof(AllowPostpone));
-            OnPropertyChanged(nameof(PostponeDescription));
-            if (AllowPostpone)
-            {
-                MainViewModel mainViewModel = MainViewModel.FindInstance();
-                mainViewModel.Postpone(this, Postpone.Minutes);
-            }
         }
 
     }

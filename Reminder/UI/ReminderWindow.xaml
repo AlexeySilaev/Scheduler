@@ -64,11 +64,11 @@
                                     <TextBlock Text ="Повтор" VerticalAlignment="Center"/>
                                     <Grid Width="70" Margin="5,0">
                                         <ComboBox IsEditable="False"  
-                                                  Visibility="{Binding Source.AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
+                                                  Visibility="{Binding AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
                                                   ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, 
-                                                           Path=DataContext.PostponeItems}" SelectedItem="{Binding Source.Postpone}"/>
-                                        <TextBlock Text="{Binding Source.PostponeDescription}" VerticalAlignment="Center"
-                                            Visibility="{Binding Source.AllowPostpone, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
+                                                           Path=DataContext.PostponeItems}" SelectedItem="{Binding Postpone}"/>
+                                        <TextBlock Text="{Binding PostponeDescription}" VerticalAlignment="Center"
+                                            Visibility="{Binding AllowPostpone, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
 
                                     </Grid>
                                 </StackPanel>

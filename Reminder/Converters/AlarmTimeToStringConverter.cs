@@ -21,7 +21,7 @@ namespace Reminder.Converters
 
             TimeSpan ts = (TimeSpan)values[1];
             if (ts.TotalSeconds < 60)
-                return "в течение минуты";
+                return "несколько десятков секунд";
             if (ts.Hours > 0)
                 return $"{ts.Hours} ч  {ts.Minutes} мин";
             return $"{ts.Minutes} мин";

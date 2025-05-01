@@ -14,7 +14,7 @@ namespace Reminder.UI
     internal class ReminderWindowViewModel : BaseViewModel
     {
         private readonly SpeechSynthesizer _synthesizer;
-        private ReminderWindow _view;
+        private ReminderWindow _window;
         private MediaElement _media;
         private bool _isPlaying;
 
@@ -26,16 +26,16 @@ namespace Reminder.UI
         public ObservableCollection<TimerReminderItem> Items { get; }
         public PostponeItem[] PostponeItems { get; }
 
-        public ReminderWindow View
+        public ReminderWindow Window
         {
-            get { return _view; }
+            get { return _window; }
             set
             {
-                if (View == value) return;
-                _view = value;
-                if (View != null)
+                if (Window == value) return;
+                _window = value;
+                if (Window != null)
                 {
-                    _media = (MediaElement)View.FindName("Media");
+                    _media = (MediaElement)Window.FindName("Media");
                     _media.MediaEnded += OnPlayingFinished;
                     _media.MediaFailed += OnPlayingFinished;
                     _synthesizer.SpeakCompleted += SynthesizerOnSpeakCompleted;
@@ -73,9 +73,15 @@ namespace Reminder.UI
             _synthesizer.SetOutputToDefaultAudioDevice();
         }
 
+        public void OnWindowClosed()
+        {
+            Window = null;
+            Items.CollectionChanged -= ItemsOnCollectionChanged;
+        }
+
         public bool IsAllItemsPostponed()
         {
-            return Items.Count == Items.Count(item => item.Source.AllowPostpone);
+            return Items.Count == Items.Count(item => item.AllowPostpone);
         }
 
         private void ItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -127,7 +133,6 @@ namespace Reminder.UI
         {
             _isPlaying = false;
         }
-
     }
 }
 
