@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using Reminder.Extensions;
 using Reminder.Launch;
 using Reminder.Models;
 using Reminder.UI;
@@ -61,8 +62,7 @@ namespace Reminder.ViewModels
 
         private void OnOpen()
         {
-            IReminderClientProcess win = Application.Current.MainWindow as IReminderClientProcess;
-            win?.ShowMainWindow();
+            Application.Current.MainWindow.ShowMainWindow();
         }
 
         private void OnAbout()

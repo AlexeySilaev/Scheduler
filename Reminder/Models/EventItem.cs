@@ -36,31 +36,39 @@ namespace Reminder.Models
                         shiftWeekly = shiftWeekly.AddDays(7);
                     return shiftWeekly;
                 case Periodicity.Monthly:
-                    return GetPeriodicalMothDate(nearestDate, 1);
+                    return GetNearestPeriodicalMothDate(nearestDate, 1);
                 case Periodicity.Quarterly:
-                    return GetPeriodicalMothDate(nearestDate, 3);
+                    return GetNearestPeriodicalMothDate(nearestDate, 3);
                 case Periodicity.EverySixMonths:
-                    return GetPeriodicalMothDate(nearestDate, 6);
+                    return GetNearestPeriodicalMothDate(nearestDate, 6);
                 case Periodicity.Annually:
-                    DateTime currentAnnually = new DateTime(nearestDate.Year, EventDate.Month,
-                        Math.Min(EventDate.Day, DateTime.DaysInMonth(nearestDate.Year, nearestDate.Month)),
-                        EventDate.Hour, EventDate.Minute, EventDate.Second);
-                    if (currentAnnually > DateTime.Now)
-                        return currentAnnually;
-                    return currentAnnually.AddYears(1);
+                    return GetNearestPeriodicalMothDate(nearestDate, 12);
             }
 
             return EventDate;
         }
 
-        private DateTime GetPeriodicalMothDate(DateTime nearestDate, int months)
+        private DateTime GetNearestPeriodicalMothDate(DateTime nearestDate, int months)
         {
-            DateTime currentNearest = new DateTime(nearestDate.Year, nearestDate.Month,
-                Math.Min(EventDate.Day, DateTime.DaysInMonth(nearestDate.Year, nearestDate.Month)),
-                EventDate.Hour, EventDate.Minute, EventDate.Second);
-            if (currentNearest > DateTime.Now)
-                return currentNearest;
-            return currentNearest.AddMonths(months);
+            if (EventDate > DateTime.Now)
+                return EventDate;
+            // сколько месяцев между месяцем даты события и месяцем текущей даты?
+            int monthInterval = DateTime.Today.Month - EventDate.Month;
+            if (monthInterval < 0)
+                monthInterval = 12 + monthInterval;
+            // попадаем ли мы в monthInterval с шагом months без остатка?
+            int additionalMonths = 0;
+            if (monthInterval > months)
+                additionalMonths = monthInterval % months;
+            else
+                additionalMonths = months - monthInterval;
+
+            DateTime template = DateTime.Today.AddMonths(additionalMonths).AddHours(EventDate.Hour).AddMinutes(EventDate.Minute).AddMilliseconds(EventDate.Second);
+            DateTime result = new DateTime(template.Year, template.Month, Math.Min(EventDate.Day, DateTime.DaysInMonth(template.Year, template.Month)),
+                template.Hour, template.Minute, template.Second);
+            if (result < DateTime.Now)
+                result = result.AddMonths(months);
+            return result;
         }
     }
 }

@@ -19,7 +19,7 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:DateTimeMethodToValueConverter x:Key="MethodToValueConverter"/>
     </Window.Resources>
-    <Grid>
+    <Grid PreviewMouseLeftButtonDown="OnBeforeMouseLeftButtonDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition/>

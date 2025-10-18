@@ -62,7 +62,7 @@ namespace Reminder.Models
             {
             }
             
-/*            Events.Clear();
+            Events.Clear();
         //   Alarms.AddRange(new[]
          //      {
          //          new AlarmItem { Text = "Через 20 минут", AlarmTimeMinutes = 20 },
