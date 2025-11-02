@@ -36,19 +36,19 @@ namespace Reminder.Models
                         shiftWeekly = shiftWeekly.AddDays(7);
                     return shiftWeekly;
                 case Periodicity.Monthly:
-                    return GetNearestPeriodicalMothDate(nearestDate, 1);
+                    return GetNearestPeriodicalMonthDate(nearestDate, 1);
                 case Periodicity.Quarterly:
-                    return GetNearestPeriodicalMothDate(nearestDate, 3);
+                    return GetNearestPeriodicalMonthDate(nearestDate, 3);
                 case Periodicity.EverySixMonths:
-                    return GetNearestPeriodicalMothDate(nearestDate, 6);
+                    return GetNearestPeriodicalMonthDate(nearestDate, 6);
                 case Periodicity.Annually:
-                    return GetNearestPeriodicalMothDate(nearestDate, 12);
+                    return GetNearestPeriodicalMonthDate(nearestDate, 12);
             }
 
             return EventDate;
         }
 
-        private DateTime GetNearestPeriodicalMothDate(DateTime nearestDate, int months)
+        private DateTime GetNearestPeriodicalMonthDate(DateTime nearestDate, int months)
         {
             if (EventDate > DateTime.Now)
                 return EventDate;
