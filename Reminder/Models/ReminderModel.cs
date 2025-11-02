@@ -61,14 +61,14 @@ namespace Reminder.Models
             catch (InvalidOperationException)
             {
             }
-            
-          /*  Events.Clear();
+       /*   тестовые данные
+            Events.Clear();
         //   Alarms.AddRange(new[]
          //      {
          //          new AlarmItem { Text = "Через 20 минут", AlarmTimeMinutes = 20 },
         //           new AlarmItem { Text = "Через 15 минут" }
          //      });
-         /*      Events.AddRange(new[]
+               Events.AddRange(new[]
                {
                    new EventItem
                    {
@@ -95,6 +95,12 @@ namespace Reminder.Models
                        Text = "Каждый квартал", EventDate = new DateTime(2024, 11, 22, 16, 30, 0),
                        Periodicity = Periodicity.Quarterly
                    },
+                   new EventItem
+                   {
+                       Text = "Каждые полгода", EventDate = new DateTime(2024, 11, 22, 16, 30, 0),
+                       Periodicity = Periodicity.EverySixMonths
+                   },
+
                    new EventItem
                    {
                        Text = "Каждый год", EventDate = new DateTime(2024, 11, 22, 16, 30, 0),
