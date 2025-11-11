@@ -208,16 +208,6 @@
     <Resource Include="Resources\add20x20.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\delete20x20.png" />
-    <Resource Include="Resources\edit20x20.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\deleteGray20x20.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\editGray20x20.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\reminder.gif" />
   </ItemGroup>
   <ItemGroup>
