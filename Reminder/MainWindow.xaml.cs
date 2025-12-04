@@ -62,7 +62,7 @@ namespace Reminder
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (ReminderModel.Settings.MinimizeToTray)
+            if (ReminderModel.Settings.MinimizeToTray && LaunchChecker.IsRunning == false)
             {
                 e.Cancel = true;
                 HideAndNotifyMinimized();

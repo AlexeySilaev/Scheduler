@@ -15,7 +15,7 @@ namespace Reminder
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            if (LaunchChecker.IsRunning())
+            if (LaunchChecker.IsRunning)
             {
                 Current.Shutdown();
                 return;

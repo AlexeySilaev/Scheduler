@@ -7,8 +7,9 @@ namespace Reminder.Launch
     {
         private static ClientProcessServiceHost _processHost;
         public static IReminderClientProcess ThisClientProcess { get; private set; }
+        public static bool IsRunning { get; private set; }
 
-        public static bool IsRunning()
+        static LaunchChecker()
         {
             try
             {
@@ -16,16 +17,18 @@ namespace Reminder.Launch
                 //  proxy.Open();
                 proxy.ShowMainWindow();
                 proxy.Close();
-                return true;
+                IsRunning = true;
             }
             catch (CommunicationException)
             {
             }
 
-            _processHost = new ClientProcessServiceHost();
-            _processHost.Open();
-
-            return false;
+            if (IsRunning == false)
+            {
+                // запустились, даем себя послушать
+                _processHost = new ClientProcessServiceHost();
+                _processHost.Open();
+            }
         }
 
         public static void RegisterClientProcess(IReminderClientProcess thisClientProcess)
