@@ -17,24 +17,51 @@
         <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
         <converters:EventDateToStringConverter x:Key="EventDateToStringConverter"/>
         <converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converters:InvertBoolToVisibilityConverter x:Key="InvertBoolToVisibilityConverter"/>
-        <converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter"/>
         <converters:CharactersEnteredConverter x:Key="CharactersEnteredConverter"/>
         <converters:StaticResourceToIntConverter x:Key="StaticResourceToIntConverter"/>
         <converters:PeriodicityToDataTemplateConverter x:Key="PeriodicityToDataTemplateConverter"/>
         <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <converters:ItemCountToVisibilityConverter x:Key="ItemCountToVisibilityConverter" />
+        <converters:IndexedStringItemCollectionConverter x:Key="IndexedStringItemCollectionConverter" />
+        <converters:DaysRangeControlVisibilityConverter x:Key="DaysRangeControlVisibilityConverter" />
+        <converters:DaysRangeActivityConverter x:Key="DaysRangeActivityConverter" />
         <SolidColorBrush x:Key="GrayText" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
         <SolidColorBrush x:Key="WindowText" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
+        <SolidColorBrush x:Key="Introductory" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
         <Thickness x:Key="DetailsMargin" Left="5" Top="5" Right="5" Bottom="5" />
-        <Thickness x:Key="ImagePanelMargin" Left="5" Top="5" Right="5" Bottom="5" />
+        <Thickness x:Key="TextBlockMargin" Left="0" Top="5" Right="0" Bottom="5" />
+        <Thickness x:Key="Left5Margin" Left="5" Top="0" Right="0" Bottom="0" />
+        <Thickness x:Key="EditTemplateMargin" Left="10" Top="5" Right="10" Bottom="5"/>
+        <Thickness x:Key="ItemTemplateMargin" Left="2" Top="2" Right="2" Bottom="2"/>
+        <Thickness x:Key="TimeTextBoxPadding" Left="2" Top="0" Right="2" Bottom="0"/>
+        <system:Double x:Key="OneLineElementsHeight">24</system:Double>
         <system:Int32 x:Key="MaxReminderLength">500</system:Int32>
         <system:Int32 x:Key="MaxNoteLength">1000</system:Int32>
+        <system:Int32 x:Key="MaxProjectLength">250</system:Int32>
+        <system:Int32 x:Key="MaxProjectItemLength">200</system:Int32>
 
+        <!-- Этот стиль призван убрать раздражающие ошибки привязки HorizontalContentAlignment и VerticalContentAlignment -->
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        
         <Style x:Key="ReminderItemText" TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property ="FontSize" Value="14"/>
             <Setter Property ="FontWeight" Value="DemiBold"/>
             <Setter Property ="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="ProjectElementText" TargetType="{x:Type TextBlock}">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property ="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="EditItemButton" TargetType="{x:Type Button}">
+            <Setter Property ="Padding" Value="5,3"/>
         </Style>
 
         <Style TargetType="ui:ShiftControl">
@@ -51,7 +78,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        
         <ControlTemplate x:Key="EditImageButton" TargetType="{x:Type Button}">
             <Canvas Background="Transparent" Width="20" Height="20">
                 <Polygon x:Name="Triangle" Points="4,10,3,19,11,16" Fill="{StaticResource GrayText}" />
@@ -83,10 +110,30 @@
             </ControlTemplate.Triggers>
         </ControlTemplate>
 
-        <!-- Шаблоны для элементов ReminderItemViewModel в списке -->
-        <DataTemplate x:Key="AlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
+        <!-- Выбор времени откладывания напоминания в окне уведомлений -->
+        <DataTemplate x:Key="CustomizePostponeItemTemplate" DataType="{x:Type viewModels:OtherItem}" >
+            <StackPanel Orientation="Horizontal">
+                <ui:TimeTextBox Time="{Binding Time}" VerticalContentAlignment="Center"
+                    Padding="{StaticResource TimeTextBoxPadding}" Margin="0,0,6,0"/>
+                <Button Command="{Binding Accept}" BorderBrush="Transparent" Background="Transparent">
+                    <Path Stroke="{StaticResource WindowText}" StrokeThickness="2" Data="M 2,6 L 7,12 L 13,2" />
+                </Button>
+            </StackPanel>
+        </DataTemplate>
+        
+        <!-- Шаблоны для элементов SchedulerItemViewModel/ReminderItemViewModel в списке -->
+        <ControlTemplate x:Key="ButtonPanel">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Height="20" Width="20" Command="{Binding Edit}" Margin="2,0"
+                    Template="{StaticResource EditImageButton}" ToolTip="{Binding EditToolTip}"/>
+                <Button Height="20" Width="20" Command="{Binding Delete}" Margin="2,0"
+                    Template="{StaticResource DeleteImageButton}" ToolTip="Удалить"/>
+            </StackPanel>
+        </ControlTemplate>
+
+        <DataTemplate x:Key="EventItemTemplate" DataType="{x:Type viewModels:EventItemViewModel}" >
             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
-                <Grid Margin="2" >
+                <Grid Margin="{StaticResource ItemTemplateMargin}" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="60"/>
@@ -95,26 +142,33 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="{Binding Text}" Style="{StaticResource ReminderItemText}" />
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
-                        <TextBlock Text="Сработает через" Foreground="{StaticResource GrayText}" Margin="0,0,5,0"/>
-                        <TextBlock Foreground="{StaticResource GrayText}">
+                    <Grid.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Edit}" />
+                    </Grid.InputBindings>
+                    <TextBlock x:Name="EventText" Text="{Binding Text}" Style="{StaticResource ReminderItemText}"/>
+                    <DockPanel Grid.Row="1" LastChildFill="False">
+                        <TextBlock  DockPanel.Dock="Left" Margin="{StaticResource DetailsMargin}" Foreground="{StaticResource GrayText}">
                             <TextBlock.Text>
-                                <MultiBinding Converter="{StaticResource AlarmTimeToStringConverter}">
+                                <MultiBinding Converter="{StaticResource EventDateToStringConverter}">
                                     <Binding Path="State" />
-                                    <Binding Path="RemainTime" />
+                                    <Binding Path="NearestEventDate" />
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>
-                    </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.RowSpan="2" x:Name="ImagesPanel" Visibility="Hidden" 
-                                Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center"
-                                Margin="{StaticResource ImagePanelMargin}">
-                        <Button Height="20" Width="20" Command="{Binding Edit}" Margin="2,0"
-                                Template="{StaticResource EditImageButton}" ToolTip="Редактировать"/>
-                        <Button Height="20" Width="20" Command="{Binding Delete}" Margin="2,0"
-                                Template="{StaticResource DeleteImageButton}" ToolTip="Удалить"/>
-                    </StackPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
+                            <TextBlock Foreground="{StaticResource GrayText}" Margin="0,0,20,0">
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource DaysRangeActivityConverter}">
+                                        <Binding Path="Range.State" />
+                                        <Binding Path="Range.RemainActiveDays"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock Text="{Binding Periodicity, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"/>
+                        </StackPanel>
+                    </DockPanel>
+                    <ContentControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="ImagesPanel"
+                        Template="{StaticResource ButtonPanel}" DataContext="{Binding}" Visibility="Hidden" />
                 </Grid>
             </Border>
             <DataTemplate.Triggers>
@@ -125,12 +179,16 @@
                         Property="Visibility"
                         Value="Visible"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding State}" Value="Expired">
+                    <Setter TargetName="EventText" Property="TextDecorations" Value="Strikethrough"/>
+                    <Setter TargetName="EventText" Property="FontStyle" Value="Oblique"/>
+                </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
 
-        <DataTemplate x:Key="EventItemTemplate" DataType="{x:Type viewModels:EventItemViewModel}" >
+        <DataTemplate x:Key="AlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
-                <Grid Margin="2" >
+                <Grid Margin="{StaticResource ItemTemplateMargin}" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="60"/>
@@ -139,47 +197,41 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="{Binding Text}" Style="{StaticResource ReminderItemText}"/>
-                    <DockPanel Grid.Row="1" LastChildFill="False">
-                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
-                            <TextBlock Text="Сработает:" Foreground="{StaticResource GrayText}" Margin="0,0,5,0"/>
-                            <TextBlock  Foreground="{StaticResource GrayText}">
-                                <TextBlock.Text>
-                                    <MultiBinding Converter="{StaticResource EventDateToStringConverter}">
-                                        <Binding Path="State" />
-                                        <Binding Path="NearestEventDate" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                        </StackPanel>
-                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
-                            <TextBlock Text="{Binding Periodicity, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"/>
-                        </StackPanel>
-                    </DockPanel>
-                    <StackPanel Grid.Row="0" Grid.RowSpan="2" x:Name="ImagesPanel" Visibility="Hidden" 
-                                Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center"
-                                Margin="{StaticResource ImagePanelMargin}">
-                        <Button Height="20" Width="20" Command="{Binding Edit}" Margin="2,0"
-                                Template="{StaticResource EditImageButton}" ToolTip="Редактировать"/>
-                        <Button Height="20" Width="20" Command="{Binding Delete}" Margin="2,0"
-                                Template="{StaticResource DeleteImageButton}" ToolTip="Удалить"/>
-                    </StackPanel>
+                    <Grid.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Edit}" />
+                    </Grid.InputBindings>
+                    <TextBlock x:Name="AlarmText" Text="{Binding Text}" Style="{StaticResource ReminderItemText}" />
+                    <TextBlock Grid.Row="1" Foreground="{StaticResource GrayText}" Margin="{StaticResource DetailsMargin}">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource AlarmTimeToStringConverter}">
+                                <Binding Path="State" />
+                                <Binding Path="RemainTime" />
+                                <MultiBinding.ConverterParameter>31</MultiBinding.ConverterParameter>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <ContentControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="ImagesPanel"
+                        Template="{StaticResource ButtonPanel}" DataContext="{Binding}" Visibility="Hidden" />
                 </Grid>
             </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},
-                        Path=IsMouseOver}" Value="True">
+                    Path=IsMouseOver}" Value="True">
                     <Setter
                         TargetName="ImagesPanel"
                         Property="Visibility"
                         Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding State}" Value="Expired">
+                    <Setter TargetName="AlarmText" Property="TextDecorations" Value="Strikethrough"/>
+                    <Setter TargetName="AlarmText" Property="FontStyle" Value="Oblique"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
 
         <DataTemplate x:Key="NoteItemTemplate" DataType="{x:Type viewModels:NoteItemViewModel}" >
             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
-                <Grid Margin="2" >
+                <Grid Margin="{StaticResource ItemTemplateMargin}" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="60"/>
@@ -188,19 +240,75 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+                    <Grid.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Edit}" />
+                    </Grid.InputBindings>
                     <TextBlock Text="{Binding Text}" Style="{StaticResource ReminderItemText}"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
                         <TextBlock Text="Изменено:" Foreground="{StaticResource GrayText}" Margin="0,0,5,0"/>
                         <TextBlock Text="{Binding CreationDate, StringFormat='dd.MM.yyyy HH:mm'}" Foreground="{StaticResource GrayText}"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="0" Grid.RowSpan="2" x:Name="ImagesPanel" Visibility="Hidden" 
-                                Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center"
-                                Margin="{StaticResource ImagePanelMargin}">
-                        <Button Height="20" Width="20" Command="{Binding Edit}" Margin="2,0"
-                                Template="{StaticResource EditImageButton}" ToolTip="Редактировать"/>
-                        <Button Height="20" Width="20" Command="{Binding Delete}" Margin="2,0"
-                                Template="{StaticResource DeleteImageButton}" ToolTip="Удалить"/>
+                    <ContentControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="ImagesPanel"
+                        Template="{StaticResource ButtonPanel}" DataContext="{Binding}" Visibility="Hidden" />
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},
+                        Path=IsMouseOver}" Value="True">
+                    <Setter
+                        TargetName="ImagesPanel"
+                        Property="Visibility"
+                        Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ProjectItemTemplate" DataType="{x:Type viewModels:ProjectItemViewModel}" >
+            <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
+                <Grid Margin="{StaticResource ItemTemplateMargin}" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Edit}" />
+                    </Grid.InputBindings>
+                    <TextBlock Text="{Binding Name}" Style="{StaticResource ReminderItemText}"/>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5,5,5,0">
+                        <TextBlock Text="В работе с " Style="{StaticResource ProjectElementText}" />
+                        <TextBlock Text="{Binding StartDate, StringFormat='dd.MM.yyyy'}" Style="{StaticResource ProjectElementText}"/>
+                        <TextBlock Text=" по " Visibility="{Binding EndDate, Converter={StaticResource NotNullToVisibilityConverter}}"
+                            Style="{StaticResource ProjectElementText}"/>
+                        <TextBlock Text="{Binding EndDate, StringFormat='dd.MM.yyyy'}" Style="{StaticResource ProjectElementText}"
+                            Visibility="{Binding EndDate, Converter={StaticResource NotNullToVisibilityConverter}}"/>
                     </StackPanel>
+                    <TextBlock Grid.Row="2" Text="{Binding Text}" Style="{StaticResource ProjectElementText}"
+                        Visibility="{Binding Text, Converter={StaticResource StringToVisibilityConverter}}"
+                        Margin="5,5,5,0" />
+                    <ItemsControl Grid.Row="3" x:Name="ClausesList" ItemsSource="{Binding Clauses}"
+                        Visibility="{Binding Clauses, Converter={StaticResource ItemCountToVisibilityConverter}}"
+                        Margin="15,0,5,2">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Style="{StaticResource ProjectElementText}" Margin="{StaticResource ItemTemplateMargin}" >
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource IndexedStringItemCollectionConverter}">
+                                            <Binding Path="."/>
+                                            <Binding ElementName="ClausesList" Path="ItemsSource"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ContentControl Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" x:Name="ImagesPanel" 
+                        Template="{StaticResource ButtonPanel}" DataContext="{Binding}" Visibility="Hidden" />
                 </Grid>
             </Border>
             <DataTemplate.Triggers>
@@ -219,62 +327,78 @@
             <StackPanel Orientation="Horizontal" >
                 <TextBlock Text="Звуковое сопровождение" VerticalAlignment="Center"/>
                 <CheckBox IsChecked="{Binding IsSettingsRingtone}" VerticalAlignment="Center"
-                             Margin="10,0,25,0"
-                             Content="Из настроек" />
-                <TextBlock Margin="10,0,10,0" Text="Выбрать" VerticalAlignment="Center"
-                          Visibility="{Binding IsSettingsRingtone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}" />
+                    Margin="10,0,25,0" Content="Из настроек" />
+                <TextBlock Margin="10,0" Text="Выбрать" VerticalAlignment="Center"
+                    Visibility="{Binding IsSettingsRingtone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}" />
                 <ComboBox VerticalAlignment="Center" ItemsSource="{x:Static extensions:EnumExtensions.RingtoneInfos}"
-                          SelectedValue="{Binding Ringtone}" SelectedValuePath="Member" DisplayMemberPath="Description"
-                          IsEditable="False" MinWidth="115"
-                          Visibility="{Binding IsSettingsRingtone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"/>
+                    SelectedValue="{Binding Ringtone}" SelectedValuePath="Member" DisplayMemberPath="Description"
+                    IsEditable="False" MinWidth="115"
+                    Visibility="{Binding IsSettingsRingtone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"/>
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="EditAlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
-            <Grid Margin="10" FocusManager.FocusedElement="{Binding ElementName=AlarmText}" >
+        <DataTemplate x:Key="EditEventItemTemplate" DataType="{x:Type viewModels:EventItemViewModel}" >
+            <Grid Margin="{StaticResource EditTemplateMargin}" FocusManager.FocusedElement="{Binding ElementName=EventText}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Описание" Margin="0,5"/>
+                <TextBlock Grid.Row="0" Text="Описание" Margin="{StaticResource TextBlockMargin}"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <TextBox x:Name="AlarmText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
-                         MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
-                         Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                    <TextBox x:Name="EventText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
+                        MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                        Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                 </ScrollViewer>
                 <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
-                           TextAlignment="Right" Margin="0,5"/>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10" Height="24">
-                    <TextBlock Text="Сигнал через" VerticalAlignment="Center"/>
-                    <ui:TimeTextBox Time="{Binding AlarmTime}" Margin="5,0,0,0" 
-                                    VerticalContentAlignment="Center" Padding="2,0"/>
+                    TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10" Height="{StaticResource OneLineElementsHeight}">
+                    <TextBlock Text="Повтор" VerticalAlignment="Center"/>
+                    <ComboBox ItemsSource="{x:Static extensions:EnumExtensions.PeriodicityInfos}" IsEditable="False"  Margin="5,0,25,0" 
+                        SelectedValue="{Binding Periodicity}" SelectedValuePath="Member" DisplayMemberPath="Description"
+                        IsEnabled="{Binding Text, Converter={StaticResource StringIsNullOrEmptyConverter}, Mode=OneTime}"
+                        VerticalContentAlignment="Center" MinWidth="115"/>
+                    <TextBlock Text="Время" VerticalAlignment="Center"/>
+                    <ui:TimeTextBox Time="{Binding EventTime}" VerticalContentAlignment="Center"
+                        Margin="5,0,25,0" Padding="{StaticResource TimeTextBoxPadding}" />
+                    <ContentControl Content="{Binding}" ContentTemplate="{Binding Periodicity, Converter={StaticResource PeriodicityToDataTemplateConverter}}"/>
                 </StackPanel>
-                <ContentControl Grid.Row="4" ContentTemplate="{StaticResource RingtoneItemTemplate}"
-                                Content="{Binding}"/>
+                <ui:WeekDaysControl Grid.Row="4" x:Name="WeekDays" DataContext="{Binding}" Visibility="Collapsed" />
+                <ui:DaysRangeControl Grid.Row="4" DataContext="{Binding}"
+                    Visibility="{Binding Periodicity, Converter={StaticResource DaysRangeControlVisibilityConverter}}" />
+                <ContentControl Grid.Row="5" ContentTemplate="{StaticResource RingtoneItemTemplate}"
+                    Content="{Binding}"/>
+
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Periodicity}" Value="Weekly">
+                    <Setter TargetName="WeekDays" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+
         </DataTemplate>
 
         <!-- Кастомизация редактирования EventItemViewModel в зависимости от периодичности -->
         <DataTemplate x:Key="PeriodicityRepeated" DataType="{x:Type viewModels:EventItemViewModel}" >
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Начиная с" VerticalAlignment="Center"/>
-                <DatePicker SelectedDate="{Binding EventDate}" Margin="5,0,0,0"/>
+                <DatePicker SelectedDate="{Binding EventDate}" Margin="{StaticResource Left5Margin}"/>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="PeriodicityOnce" DataType="{x:Type viewModels:EventItemViewModel}" >
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Дата" VerticalAlignment="Center"/>
-                <DatePicker SelectedDate="{Binding EventDate}" Margin="5,0,0,0"/>
+                <DatePicker SelectedDate="{Binding EventDate}" Margin="{StaticResource Left5Margin}"/>
             </StackPanel>
         </DataTemplate>
 
         <!-- Конец кастомизация редактирования EventItemViewModel в зависимости от периодичности -->
 
-        <DataTemplate x:Key="EditEventItemTemplate" DataType="{x:Type viewModels:EventItemViewModel}" >
-            <Grid Margin="10" FocusManager.FocusedElement="{Binding ElementName=EventText}">
+        <DataTemplate x:Key="EditAlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
+            <Grid Margin="{StaticResource EditTemplateMargin}" FocusManager.FocusedElement="{Binding ElementName=AlarmText}" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -282,46 +406,123 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Описание" Margin="0,5"/>
+                <TextBlock Grid.Row="0" Text="Описание" Margin="{StaticResource TextBlockMargin}"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <TextBox x:Name="EventText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
+                    <TextBox x:Name="AlarmText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
                          MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
                          Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                 </ScrollViewer>
                 <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
-                           TextAlignment="Right" Margin="0,5"/>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10" Height="24">
-                    <TextBlock Text="Повтор" VerticalAlignment="Center"/>
-                    <ComboBox ItemsSource="{x:Static extensions:EnumExtensions.PeriodicityInfos}" IsEditable="False"  Margin="5,0,25,0" 
-                              SelectedValue="{Binding Periodicity}" SelectedValuePath="Member" DisplayMemberPath="Description"
-                              IsEnabled="{Binding Text, Converter={StaticResource StringIsNullOrEmptyConverter}, Mode=OneTime}"
-                              VerticalContentAlignment="Center" MinWidth="115"/>
-                    <TextBlock Text="Время" VerticalAlignment="Center"/>
-                    <ui:TimeTextBox Time="{Binding EventTime}" Margin="5,0,25,0" 
-                                    VerticalContentAlignment="Center" Padding="2,0"/>
-                    <ContentControl Content="{Binding}" ContentTemplate="{Binding Periodicity, Converter={StaticResource PeriodicityToDataTemplateConverter}}"/>
+                    TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10" Height="{StaticResource OneLineElementsHeight}">
+                    <TextBlock Text="Сигнал через" VerticalAlignment="Center"/>
+                    <ui:TimeTextBox Time="{Binding AlarmTime}"  VerticalContentAlignment="Center"
+                         Margin="{StaticResource Left5Margin}" Padding="{StaticResource TimeTextBoxPadding}"/>
                 </StackPanel>
-                <ContentControl Grid.Row="4" ContentTemplate="{StaticResource RingtoneItemTemplate}"
-                                Content="{Binding}"/>
-
+                <ContentControl Grid.Row="4" ContentTemplate="{StaticResource RingtoneItemTemplate}" Content="{Binding}"/>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="EditNoteItemTemplate" DataType="{x:Type viewModels:NoteItemViewModel}" >
-            <Grid Margin="10" FocusManager.FocusedElement="{Binding ElementName=NoteText}">
+            <Grid Margin="{StaticResource EditTemplateMargin}" FocusManager.FocusedElement="{Binding ElementName=NoteText}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Описание" Margin="0,5"/>
+                <TextBlock Grid.Row="0" Text="Описание" Margin="{StaticResource TextBlockMargin}"/>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <TextBox x:Name="NoteText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
-                         MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxNoteLength}}"
-                         Height="185" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                        MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxNoteLength}}"
+                        Height="185" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
                 </ScrollViewer>
                 <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxNoteLength}}"
-                           TextAlignment="Right" Margin="0,5"/>
+                    TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="EditProjectItemTemplate" DataType="{x:Type viewModels:ProjectItemViewModel}" >
+            <Grid Margin="{StaticResource EditTemplateMargin}" FocusManager.FocusedElement="{Binding ElementName=ProjectName}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Название" Margin="0,3,5,5" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" x:Name="ProjectName" Text="{Binding Name}" VerticalContentAlignment="Center" MaxLength="70"/>
+                </Grid>
+                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,5">
+                    <TextBlock Text="Начало проекта" VerticalAlignment="Center"/>
+                    <DatePicker SelectedDate="{Binding StartDate}" Margin="{StaticResource Left5Margin}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,5">
+                    <TextBlock Text="Окончание проекта" VerticalAlignment="Center"/>
+                    <DatePicker SelectedDate="{Binding EndDate}" Margin="{StaticResource Left5Margin}" />
+                </StackPanel>
+                <TextBlock Grid.Row="2" Text="Описание" Margin="{StaticResource TextBlockMargin}"/>
+                <TextBox Grid.Row="3" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
+                    MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxProjectLength}}"
+                    Height="70" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                <TextBlock Grid.Row="4" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxProjectLength}}"
+                    TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
+                <Grid Grid.Row="5" Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                        <TextBlock Text="Пункты проекта" Margin="{StaticResource TextBlockMargin}"/>
+                        <ListBox ItemsSource="{Binding Clauses}" SelectedItem="{Binding SelectedClause}" 
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="125">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontSize="12" VerticalAlignment="Center" Margin="5,2" Text="{Binding Path=Text}" 
+                                        TextWrapping="Wrap"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="5,10">
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0" Content="Добавить" Style="{StaticResource EditItemButton}"
+                                Command="{Binding AddClause}"/>
+                            <Button Grid.Column="1" Content="Редактировать" Style="{StaticResource EditItemButton}" 
+                                Command="{Binding EditClause}" HorizontalAlignment="Center"/>
+                            <Button Grid.Column="2" Content="Удалить" Style="{StaticResource EditItemButton}"
+                                Command="{Binding DeleteClause}"/>
+                        </Grid>
+                        <TextBox Text="{Binding SelectedClause.BufferedText}" Height="83" TextWrapping="Wrap"
+                            MaxLength="{StaticResource MaxProjectItemLength}"
+                            IsReadOnly="{Binding ClauseMode, Converter={StaticResource EnumToBoolConverter},
+                            ConverterParameter={x:Static viewModels:EditingClauseMode.ViewItems}}"
+                            VerticalScrollBarVisibility="Auto" Margin="{StaticResource TextBlockMargin}"/>
+                        <Grid >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0" Content="Завершить" Style="{StaticResource EditItemButton}"
+                                Command="{Binding SaveClause}" HorizontalAlignment="Center"/>
+                            <Button Grid.Column="1" Content="Отменить" Style="{StaticResource EditItemButton}" 
+                                Command="{Binding CancelClause}" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </DataTemplate>
 

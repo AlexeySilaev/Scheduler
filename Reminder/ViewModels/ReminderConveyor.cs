@@ -22,30 +22,26 @@ namespace Reminder.ViewModels
         private const double FAST_TIMER_INTERVAL = 1000 * 0.5;
 
         private readonly AlarmGroup _alarms;
-        private readonly ReminderGroup _events;
+        private readonly EventGroup _events;
         private readonly Action<EventItemViewModel[]> _onConveyorRefresh;
         private readonly Timer _queueTimer;
         private readonly object _lockQueue;
         private readonly List<EventItemViewModel> _dayAboutEvents; // события, которые сработают через сутки
+        private readonly List<TimerReminderItem> _timerReminderQueue;
 
-        private Queue<TimerReminderItem> _timerReminderQueue;
         private ReminderWindowViewModel _reminderWindowViewModel;
-
-        // флаг для определения устаревших напоминаний при первом разборе очереди - на запуске
-        private bool _isInitializingCheckExpired;
 
         public ReminderConveyor(AlarmGroup alarms, EventGroup events, Action<EventItemViewModel[]> onConveyorRefresh)
         {
             _alarms = alarms;
             _events = events;
             _onConveyorRefresh = onConveyorRefresh;
-            _timerReminderQueue = new Queue<TimerReminderItem>();
+            _timerReminderQueue = new List<TimerReminderItem>();
             _queueTimer = new Timer();
             _queueTimer.AutoReset = false;
             _queueTimer.Elapsed += QueueTimer_Elapsed;
             _lockQueue = new object();
             _dayAboutEvents = new List<EventItemViewModel>();
-            _isInitializingCheckExpired = true;
         }
 
         /// <summary>
@@ -55,11 +51,10 @@ namespace Reminder.ViewModels
         {
             lock (_lockQueue)
             {
-                List<TimerReminderItem> queue = _alarms.GetTimerReminderItems();
-                queue.AddRange(_events.GetTimerReminderItems());
-                queue.Sort();
-
-                _timerReminderQueue = new Queue<TimerReminderItem>(queue);
+                _timerReminderQueue.Clear();
+                _timerReminderQueue.AddRange(_alarms.GetTimerReminderItems());
+                _timerReminderQueue.AddRange(_events.GetTimerReminderItems());
+                _timerReminderQueue.Sort();
                 CheckStartTimer();
             }
         }
@@ -91,14 +86,24 @@ namespace Reminder.ViewModels
         {
             if (_timerReminderQueue.Any() == false) return;
 
-            TimerReminderItem nearestReminderItem = _timerReminderQueue.Peek();
-            TimeSpan timeToNearestReminder = nearestReminderItem.ReminderDateTime - DateTime.Now;
-            if (timeToNearestReminder.TotalMilliseconds < SLOW_TIMER_INTERVAL)
-                _queueTimer.Interval = FAST_TIMER_INTERVAL; // будем тикать чаще, чтобы точнее попасть во время Ч
-            else
-                _queueTimer.Interval = SLOW_TIMER_INTERVAL;
-            _queueTimer.Enabled = true;
-            _queueTimer.AutoReset = true;
+            TimerReminderItem nearestReminderItem = _timerReminderQueue.FirstOrDefault(item => item.IsExpired == false);
+            if (nearestReminderItem == null)
+            {
+                // если нет активных элементов, есть ли просроченные напоминания? Будем обновлять в интерфейсе время,
+                // на которое они просрочены
+                nearestReminderItem = _timerReminderQueue.FirstOrDefault(item => item.Source.Type == ReminderItemType.Alarm);
+            }
+
+            if (nearestReminderItem != null)
+            {
+                TimeSpan timeToNearestReminder = nearestReminderItem.ReminderDateTime - DateTime.Now;
+                if (timeToNearestReminder.TotalMilliseconds < SLOW_TIMER_INTERVAL)
+                    _queueTimer.Interval = FAST_TIMER_INTERVAL; // будем тикать чаще, чтобы точнее попасть во время Ч
+                else
+                    _queueTimer.Interval = SLOW_TIMER_INTERVAL;
+                _queueTimer.Enabled = true;
+                _queueTimer.AutoReset = true;
+            }
         }
 
         /// <summary>
@@ -109,31 +114,32 @@ namespace Reminder.ViewModels
             lock (_lockQueue)
             {
                 _queueTimer.Enabled = false;
-                TimerReminderItem nearestReminderItem = _timerReminderQueue.Peek();
+                List<TimerReminderItem> activeItems = _timerReminderQueue
+                    .Where(item => item.IsExpired == false)
+                    .ToList();
                 // чтобы не терять в окне уведомлений элементы с одинаковым временем,
                 // пробежимся по голове очереди, где может быть серия просроченных
-                if (nearestReminderItem.CheckExpired(e.SignalTime, _isInitializingCheckExpired))
+                List<TimerReminderItem> expired = new List<TimerReminderItem>();
+                for (int i = 0; i < activeItems.Count; ++i)
                 {
-                    List<TimerReminderItem> expired = new List<TimerReminderItem>();
-                    while (nearestReminderItem.CheckExpired(e.SignalTime, _isInitializingCheckExpired))
+                    TimerReminderItem nearestReminderItem = activeItems[i];
+                    if (nearestReminderItem.CheckExpired(e.SignalTime))
                     {
-                        _timerReminderQueue.Dequeue();
+                        _timerReminderQueue.Remove(nearestReminderItem);
                         expired.Add(nearestReminderItem);
 
-                        if (_timerReminderQueue.Any())
-                            nearestReminderItem = _timerReminderQueue.Peek();
-                        else break;
                     }
+                    else break;
+                }
+
+                if (expired.Any())
+                {
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                        OnReminderActivated(expired)));
-
+                            OnReminderActivated(expired)));
                     Reconstruct();
-
                 }
                 else
                     CheckStartTimer();
-
-                _isInitializingCheckExpired = false;
 
                 bool updated = UpdateDayAboutEvents(e.SignalTime);
                 EventItemViewModel[] newDayAboutEvents =
@@ -146,7 +152,7 @@ namespace Reminder.ViewModels
         // Если событие отработает минутой меньше, чем через сутки, оно устарело, удаляем его,
         // оно уже отправлено во всплывающее окно подсказки.
         // Если событии уже имеется в коллекции, ничего не делаем, оно было добавлено чуть ранее,
-        // потому что таймер конвейера тикаеет чаще раза в минуту.
+        // потому что таймер конвейера тикает чаще раза в минуту.
         private bool UpdateDayAboutEvents(DateTime signalTime)
         {
             List<EventItemViewModel> currentDayEvents = GetDayAboutEvents(signalTime.AddDays(1));
@@ -166,9 +172,26 @@ namespace Reminder.ViewModels
                 && from <= reminder.ReminderDateTime && reminder.ReminderDateTime <= to)
                 .Select(reminder => (EventItemViewModel)reminder.Source)
                 .ToList();
-            // ежедневные события покажутся в окне уведомлений. Чтобы не накладывать окно предупреждений на окно уведомлений,
-            // не показываем их. И так видно в уведомлениях. Но стоит проверить, что такие события показаны в уведомлениях
-            result.RemoveAll(ev => ev.Periodicity == Periodicity.Daily && ev.EventDate < dayAboutTime.Date);
+            // ежедневные события и последовательно идущие день за днем внутри недели или в интервале покажутся
+            // в окне уведомлений. Чтобы не накладывать окно предупреждений на окно уведомлений, не показываем их.
+            // И так видно в уведомлениях. Но стоит проверить, что такие события показаны в уведомлениях
+            Func<EventItemViewModel, bool> allowRemovePredicate = (EventItemViewModel item) =>
+            {
+                if (item.EventDate == dayAboutTime.Date)
+                    return false; // до даты ПЕРВОГО срабатывания сутки, покажем
+                if (item.Periodicity == Periodicity.Daily)
+                    return true; // напоминание за день о ежедневных не показываем никогда
+                if (item.Periodicity == Periodicity.Weekly)
+                {
+                    // посмотрим, является ли предыдущий день (который только что отработал) днем активации уведомления
+                    WeekDaysEnumerator weekDaysEnumerator = new WeekDaysEnumerator(item.WeekDays);
+                    return weekDaysEnumerator.IsPreviousInWeekDays(dayAboutTime.DayOfWeek);
+                }
+                if (item.Range != null)
+                    return item.Range.State != DaysRangeState.Dormant; // покажем до входа в интервал
+                return false;
+            };
+            result.RemoveAll(ev => allowRemovePredicate(ev));
             return result;
         }
 
@@ -177,10 +200,11 @@ namespace Reminder.ViewModels
             if (_reminderWindowViewModel == null || _reminderWindowViewModel.Window == null)
             {
                 ReminderWindow window = new ReminderWindow();
-                ReminderWindowViewModel context = (ReminderWindowViewModel)window.DataContext;
+                ReminderWindowViewModel context = window.DataContext;
                 context.Window = window;
                 expired.ForEach(reminder => context.Items.Add(reminder));
                 window.SetPosition(ReminderModel.Instance.Settings.NotificationsWindowPosition);
+                window.ShowActivated = false;
                 window.Show();
                 _reminderWindowViewModel = context;
             }
@@ -189,22 +213,20 @@ namespace Reminder.ViewModels
                 expired.ForEach(reminder => _reminderWindowViewModel.Items.Add(reminder));
             }
 
-            if (ReminderModel.Instance.Settings.DeleteCompletedReminders)
-                expired.ForEach(reminder =>
-                {
-                    if (reminder.Source.IsOneTimeReminder)
-                    {
-                        ReminderGroup group = reminder.Source.Type == ReminderItemType.Alarm ? _alarms : _events;
-                        group.Remove(reminder.Source);
-                        MainViewModel mainViewModel = MainViewModel.FindInstance();
-                        mainViewModel.SaveToModel();
-                    }
-                });
-            if (expired.Any(item => item.Source.Type == ReminderItemType.Event))
+            expired.ForEach(reminder =>
             {
-                MainViewModel mainViewModel = MainViewModel.FindInstance();
-                mainViewModel.OnEventActivated();
-            }
+                if (reminder.Source.IsOneTimeReminder)
+                {
+                    ISchedulerGroup group = reminder.Source.Type == ReminderItemType.Alarm ?
+                       (ISchedulerGroup)_alarms : (ISchedulerGroup)_events;
+                    group.Remove(reminder.Source);
+                    MainViewModel mainViewModel = MainViewModel.FindInstance();
+                    mainViewModel.SaveToModel();
+                }
+            });
+
+            bool wasEvent = expired.Any(item => item.Source.Type == ReminderItemType.Event);
+            MainViewModel.FindInstance().OnReminderActivated(wasEvent);
         }
     }
 }

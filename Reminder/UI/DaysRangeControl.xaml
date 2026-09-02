@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="Reminder.UI.DaysRangeControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Reminder.UI"
+             xmlns:vm="clr-namespace:Reminder.ViewModels"
+             xmlns:c="clr-namespace:Reminder.Converters"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance vm:EventItemViewModel}"
+             d:DesignHeight="26" d:DesignWidth="250">
+    <UserControl.Resources>
+        <c:DaysRangeToBoolConverter x:Key="DaysRangeToBoolConverter" />
+        <c:NotNullToBoolConverter x:Key="NotNullToBoolConverter" />
+    </UserControl.Resources>
+    <Grid Height="{StaticResource OneLineElementsHeight}" Margin="0,0,0,5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <CheckBox Grid.Column="0" Content="Отслеживать в течение" VerticalAlignment="Center"
+             IsChecked="{Binding Range, Converter={StaticResource DaysRangeToBoolConverter}}" />
+        <ComboBox Grid.Column="1" VerticalAlignment="Center" IsEditable="False" MinWidth="43" Margin="10,0"
+             ItemsSource="{Binding RangeDays}" SelectedItem="{Binding Range.Days}"
+             IsEnabled="{Binding Range, Converter={StaticResource NotNullToBoolConverter}}" />
+        <TextBlock Grid.Column="2" Text="дней" VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

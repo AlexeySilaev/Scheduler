@@ -6,6 +6,7 @@ using System.Linq;
 using System.Speech.Synthesis;
 using System.Windows;
 using System.Windows.Controls;
+using Reminder.Extensions;
 using Reminder.Models;
 using Reminder.ViewModels;
 
@@ -16,6 +17,7 @@ namespace Reminder.UI
         private readonly SpeechSynthesizer _synthesizer;
         private ReminderWindow _window;
         private MediaElement _media;
+        private Visibility _tipVisibility;
         private bool _isPlaying;
 
         private Settings Settings
@@ -25,6 +27,9 @@ namespace Reminder.UI
 
         public ObservableCollection<TimerReminderItem> Items { get; }
         public PostponeItem[] PostponeItems { get; }
+        public PostponeItem[] IntervalItems { get; }
+
+        public TimerReminderItem ReminderItemUnderMouse { get; set; }
 
         public ReminderWindow Window
         {
@@ -55,33 +60,72 @@ namespace Reminder.UI
             get { return ReminderModel.Instance.Settings.TopMostNotificationsWindow; }
         }
 
+        public Visibility TipVisibility
+        {
+            get { return _tipVisibility; }
+            private set
+            {
+                if (TipVisibility == value) return;
+                _tipVisibility = value;
+                OnPropertyChanged(nameof(TipVisibility));
+            }
+        }
+
         public ReminderWindowViewModel()
         {
             Items = new ObservableCollection<TimerReminderItem>();
             Items.CollectionChanged += ItemsOnCollectionChanged;
+            if (App.Current.MainWindow != null)
+                MainViewModel.FindInstance().PropertyChanged += MainViewModel_PropertyChanged;
             PostponeItems = new[]
             {
                 CompleteItem.Instance,
-                new PostponeItem("5 мин", 5),
-                new PostponeItem("10 мин", 10),
+                new PostponeItem("15 мин", 15),
                 new PostponeItem("30 мин", 30),
                 new PostponeItem("1 час", 60),
                 new PostponeItem("2 часа", 120),
                 new PostponeItem("4 часа", 240),
+                new OtherItem(new Command(OnAcceptOtherItem))
+            };
+            IntervalItems = new PostponeItem[]
+            {
+                BreakIntervalItem.Instance,
+                ContinueIntervalItem.Instance
             };
             _synthesizer = new SpeechSynthesizer();
             _synthesizer.SetOutputToDefaultAudioDevice();
+            _tipVisibility = GetTipVisibility();
         }
 
         public void OnWindowClosed()
         {
             Window = null;
             Items.CollectionChanged -= ItemsOnCollectionChanged;
+            if (App.Current.MainWindow != null)
+                MainViewModel.FindInstance().PropertyChanged -= MainViewModel_PropertyChanged;
+            Items.ForEach(item => item.OnPostponeAccepted());
         }
 
         public bool IsAllItemsPostponed()
         {
             return Items.Count == Items.Count(item => item.AllowPostpone);
+        }
+
+        private void MainViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Settings.IntroductoryMode))
+                TipVisibility = GetTipVisibility();
+        }
+
+        private Visibility GetTipVisibility()
+        { 
+            return Settings.IntroductoryMode ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void OnAcceptOtherItem()
+        {
+            if (ReminderItemUnderMouse != null)
+                ReminderItemUnderMouse.Postpone = PostponeItems.Last();
         }
 
         private void ItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

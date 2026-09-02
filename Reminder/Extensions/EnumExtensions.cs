@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using Reminder.Converters;
 using Reminder.Models;
-using Reminder.ViewModels;
 
 namespace Reminder.Extensions
 {

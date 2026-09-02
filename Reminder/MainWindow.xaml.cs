@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Reminder.Launch;
+using Reminder.Models;
+using Reminder.UI;
+using Reminder.ViewModels;
+using System;
 using System.ComponentModel;
 using System.Windows;
-using Reminder.Launch;
-using Reminder.Models;
-using Reminder.ViewModels;
 
 namespace Reminder
 {
@@ -97,6 +98,12 @@ namespace Reminder
                 Activate();
                 Focus();
             }));
+        }
+
+        private void ShiftControl_OnIsShiftedChangedCompleted(object sender, EventArgs e)
+        {
+            ShiftControl shiftControl = (ShiftControl)sender;
+            DataContext.OnIsShiftedChangedCompleted(shiftControl.IsShifted);
         }
     }
 }

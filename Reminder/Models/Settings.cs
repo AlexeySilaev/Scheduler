@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
+using Reminder.Extensions;
 using Reminder.Resources;
 
 namespace Reminder.Models
@@ -13,16 +14,24 @@ namespace Reminder.Models
         public bool LaunchWithWindows { get; set; }
         public bool MinimizeToTray { get; set; }
         public bool TopMostNotificationsWindow { get; set; }
-        public bool DeleteCompletedReminders { get; set; }
+        /// <summary>
+        /// При запуске приложения удалять просроченные напоминания и одноразовые события.
+        /// </summary>
+        public bool DeleteExpiredRemindersOnStart { get; set; }
         /// <summary>
         /// Для событий, наступление которых от текущего момента больше суток, предупредить за день
         /// об их наступлении.
         /// </summary>
         public bool ShowComingDayAboutEvents { get; set; }
-
-        // служебные настройки, наружу не видны
+        public bool IntroductoryMode { get; set; }
+        // --- служебные настройки, наружу не видны ---
         public bool IsFirstMinimize { get; set; }
         public string InstalledFolder { get; set; } // если приложение уже установлено, инсталлятор покажет эту папку
+        public double MainWindowLeft { get; set; }
+        public double MainWindowTop { get; set; }
+        public double MainWindowHeight { get; set; }
+        public double MainWindowWidth { get { return 730; } }
+        public double MainWindowMinHeight { get { return 485; } }
 
         public Settings()
         {
@@ -31,7 +40,7 @@ namespace Reminder.Models
             RingtoneMode = RingtoneMode.Default;
             LaunchWithWindows = true;
             MinimizeToTray = true;
-            DeleteCompletedReminders = true;
+            IntroductoryMode = true;
             TopMostNotificationsWindow = true;
             IsFirstMinimize = true;
         }
@@ -49,5 +58,22 @@ namespace Reminder.Models
             return result;
         }
 
+        /// <summary>
+        /// Проверить, что окно полностью умещается на экран. При необходимости отцентровать.
+        /// </summary>
+        public void ValidateMainWindowBounds()
+        {
+            bool setCentered = false;
+            if (MainWindowHeight == 0)
+            {
+                // предполагаем первый запуск, настройки еще не сохранены на диск
+                MainWindowHeight = MainWindowMinHeight;
+                setCentered = true;
+            }
+            Rect windowBounds = new Rect(MainWindowLeft, MainWindowTop, MainWindowWidth, MainWindowHeight);
+            Point location = WindowPositioning.GetValidLocation(windowBounds, setCentered);
+            MainWindowLeft = location.X;
+            MainWindowTop = location.Y;
+        }
     }
 }

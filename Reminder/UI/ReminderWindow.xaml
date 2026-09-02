@@ -6,6 +6,7 @@
         xmlns:ui="clr-namespace:Reminder.UI"
         xmlns:viewModels="clr-namespace:Reminder.ViewModels"
         xmlns:converters="clr-namespace:Reminder.Converters"
+        xmlns:templateSelectors="clr-namespace:Reminder.TemplateSelectors"
         mc:Ignorable="d" 
         WindowStyle="ToolWindow"
         ResizeMode="NoResize"
@@ -16,12 +17,13 @@
         <ui:ReminderWindowViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <converters:DateTimeMethodToValueConverter x:Key="MethodToValueConverter"/>
+        <templateSelectors:PostponeItemTemplateSelector x:Key="PostponeItemTemplateSelector"/>
+        <converters:PostponeDescriptionConverter x:Key="PostponeDescriptionConverter"/>
+        <converters:ReminderItemPostponeItemsSourceConverter x:Key="ReminderItemPostponeItemsSourceConverter" />
     </Window.Resources>
     <Grid PreviewMouseLeftButtonDown="OnBeforeMouseLeftButtonDown">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="95"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -31,18 +33,22 @@
 
         <MediaElement LoadedBehavior="Manual" x:Name="Media"/>
 
-        <TextBlock Grid.Row="0"  Grid.Column="1" Margin="10,10" Foreground="{StaticResource GrayText}"
+        <TextBlock Grid.Row="0"  Grid.Column="1" Margin="10,10" Foreground="{StaticResource Introductory}"
+                   Visibility="{Binding TipVisibility}"
                    Text="Вновь возникающие уведомления будут добавлены в общий список." TextAlignment="Center"  TextWrapping="Wrap"/>
 
-        <ui:GifImage Grid.Row="1" Grid.Column="0" Stretch="None" Margin="12,12,0,0" 
-                          GifSource="/Resources/reminder.gif" AutoStart="True"/>
+        <Image Grid.Row="1" Grid.Column="0" Stretch="None">
+            <Image.Source>
+                <BitmapImage UriSource="/Resources/reminder.gif" />
+            </Image.Source>
+        </Image>
         <ScrollViewer Grid.Column="1"  Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                       VerticalAlignment="Center">
             <ItemsControl ItemsSource="{Binding Items}" Margin="10" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type viewModels:TimerReminderItem}">
                         <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
-                            <Grid Margin="5" >  
+                            <Grid Margin="5" PreviewMouseLeftButtonDown="OnTimerReminderItem_PreviewMouseLeftButtonDown">  
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
@@ -62,21 +68,21 @@
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">
                                     <TextBlock Text ="Повтор" VerticalAlignment="Center"/>
-                                    <Grid Width="70" Margin="5,0">
-                                        <ComboBox IsEditable="False"  
-                                                  Visibility="{Binding AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
-                                                  ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}, 
-                                                           Path=DataContext.PostponeItems}" SelectedItem="{Binding Postpone}"/>
-                                        <TextBlock Text="{Binding PostponeDescription}" VerticalAlignment="Center"
+                                    <Grid Width="75" Margin="5,0">
+                                        <ComboBox IsEditable="False"
+                                            ItemTemplateSelector="{StaticResource PostponeItemTemplateSelector}"
+                                            Visibility="{Binding AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
+                                            ItemsSource="{Binding Source, Converter={StaticResource ReminderItemPostponeItemsSourceConverter}}"
+                                            SelectedItem="{Binding Postpone}"/>
+                                        <TextBlock VerticalAlignment="Center"
+                                            Text="{Binding Postpone, Converter={StaticResource PostponeDescriptionConverter}}"
                                             Visibility="{Binding AllowPostpone, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
-
                                     </Grid>
                                 </StackPanel>
                             </Grid>
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-
             </ItemsControl>
         </ScrollViewer>
     </Grid>

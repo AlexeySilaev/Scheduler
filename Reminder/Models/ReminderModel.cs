@@ -33,6 +33,7 @@ namespace Reminder.Models
         public List<AlarmItem> Alarms { get; }
         public List<EventItem> Events { get; }
         public List<NoteItem> Notes { get; }
+        public List<ProjectItem> Projects { get; }
         public Settings Settings { get; private set; }
         public bool IsLoaded { get; private set; }
 
@@ -41,6 +42,7 @@ namespace Reminder.Models
             Alarms = new List<AlarmItem>();
             Events = new List<EventItem>();
             Notes = new List<NoteItem>();
+            Projects = new List<ProjectItem>();
             Settings = new Settings();
         }
 
@@ -48,14 +50,16 @@ namespace Reminder.Models
         {
             try
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Data));
+                XmlSerializer xmlSerializer = XmlSerializer.FromTypes(new [] { typeof(Data) })[0];
                 using (FileStream fs = new FileStream(FilePath, FileMode.OpenOrCreate))
                 {
                     Data data = xmlSerializer.Deserialize(fs) as Data;
                     Alarms.AddRange(data.Alarms);
                     Events.AddRange(data.Events);
                     Notes.AddRange(data.Notes);
+                    Projects.AddRange(data.Projects);
                     Settings = data.Settings;
+                    Settings.ValidateMainWindowBounds();
                 }
             }
             catch (InvalidOperationException)
@@ -136,6 +140,7 @@ namespace Reminder.Models
                       Alarms = Alarms.ToArray(),
                       Events = Events.ToArray(),
                       Notes = Notes.ToArray(),
+                      Projects = Projects.ToArray(),
                       Settings = Settings
                   };
 

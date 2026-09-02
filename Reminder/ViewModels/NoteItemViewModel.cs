@@ -3,7 +3,7 @@ using Reminder.Models;
 
 namespace Reminder.ViewModels
 {
-    internal class NoteItemViewModel : SchedulerItemViewModel
+    public class NoteItemViewModel : SchedulerItemViewModel
     {
         private DateTime _creationDate;
 

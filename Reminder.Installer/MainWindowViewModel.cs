@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Packaging;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -236,8 +237,19 @@ namespace Reminder.Installer
                         foreach (PackagePart part in zip.GetParts())
                         {
                             string target = Path.GetFullPath(Path.Combine(InstallFolderPath, part.Uri.OriginalString.TrimStart('/')));
-                            if(File.Exists(target)) // отработать случай повторной установки в ту же папку
+                            if (File.Exists(target)) // отработать случай повторной установки в ту же папку
+                            {
+                                var reminders = Process.GetProcessesByName("AvReminder");
+                                if (reminders.Any())
+                                {
+                                    // достаточно первого, он один
+                                    Process avReminder = reminders.First();
+                                    if (avReminder.WaitForExit(3000) == false) // Ждем до 3 секунды
+                                        avReminder.Kill();
+                                }
+
                                 File.Delete(target);
+                            }
 
                             using (Stream source = part.GetStream(FileMode.Open, FileAccess.Read))
                             {

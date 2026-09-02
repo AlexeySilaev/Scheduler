@@ -12,6 +12,7 @@ namespace Reminder.Models
         public AlarmItem[] Alarms { get; set; }
         public EventItem[] Events { get; set; }
         public NoteItem[] Notes { get; set; }
+        public ProjectItem[] Projects { get; set; }
         public Settings Settings { get; set; }
     }
 }

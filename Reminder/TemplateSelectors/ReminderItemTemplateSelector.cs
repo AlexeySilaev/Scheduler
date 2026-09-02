@@ -9,6 +9,7 @@ namespace Reminder.TemplateSelectors
         public DataTemplate AlarmTemplate { get; set; }
         public DataTemplate EventTemplate { get; set; }
         public DataTemplate NoteTemplate { get; set; }
+        public DataTemplate ProjectTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object value, DependencyObject container)
         {
@@ -24,6 +25,8 @@ namespace Reminder.TemplateSelectors
                     return EventTemplate;
                 case ReminderItemType.Note:
                     return NoteTemplate;
+                case ReminderItemType.Project:
+                    return ProjectTemplate;
             }
             return null;
         }

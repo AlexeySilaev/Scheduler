@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Reminder.Extensions
 {
@@ -16,5 +18,25 @@ namespace Reminder.Extensions
             if (source == null) return true;
             return source.Length == 0;
         }
+
+        public static bool In<T>(this T value, params T[] source)
+        {
+            return source.Contains(value);
+        }
+
+        public static bool In<T>(this T value, IEnumerable source)
+        {
+            T[] array = source.Cast<T>().ToArray();
+            return value.In(array);
+        }
+
+        public static T FirstOrDefault<T>(this IEnumerable source)
+        {
+            foreach (var element in source)
+                if (element is T result)
+                    return result;
+            return default(T);
+        }
+
     }
 }

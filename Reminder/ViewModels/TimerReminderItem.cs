@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reminder.Extensions;
+using System;
 using System.Windows;
 
 namespace Reminder.ViewModels
@@ -9,10 +10,23 @@ namespace Reminder.ViewModels
     public class TimerReminderItem : BaseViewModel, IComparable<TimerReminderItem>
     {
         private PostponeItem _postpone;
+        private bool _isExpired;
 
         public ReminderItemViewModel Source { get; }
         public DateTime ReminderDateTime { get; }
-        public bool IsExpired { get; private set; }
+        
+        public bool IsExpired
+        {
+            get { return _isExpired; }
+            private set
+            {
+                if (IsExpired == value) return;
+                _isExpired = value;
+                OnPropertyChanged(nameof(IsExpired));
+                if (IsExpired)
+                    Application.Current.Dispatcher.Invoke(() => Source.OnCurrentReminderIsExpired());
+            }
+        }
 
         public PostponeItem Postpone
         {
@@ -27,27 +41,29 @@ namespace Reminder.ViewModels
 
         public bool AllowPostpone
         {
-            get { return Postpone != CompleteItem.Instance; }
+            get 
+            {
+                return Postpone.In(CompleteItem.Instance, BreakIntervalItem.Instance) == false;
+            }
         }
-        public string PostponeDescription
-        {
-            get { return Postpone.Description; }
-        }
-
 
         public TimerReminderItem(ReminderItemViewModel source)
         {
-            _postpone = CompleteItem.Instance;
+            _postpone = source.GetDefaultPostponeItem();
+            _isExpired = source.State == ReminderState.Expired;
             Source = source;
             ReminderDateTime = source.GetReminderDateTime();
         }
 
-        public bool CheckExpired(DateTime checkTime, bool initializing)
+        public bool CheckExpired(DateTime checkTime)
         {
             IsExpired = ReminderDateTime < checkTime;
-            if (IsExpired)
-                Application.Current.Dispatcher.Invoke(() => Source.OnCurrentReminderIsExpired(initializing));
             return IsExpired;
+        }
+
+        public void OnPostponeAccepted()
+        {
+            Source.OnPostponeAccepted(Postpone);
         }
 
         public override string ToString()
@@ -59,11 +75,10 @@ namespace Reminder.ViewModels
         {
             OnPropertyChanged(nameof(Postpone));
             OnPropertyChanged(nameof(AllowPostpone));
-            OnPropertyChanged(nameof(PostponeDescription));
             if (AllowPostpone)
             {
                 MainViewModel mainViewModel = MainViewModel.FindInstance();
-                mainViewModel.Postpone(Source, Postpone.Minutes);
+                mainViewModel.Postpone(Source, Postpone);
             }
         }
 
