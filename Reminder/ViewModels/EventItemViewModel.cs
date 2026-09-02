@@ -80,6 +80,7 @@ namespace Reminder.ViewModels
                 if (Range == value) return;
                 _range = value;
                 Range?.SetOwner(this);
+                GetReminderDateTime(); // пересчет Range.RemainActiveDays
                 OnPropertyChanged(nameof(Range));
             }
         }
