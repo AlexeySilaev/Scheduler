@@ -62,6 +62,8 @@ namespace Reminder.ViewModels
         }
 
         public abstract DateTime GetReminderDateTime();
+        public abstract PostponeItem GetDefaultPostponeItem();
+        public abstract void OnPostponeAccepted(PostponeItem postpone);
 
         public virtual void OnCurrentReminderIsExpired(bool initializing)
         {

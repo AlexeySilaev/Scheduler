@@ -81,6 +81,13 @@ namespace Reminder.ViewModels
                 .AddSeconds(AlarmTime.Seconds);
         }
 
+        public override PostponeItem GetDefaultPostponeItem()
+        {
+            return CompleteItem.Instance;
+        }
+
+        public override void OnPostponeAccepted(PostponeItem postpone) { }
+
         public void UpdateRemainTime()
         {
             RemainTime = GetReminderDateTime() - DateTime.Now;

@@ -231,9 +231,10 @@ namespace Reminder.ViewModels
             return App.Current.MainWindow.DataContext as MainViewModel;
         }
 
-        public void Postpone(ReminderItemViewModel reminderItemViewModel, int postponeMinutes)
+        public void Postpone(ReminderItemViewModel reminderItemViewModel, PostponeItem postpone)
         {
-            Alarms.AddPostponed(reminderItemViewModel, postponeMinutes);
+            if(postpone != ContinueIntervalItem.Instance) // элемент "Завтра" пересчитается в событиях
+                Alarms.AddPostponed(reminderItemViewModel, postpone.Minutes);
             Alarms.Filter(SearchText);
             _reminderConveyor.OnReminderItemPostponed();
         }

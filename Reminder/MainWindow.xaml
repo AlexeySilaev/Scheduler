@@ -4,27 +4,35 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Reminder.ViewModels"
+        xmlns:converters="clr-namespace:Reminder.Converters"
         xmlns:templateSelectors="clr-namespace:Reminder.TemplateSelectors"
         xmlns:ui="clr-namespace:Reminder.UI"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="Напоминалка" Height="485" 
-        MinWidth="730" MaxWidth="730"
-        MinHeight="485"
+        Title="Мечта склеротика" 
+        Left="{Binding MainWindowLeft, Mode=TwoWay}"
+        Top="{Binding MainWindowTop, Mode=TwoWay}"
+        Height="{Binding MainWindowHeight, Mode=TwoWay}" 
+        MinWidth="{Binding MainWindowWidth, Mode=OneTime}" 
+        MaxWidth="{Binding MainWindowWidth, Mode=OneTime}" 
+        MinHeight="{Binding MainWindowMinHeight, Mode=OneTime}" 
         Icon="/Resources/About.png">
     <Window.DataContext>
-        <vm:MainViewModel></vm:MainViewModel>
+        <vm:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
+        <converters:FoundItemsCountConverter x:Key="FoundItemsCountConverter"/>
         <templateSelectors:ReminderItemTemplateSelector
             AlarmTemplate="{StaticResource AlarmItemTemplate}"
             EventTemplate="{StaticResource EventItemTemplate}"
             NoteTemplate="{StaticResource NoteItemTemplate}"
+            ProjectTemplate="{StaticResource ProjectItemTemplate}"
             x:Key="ReminderItemTemplateSelector"/>
         <templateSelectors:ReminderItemTemplateSelector
             AlarmTemplate="{StaticResource EditAlarmItemTemplate}"
             EventTemplate="{StaticResource EditEventItemTemplate}"
             NoteTemplate="{StaticResource EditNoteItemTemplate}"
+            ProjectTemplate="{StaticResource EditProjectItemTemplate}"
             x:Key="EditorItemTemplateSelector"/>
     </Window.Resources>
     <Grid>
@@ -36,12 +44,12 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Background="OrangeRed">
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" Background="OrangeRed">
             <TextBlock Text="{Binding Error}" Visibility="{Binding Error, Converter={StaticResource StringToVisibilityConverter}}"
                        TextAlignment="Center" TextWrapping="Wrap" Margin="10"/>
             <!-- Системный лоток -->
             <ui:FrameworkNotifyIcon NotifyRequest="{Binding NotifyIconHandler.NotifyRequest}"
-                                    IconVisible="{Binding NotifyIconHandler.IsIconVisible}" Text="Напоминалка">
+                                    IconVisible="{Binding NotifyIconHandler.IsIconVisible}" Text="Мечта склеротика">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="OpenSelected">
                         <b:InvokeCommandAction Command="{Binding NotifyIconHandler.NotifyIconOpenCommand}"/>
@@ -84,7 +92,8 @@
             </Button>
         </Grid>
         <!-- Список элементов / панель редактирования -->
-        <ui:ShiftControl Grid.Row="1" Grid.Column="1" IsShifted="{Binding EditingItem, Converter={StaticResource NotNullToBoolConverter}}">
+        <ui:ShiftControl Grid.Row="1" Grid.Column="1" IsShifted="{Binding IsShifted}"
+                         IsShiftedChangedCompleted="ShiftControl_OnIsShiftedChangedCompleted">
             <ui:ShiftControl.LeftContent>
                 <!-- Список -->
                 <Grid>
@@ -94,19 +103,24 @@
                     </Grid.RowDefinitions>
                     <DockPanel LastChildFill="False" Margin="5"
                        FocusManager.FocusedElement="{Binding ElementName=FilterBox}">
+                        <TextBlock Text="{Binding SelectedGroup.Description}" TextWrapping="Wrap" TextAlignment="Center"
+                            Height="36" Margin="10,5, 10, 10" DockPanel.Dock="Top" Foreground="{StaticResource Introductory}"
+                            Visibility="{Binding IntroductoryMode, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"/>
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                            <TextBlock Text="Поиск по тексту" Margin="5,0" VerticalAlignment="Center"/>
-                            <TextBox Text="{Binding SearchText, Delay=500, UpdateSourceTrigger=PropertyChanged}" MinWidth="300"
-                             VerticalContentAlignment="Center" x:Name="FilterBox"/>
+                            <TextBlock Text="Поиск" Margin="5,0" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding SearchText, Delay=500, UpdateSourceTrigger=PropertyChanged}" MinWidth="310"
+                                 VerticalContentAlignment="Center" x:Name="FilterBox"/>
+                            <TextBlock Text="{Binding SelectedGroup.Items, Converter={StaticResource FoundItemsCountConverter}}"
+                                 Margin="5,0" VerticalAlignment="Center" />
                         </StackPanel>
-                        <Button Command="{Binding AddItemCommand}" DockPanel.Dock="Right" Height="24"> 
-                            <StackPanel Orientation="Horizontal" >
+                        <Button Command="{Binding AddItemCommand}" DockPanel.Dock="Right" Height="{StaticResource OneLineElementsHeight}"> 
+                            <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Добавить" Margin="5,0" VerticalAlignment="Center"/>
-                                <Image Source="/Resources/add20x20.png"/>
+                                <Path Stroke="Black" StrokeThickness="2" Data="M 7,2 L 7,14 M 1,8 L 13,8" Margin="0,0,5,0"/>
                             </StackPanel>
                         </Button>
                     </DockPanel>
-                    <ListBox Grid.Row="1" Margin="5" 
+                    <ListBox Grid.Row="1" Margin="5"
                              ItemsSource="{Binding SelectedGroup.Items}"
                              SelectedValue="{Binding SelectedItem}"
                              ItemTemplateSelector="{StaticResource ReminderItemTemplateSelector}"
@@ -114,6 +128,7 @@
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Focusable" Value="False" />
                             </Style>
                         </ListBox.ItemContainerStyle>
                     </ListBox>
@@ -129,10 +144,10 @@
                         <RowDefinition/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <DockPanel LastChildFill="False" Margin="5">
-                        <Button Content=" &lt; Отмена " DockPanel.Dock="Left" Height="24"
+                    <DockPanel LastChildFill="False" Margin="15,5">
+                        <Button Content=" &lt; Отмена " DockPanel.Dock="Left" Height="{StaticResource OneLineElementsHeight}"
                                 Command="{Binding CancelEditItemCommand}" IsCancel="True"/>
-                        <Button Command="{Binding SaveItemCommand}" DockPanel.Dock="Right" Height="24">
+                        <Button Command="{Binding SaveItemCommand}" DockPanel.Dock="Right" Height="{StaticResource OneLineElementsHeight}">
                             <StackPanel Orientation="Horizontal" >
                                 <TextBlock Text="Сохранить" Margin="5,0" VerticalAlignment="Center"/>
                                 <Image Source="/Resources/save.png" Width="16" Height="16"/>
