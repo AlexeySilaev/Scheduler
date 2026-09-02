@@ -100,14 +100,14 @@ namespace Reminder.UI
             }
         }
 
-        public bool DeleteCompletedReminders
+        public bool DeleteExpiredRemindersOnStart
         {
-            get { return _settings.DeleteCompletedReminders; }
+            get { return _settings.DeleteExpiredRemindersOnStart; }
             set
             {
-                if (DeleteCompletedReminders == value) return;
-                _settings.DeleteCompletedReminders = value;
-                OnPropertyChanged(nameof(DeleteCompletedReminders));
+                if (DeleteExpiredRemindersOnStart == value) return;
+                _settings.DeleteExpiredRemindersOnStart = value;
+                OnPropertyChanged(nameof(DeleteExpiredRemindersOnStart));
             }
         }
 
@@ -133,6 +133,18 @@ namespace Reminder.UI
                 OnPropertyChanged(nameof(ShowComingDayAboutEvents));
             }
         }
+
+        public bool IntroductoryMode
+        {
+            get { return _settings.IntroductoryMode; }
+            set
+            {
+                if (IntroductoryMode == value) return;
+                _settings.IntroductoryMode = value;
+                OnPropertyChanged(nameof(IntroductoryMode));
+            }
+        }
+
 
         public MediaElement Media { get; set; }
 

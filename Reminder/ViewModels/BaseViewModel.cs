@@ -16,7 +16,7 @@ namespace Reminder.ViewModels
                 _propertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged
         {
             add { _propertyChanged += value; }
             remove { _propertyChanged -= value; }

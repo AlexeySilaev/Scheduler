@@ -18,7 +18,8 @@ namespace Reminder.UI
 
         public static readonly DependencyProperty TimeProperty =
             DependencyProperty.Register("Time", typeof(TimeSpan), typeof(TimeTextBox),
-                new FrameworkPropertyMetadata(TimeSpan.Zero, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnTimeChangedCallBack));
+                new FrameworkPropertyMetadata(TimeSpan.Zero, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnTimeChangedCallBack, OnTimeValidateCallBack));
 
         public TimeSpan Time
         {
@@ -107,7 +108,7 @@ namespace Reminder.UI
                 // редактируем минуты
                 StringBuilder minutes = new StringBuilder(Text.Substring(MiNUTES_BEGIN));
                 minutes[SelectionStart - MiNUTES_BEGIN] = digit;
-                if (int.Parse(minutes.ToString()) < 59)
+                if (int.Parse(minutes.ToString()) < 60)
                     e.Handled = false; // ввод корректен, разрешаем замену символа
             }
         }
@@ -116,12 +117,35 @@ namespace Reminder.UI
         {
             TimeTextBox timeBox = sender as TimeTextBox;
             if (timeBox != null)
-                timeBox.Text = $"{timeBox.Time.Hours:D2}:{timeBox.Time.Minutes:D2}";
+                timeBox.Text = FormatTime(timeBox.Time);
+        }
+
+        private static string FormatTime(TimeSpan time)
+        {
+            return $"{time.Hours:D2}:{time.Minutes:D2}";
+        }
+
+        private static object OnTimeValidateCallBack(DependencyObject d, object baseValue)
+        {
+            TimeSpan span = (TimeSpan)baseValue;
+            if (span == TimeSpan.Zero)
+                return TimeSpan.FromMinutes(1);
+            return baseValue;
         }
 
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
-            Time = TimeSpan.Parse(Text);
+            try
+            {
+                if (Text == "00:00")
+                    Text = "00:01";
+                Time = TimeSpan.Parse(Text);
+            }
+            catch (Exception)
+            { 
+                // перетащили цифры драг-дропом
+                Text = FormatTime(Time);
+            }
         }
     }
 }

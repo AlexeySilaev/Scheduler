@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace Reminder.Models
 {
@@ -6,6 +8,16 @@ namespace Reminder.Models
     {
         public DateTime EventDate { get; set; }
         public Periodicity Periodicity { get; set; }
+        /// <summary>
+        /// Дни недели для еженедельных событий.
+        /// </summary>
+        [DefaultValue(0)]
+        public int WeekDays { get; set; }
+        /// <summary>
+        /// Интервал напоминания для событий от ежемесячного и реже.
+        /// </summary>
+        [XmlElement, DefaultValue(null)]
+        public DaysRange Range { get; set; }
         public ReminderRingtone Ringtone { get; set; }
 
         public EventItem()
@@ -14,61 +26,24 @@ namespace Reminder.Models
             Periodicity = Periodicity.Once;
             Ringtone = ReminderRingtone.AsIs;
         }
+    }
 
-        public DateTime GetNearestEventDate()
-        {
-            DateTime nearestDate = DateTime.Today > EventDate.Date ? DateTime.Today : EventDate.Date;
-            switch (Periodicity)
-            {
-                case Periodicity.Daily:
-                    DateTime currentDaily = nearestDate.AddHours(EventDate.Hour).AddMinutes(EventDate.Minute)
-                        .AddSeconds(EventDate.Second);
-                    if (currentDaily > DateTime.Now)
-                        return currentDaily;
-                    return currentDaily.AddDays(1);
-                case Periodicity.Weekly:
-                    DateTime currentWeekly = nearestDate.AddHours(EventDate.Hour).AddMinutes(EventDate.Minute)
-                        .AddSeconds(EventDate.Second);
-                    // выравниванием текущую дату по границе дня недели 
-                    int dayShift = currentWeekly.DayOfWeek - EventDate.DayOfWeek;
-                    DateTime shiftWeekly = currentWeekly.AddDays(-dayShift);
-                    if (shiftWeekly < DateTime.Now)
-                        shiftWeekly = shiftWeekly.AddDays(7);
-                    return shiftWeekly;
-                case Periodicity.Monthly:
-                    return GetNearestPeriodicalMonthDate(nearestDate, 1);
-                case Periodicity.Quarterly:
-                    return GetNearestPeriodicalMonthDate(nearestDate, 3);
-                case Periodicity.EverySixMonths:
-                    return GetNearestPeriodicalMonthDate(nearestDate, 6);
-                case Periodicity.Annually:
-                    return GetNearestPeriodicalMonthDate(nearestDate, 12);
-            }
+    public enum DaysRangeState
+    {
+        Dormant,
+        Active,
+        Broken
+    }
 
-            return EventDate;
-        }
-
-        private DateTime GetNearestPeriodicalMonthDate(DateTime nearestDate, int months)
-        {
-            if (EventDate > DateTime.Now)
-                return EventDate;
-            // сколько месяцев между месяцем даты события и месяцем текущей даты?
-            int monthInterval = DateTime.Today.Month - EventDate.Month;
-            if (monthInterval < 0)
-                monthInterval = 12 + monthInterval;
-            // попадаем ли мы в monthInterval с шагом months без остатка?
-            int additionalMonths = 0;
-            if (monthInterval > months)
-                additionalMonths = monthInterval % months;
-            else
-                additionalMonths = months - monthInterval;
-
-            DateTime template = DateTime.Today.AddMonths(additionalMonths).AddHours(EventDate.Hour).AddMinutes(EventDate.Minute).AddMilliseconds(EventDate.Second);
-            DateTime result = new DateTime(template.Year, template.Month, Math.Min(EventDate.Day, DateTime.DaysInMonth(template.Year, template.Month)),
-                template.Hour, template.Minute, template.Second);
-            if (result < DateTime.Now)
-                result = result.AddMonths(months);
-            return result;
-        }
+    public class DaysRange
+    { 
+        /// <summary>
+        /// Количество отслеживаемых дней.
+        /// </summary>
+        public int Days { get; set; }
+        /// <summary>
+        /// Пользователь прервал чреду ежедневных напоминаний.
+        /// </summary>
+        public DaysRangeState State { get; set; } = DaysRangeState.Dormant;
     }
 }

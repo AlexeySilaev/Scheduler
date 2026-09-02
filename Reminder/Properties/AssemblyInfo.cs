@@ -6,7 +6,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AV Reminder")]
-[assembly: AssemblyDescription("Напоминалка")]
+[assembly: AssemblyDescription("Мечта склеротика")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("AV Reminder")]
 [assembly: AssemblyCopyright("Алексей Силаев, flownder@mail.ru, Copyright ©  2024")]

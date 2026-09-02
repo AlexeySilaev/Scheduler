@@ -1,17 +1,13 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Reminder.Models;
 
 namespace Reminder.ViewModels
 {
-    public class EventGroup : ReminderGroup
+    public class EventGroup : ReminderGroup<EventItemViewModel>
     {
-        private List<EventItemViewModel> _allItems;
-        private ObservableCollection<EventItemViewModel> _items;
-
         public override string Name
         {
             get { return "События"; }
@@ -22,38 +18,21 @@ namespace Reminder.ViewModels
             get { return "/Resources/event32x32.png"; }
         }
 
-        public override IEnumerable Items
+        public override string Description
         {
-            get { return _items; }
-        }
-
-        public override void Initialize()
-        {
-            _allItems = ReminderModel.Instance.Events.Select(e => new EventItemViewModel(e))
-                .OrderBy(item => item.NearestEventDate)
-                .ToList();
-            _items = new ObservableCollection<EventItemViewModel>(_allItems);
+            get { return "Событие - основной вид уведомления, срабатывающий одноразово на определенную дату или по периоду. Сортируются по дате срабатывания."; }
         }
 
         public override void Save()
         {
             ReminderModel.Instance.Events.Clear();
-            _allItems.ForEach(item => item.Save());
-        }
-
-        public override void Filter(string searchText)
-        {
-            var filtered = _allItems.Where(item => item.Text.ToLower().Contains(searchText.ToLower()));
-            _items = new ObservableCollection<EventItemViewModel>(filtered);
-            OnPropertyChanged(nameof(Items));
+            base.Save();
         }
 
         public override void Remove(SchedulerItemViewModel item)
         {
             Debug.Assert(item.Type == ReminderItemType.Event);
-            EventItemViewModel eventItem = (EventItemViewModel)item;
-            _allItems.Remove(eventItem);
-            _items.Remove(eventItem);
+            base.Remove(item);
         }
 
         public override SchedulerItemViewModel CreateNewItem()
@@ -64,17 +43,7 @@ namespace Reminder.ViewModels
         public override void CheckAddNew(SchedulerItemViewModel item)
         {
             Debug.Assert(item.Type == ReminderItemType.Event);
-            if (_allItems.Contains(item) == false)
-                _allItems.Add((EventItemViewModel)item);
-            _allItems.Sort(this);
-        }
-
-        public override List<TimerReminderItem> GetTimerReminderItems()
-        {
-            return _allItems
-                .Where(a => a.State == ReminderState.Active)
-                .Select(a => new TimerReminderItem(a))
-                .ToList();
+            base.CheckAddNew(item);
         }
 
         public void OnEventActivated(string searchText)
@@ -84,12 +53,21 @@ namespace Reminder.ViewModels
             Filter(searchText);
         }
 
-        // сортировка по возрастанию времени срабатывания
-        protected override int Compare(SchedulerItemViewModel x, SchedulerItemViewModel y)
+        protected override IEnumerable<EventItemViewModel> FilterExpiredItems()
         {
-            EventItemViewModel x1 = (EventItemViewModel)x;
-            EventItemViewModel y1 = (EventItemViewModel)y;
-            return x1.NearestEventDate.CompareTo(y1.NearestEventDate);
+            return FilterExpiredItems(ReminderModel.Instance.Events, item => new EventItemViewModel(item));
+        }
+
+        protected override IOrderedEnumerable<EventItemViewModel> OrderItems(IEnumerable<EventItemViewModel> events)
+        {
+            return events.OrderBy(item => item.NearestEventDate);
+        }
+
+
+        // сортировка по возрастанию времени срабатывания
+        protected override int Compare(EventItemViewModel x, EventItemViewModel y)
+        {
+            return x.NearestEventDate.CompareTo(y.NearestEventDate);
         }
 
     }

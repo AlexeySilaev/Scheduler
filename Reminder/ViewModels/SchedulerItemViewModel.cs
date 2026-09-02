@@ -8,7 +8,8 @@ namespace Reminder.ViewModels
     {
         [Description("Событие")] Event,
         [Description("Напоминание")] Alarm,
-        [Description("Заметка")] Note
+        [Description("Заметка")] Note,
+        [Description("Проект")] Project
     }
 
     public abstract class SchedulerItemViewModel : BaseViewModel
@@ -24,6 +25,17 @@ namespace Reminder.ViewModels
                 if (Text == value) return;
                 _text = value;
                 OnPropertyChanged(nameof(Text));
+            }
+        }
+
+        public string EditToolTip
+        {
+            get 
+            {
+                string result = "Редактировать";
+                if (ReminderModel.Instance.Settings.IntroductoryMode)
+                    result += " (двойной щелчок)";
+                return result;
             }
         }
 
@@ -54,7 +66,7 @@ namespace Reminder.ViewModels
             mainViewModel.OnDeleteItem(this);
         }
 
-        public virtual string Validate()
+        public virtual string Validate(bool isNew)
         {
             if (string.IsNullOrWhiteSpace(Text))
                 return "Необходимо заполнить описание.";

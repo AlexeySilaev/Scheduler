@@ -7,8 +7,8 @@ namespace Reminder.ViewModels
     public enum ReminderState
     {
         [Description("Активно")] Active,
-        [Description("Устарело")] Obsolete,
-        [Description("Выполнено")] Completed
+        [Description("Просрочено")] Expired,
+    //  [Description("Выполнено")] Completed
     }
 
     public abstract class ReminderItemViewModel : SchedulerItemViewModel
@@ -65,10 +65,10 @@ namespace Reminder.ViewModels
         public abstract PostponeItem GetDefaultPostponeItem();
         public abstract void OnPostponeAccepted(PostponeItem postpone);
 
-        public virtual void OnCurrentReminderIsExpired(bool initializing)
+        public virtual void OnCurrentReminderIsExpired()
         {
-            if(IsOneTimeReminder)
-                State = initializing ? ReminderState.Obsolete : ReminderState.Completed;
+            if (IsOneTimeReminder)
+                State = ReminderState.Expired;
         }
 
         protected override bool CanExecuteEdit()
@@ -76,9 +76,9 @@ namespace Reminder.ViewModels
             return State == ReminderState.Active;
         }
 
-        public override string Validate()
+        public override string Validate(bool isNew)
         {
-            string result = base.Validate();
+            string result = base.Validate(isNew);
             if (string.IsNullOrEmpty(result))
             {
                 if (CanExecuteEdit() == false)
@@ -86,6 +86,5 @@ namespace Reminder.ViewModels
             }
             return result;
         }
-
     }
 }

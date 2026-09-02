@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Reminder.Models;
 using Reminder.UI;
 using Reminder.Extensions;
-using System.Windows;
-using System.Collections.ObjectModel;
 
 namespace Reminder.ViewModels
 {
@@ -19,12 +18,13 @@ namespace Reminder.ViewModels
             POPUP_HEIGHT = 215;
         private readonly ReminderConveyor _reminderConveyor;
 
-        private SchedulerGroup _selectedGroup;
+        private ISchedulerGroup _selectedGroup;
         private SchedulerItemViewModel _selectedItem;
         private string _searchText;
         private string _error;
         private string _validationWarning;
         private bool _isShowComingDayAboutEvents;
+        private bool _isShifted;
         private Rect _popupRect;
         private ConfirmDeleteViewModel _confirmDelete;
         private ComingDayEventsViewModel _comingDayEvents;
@@ -41,9 +41,9 @@ namespace Reminder.ViewModels
             get { return (AlarmGroup)Groups[1]; }
         }
 
-        public SchedulerGroup[] Groups { get; }
+        public ISchedulerGroup [] Groups { get; }
 
-        public SchedulerGroup SelectedGroup
+        public ISchedulerGroup SelectedGroup
         {
             get { return _selectedGroup; }
             set
@@ -125,6 +125,17 @@ namespace Reminder.ViewModels
             }
         }
 
+        public bool IsShifted
+        {
+            get { return _isShifted; }
+            set
+            {
+                if (IsShifted == value) return;
+                _isShifted = value;
+                OnPropertyChanged(nameof(IsShifted));
+            }
+        }
+
         public SchedulerItemViewModel EditingItem
         {
             get { return _editingItem; }
@@ -135,19 +146,86 @@ namespace Reminder.ViewModels
                 OnPropertyChanged(nameof(EditingItem));
                 if (EditingItem == null)
                     ValidationWarning = null;
+                IsShifted = EditingItem != null;
             }
         }
 
         public SettingsViewModel Settings
         {
             get { return _settings; }
-            set
+            private set
             {
                 if (Settings == value) return;
+                if(Settings != null)
+                    Settings.PropertyChanged -= Settings_OnPropertyChanged;
                 _settings = value;
+                if (Settings != null)
+                    Settings.PropertyChanged += Settings_OnPropertyChanged;
                 OnPropertyChanged(nameof(Settings));
             }
         }
+
+        public double MainWindowLeft
+        {
+            get { return AppSettings.MainWindowLeft; }
+            set
+            {
+                if (MainWindowLeft == value) return;
+                AppSettings.MainWindowLeft = value;
+                OnPropertyChanged(nameof(MainWindowLeft));
+            }
+        }
+        public double MainWindowTop
+        {
+            get { return AppSettings.MainWindowTop; }
+            set
+            {
+                if (MainWindowTop == value) return;
+                AppSettings.MainWindowTop = value;
+                OnPropertyChanged(nameof(MainWindowTop));
+            }
+        }
+
+        public double MainWindowHeight
+        {
+            get { return AppSettings.MainWindowHeight; }
+            set
+            {
+                if (MainWindowHeight == value) return;
+                AppSettings.MainWindowHeight = value;
+                OnPropertyChanged(nameof(MainWindowHeight));
+            }
+        }
+
+        public double MainWindowWidth
+        {
+            get { return AppSettings.MainWindowWidth; }
+        }
+
+        public double MainWindowMinHeight
+        {
+            get { return AppSettings.MainWindowMinHeight; }
+        }
+
+        Settings AppSettings { get { return ReminderModel.Instance.Settings; } }
+
+
+        private void Settings_OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Settings.IntroductoryMode))
+            {
+                // прокидываем изменившуюся настройку, мы находимся в настройках
+                // пользователь щелкат галку ознакомительного режима
+                // вынос в отдельное свойство обусловлен тем что свойство Settings всегда null,
+                // если не отображаются настройки, и биндинг Settings.IntroductoryMode не отработает
+                OnPropertyChanged(nameof(IntroductoryMode));
+            }
+        }
+
+        /// <summary>
+        /// Признак ознакомительного режима.
+        /// </summary>
+        public bool IntroductoryMode { get { return AppSettings.IntroductoryMode; } }
 
         /// <summary>
         /// Показывать всплывающее окно о грядущих за сутки событиях.
@@ -188,7 +266,7 @@ namespace Reminder.ViewModels
         public MainViewModel()
         {
             _searchText = string.Empty;
-            Groups = new[] { new EventGroup(), new AlarmGroup(), (SchedulerGroup)new NoteGroup() };
+            Groups = new[] { new EventGroup(), new AlarmGroup(), (ISchedulerGroup)new NoteGroup(), (ISchedulerGroup)new ProjectGroup() };
             _reminderConveyor = new ReminderConveyor(Alarms, Events, OnConveyorRefresh);
             _popupRect = Rect.Empty;
             SelectedGroup = Groups[0];
@@ -248,12 +326,12 @@ namespace Reminder.ViewModels
         {
             try
             {
-                if(ReminderModel.Instance.Settings.DeleteReminderItemsMode == DeleteReminderItemsMode.Immediately)
+                if(AppSettings.DeleteReminderItemsMode == DeleteReminderItemsMode.Immediately)
                     DeleteItem(schedulerItemViewModel);
                 else
                 {
                     Debug.Assert(
-                        ReminderModel.Instance.Settings.DeleteReminderItemsMode == DeleteReminderItemsMode.Confirm);
+                        AppSettings.DeleteReminderItemsMode == DeleteReminderItemsMode.Confirm);
                     ConfirmDelete = new ConfirmDeleteViewModel(schedulerItemViewModel,
                         confirmed =>
                         {
@@ -273,6 +351,9 @@ namespace Reminder.ViewModels
         {
             int index = Convert.ToInt32(schedulerItemViewModel.Type);
             Groups[index].Remove(schedulerItemViewModel);
+            if (Groups[index] == SelectedGroup)
+                OnPropertyChanged(nameof(SelectedGroup)); // обновим количество найденных элементов
+            SaveToModel();
             _reminderConveyor.Reconstruct();
         }
 
@@ -282,13 +363,13 @@ namespace Reminder.ViewModels
         }
 
         private void OnEndEditItem()
-        {
-            ValidationWarning = EditingItem.Validate();
+        { 
+            ValidationWarning = EditingItem.Validate(EditingItem.In(SelectedGroup.Items) == false);
             if (string.IsNullOrEmpty(ValidationWarning))
             {
                 EditingItem.EndEdit();
                 SelectedGroup.CheckAddNew(EditingItem);
-                EditingItem = null;
+                IsShifted = false;
                 SaveToModel();
                 FilterSchedulerGroupItems();
                 _reminderConveyor.Reconstruct();
@@ -300,8 +381,19 @@ namespace Reminder.ViewModels
             if (EditingItem == null) return;
 
             EditingItem.CancelEdit();
-            EditingItem = null;
+            IsShifted = false;
             ValidationWarning = null;
+        }
+
+        public void OnIsShiftedChangedCompleted(bool isShifted)
+        {
+            if (isShifted == false)
+            {
+                // закончился скроллинг панели редактирования в исходное состояние
+                // теперь можно обнулить редактируемый элемент
+                // если это сделать на начале скроллинга (сразу на окончании редактирования), панель поедет задвигаться пустой
+                EditingItem = null;
+            }
         }
 
         private void OnSettingsCommand()
@@ -309,13 +401,13 @@ namespace Reminder.ViewModels
             ConfirmDelete = null;
             SelectedGroup = null;
             OnCancelEditItem();
-            Settings = new SettingsViewModel(ReminderModel.Instance.Settings);
+            Settings = new SettingsViewModel(AppSettings);
         }
 
         private void OnConveyorRefresh(EventItemViewModel[] newDayAboutEvents)
         {
             Alarms.UpdateRemainTime();
-            if (ReminderModel.Instance.Settings.ShowComingDayAboutEvents == false
+            if (AppSettings.ShowComingDayAboutEvents == false
                 || newDayAboutEvents.IsEmpty())
                 return;
 
@@ -336,9 +428,11 @@ namespace Reminder.ViewModels
             }
         }
 
-        public void OnEventActivated()
+        public void OnReminderActivated(bool withEvent)
         {
-            Events.OnEventActivated(SearchText);
+            if (withEvent)
+                Events.OnEventActivated(SearchText);
+            OnPropertyChanged(nameof(SelectedGroup)); // обновим количество найденных элементов
         }
 
         private void FilterSchedulerGroupItems()
@@ -346,6 +440,5 @@ namespace Reminder.ViewModels
             if (SelectedGroup != null)
                 SelectedGroup.Filter(SearchText);
         }
-
     }
 }

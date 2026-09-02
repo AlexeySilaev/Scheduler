@@ -1,17 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Reminder.Models;
 
 namespace Reminder.ViewModels
 {
-    public class NoteGroup : SchedulerGroup
+    public class NoteGroup : SchedulerGroup<NoteItemViewModel>
     {
-        private List<NoteItemViewModel> _allItems;
-        private ObservableCollection<NoteItemViewModel> _items;
-
         public override string Name
         {
             get { return "Заметки"; }
@@ -22,9 +17,9 @@ namespace Reminder.ViewModels
             get { return "/Resources/notepad32x32.png"; }
         }
 
-        public override IEnumerable Items
+        public override string Description
         {
-            get { return _items; }
+            get { return "Заметка - любой текст длиной до 1000 символов, который удобно оперативно сохранить: гиперссылка, телефон, адрес, рецепт и т.п. Сортируются по дате изменения."; }
         }
 
         public override void Initialize()
@@ -38,22 +33,13 @@ namespace Reminder.ViewModels
         public override void Save()
         {
             ReminderModel.Instance.Notes.Clear();
-            _allItems.ForEach(item => item.Save());
-        }
-
-        public override void Filter(string searchText)
-        {
-            var filtered = _allItems.Where(item => item.Text.ToLower().Contains(searchText.ToLower()));
-            _items = new ObservableCollection<NoteItemViewModel>(filtered);
-            OnPropertyChanged(nameof(Items));
+            base.Save();
         }
 
         public override void Remove(SchedulerItemViewModel item)
         {
             Debug.Assert(item.Type == ReminderItemType.Note);
-            NoteItemViewModel noteItem = (NoteItemViewModel)item;
-            _allItems.Remove(noteItem);
-            _items.Remove(noteItem);
+            base.Remove(item);
         }
 
         public override SchedulerItemViewModel CreateNewItem()
@@ -64,17 +50,13 @@ namespace Reminder.ViewModels
         public override void CheckAddNew(SchedulerItemViewModel item)
         {
             Debug.Assert(item.Type == ReminderItemType.Note);
-            if (_allItems.Contains(item) == false)
-                _allItems.Add((NoteItemViewModel)item);
-            _allItems.Sort(this);
+            base.CheckAddNew(item);
         }
 
         // сортировка по убыванию даты создания
-        protected override int Compare(SchedulerItemViewModel x, SchedulerItemViewModel y)
+        protected override int Compare(NoteItemViewModel x, NoteItemViewModel y)
         {
-            NoteItemViewModel x1 = (NoteItemViewModel)x;
-            NoteItemViewModel y1 = (NoteItemViewModel)y;
-            return y1.CreationDate.CompareTo(x1.CreationDate);
+            return y.CreationDate.CompareTo(x.CreationDate);
         }
     }
 }

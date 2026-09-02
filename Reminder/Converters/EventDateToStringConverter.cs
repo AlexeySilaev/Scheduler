@@ -1,9 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Data;
+﻿using Reminder.Extensions;
 using Reminder.ViewModels;
-using Reminder.Extensions;
+using System;
+using System.Globalization;
 using System.Threading;
+using System.Windows;
+using System.Windows.Data;
 
 namespace Reminder.Converters
 {
@@ -14,17 +15,17 @@ namespace Reminder.Converters
         {
             ReminderState state = (ReminderState)values[0];
             if (state != ReminderState.Active)
-                return state.GetDescription().ToLower();
+                return state.GetDescription();
 
             DateTime eventDate = (DateTime)values[1];
             culture = Thread.CurrentThread.CurrentCulture;
-            return eventDate.ToString("dd.MM.yyyy HH:mm", culture);
+            return "Сработает: " + eventDate.ToString("dd.MM.yyyy HH:mm", culture);
         }
 
         public object[] ConvertBack(
             object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            return new object[] { DependencyProperty.UnsetValue, DependencyProperty.UnsetValue };
         }
     }
 }

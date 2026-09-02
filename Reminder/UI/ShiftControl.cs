@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -38,6 +39,13 @@ namespace Reminder.UI
         {
             get { return (bool)GetValue(IsShiftedProperty); }
             set { SetValue(IsShiftedProperty, value); }
+        }
+
+        private EventHandler _isShiftedChangedCompleted;
+        public event EventHandler IsShiftedChangedCompleted
+        {
+            add { _isShiftedChangedCompleted += value; }
+            remove { _isShiftedChangedCompleted -= value; }
         }
 
         public ShiftControl()
@@ -80,7 +88,17 @@ namespace Reminder.UI
 
             animation.Duration = duration;
             animation.AccelerationRatio = 1.0;
+            animation.Completed += AnimationOnCompleted;
             shiftPanel.BeginAnimation(MarginProperty, animation);
+        }
+
+        private void AnimationOnCompleted(object sender, EventArgs e)
+        {
+            AnimationClock animation = (AnimationClock)sender;
+            animation.Completed -= AnimationOnCompleted;
+
+            if (_isShiftedChangedCompleted != null)
+                _isShiftedChangedCompleted(this, EventArgs.Empty);
         }
     }
 }

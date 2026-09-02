@@ -3,7 +3,7 @@ using Reminder.Models;
 
 namespace Reminder.ViewModels
 {
-    internal class AlarmItemViewModel : ReminderItemViewModel
+    public class AlarmItemViewModel : ReminderItemViewModel
     {
         private TimeSpan _alarmTime;
         private TimeSpan _remainTime;
@@ -113,8 +113,7 @@ namespace Reminder.ViewModels
 
         public override void Save()
         {
-            if (State == ReminderState.Active)
-                ReminderModel.Instance.Alarms.Add(AlarmItem);
+            ReminderModel.Instance.Alarms.Add(AlarmItem);
         }
     }
 }
