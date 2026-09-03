@@ -6,6 +6,7 @@ using System.Windows;
 using Reminder.Models;
 using Reminder.UI;
 using Reminder.Extensions;
+using System.Threading.Tasks;
 
 namespace Reminder.ViewModels
 {
@@ -71,12 +72,14 @@ namespace Reminder.ViewModels
             }
         }
 
-        public void OnReminderItemPostponed()
+        public async void OnReminderItemPostponed()
         {
             Reconstruct();
             // если все одноразовые элементы отложены, просматривать больше нечего
             if (_reminderWindowViewModel.IsAllItemsPostponed())
             {
+                // пусть пользователь успеет увидеть ввод
+                await Task.Delay(TimeSpan.FromSeconds(1));
                 _reminderWindowViewModel.Window.Close();
                 _reminderWindowViewModel = null;
             }

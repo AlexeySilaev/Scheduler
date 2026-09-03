@@ -9,7 +9,7 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen"
-        Title="О программе" Height="185" Width="335"
+        Title="О программе" Height="200" Width="335"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -27,18 +27,20 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Source="/Resources/About.png"
-                   Width="110" Height="115" Margin="5,5,15,15" VerticalAlignment="Center"/>
+            <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="6" Source="/Resources/About.png" Stretch="Uniform"
+                   Width="128" Height="128" Margin="5" VerticalAlignment="Center"/>
             <TextBlock Grid.Column="1" Grid.Row="0" Text="AV Reminder" FontSize="18" TextAlignment="Center"/>
-            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Version, Mode=OneTime}"/>
-            <TextBlock Grid.Column="1" Grid.Row="2" Text="Автор: Силаев Алексей"/>
-            <TextBlock Grid.Column="1" Grid.Row="3">
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="Мечта склеротика" FontSize="16" TextAlignment="Center"/>
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Version, Mode=OneTime}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Grid.Row="3" Text="Автор: Алексей Силаев" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Grid.Row="4" VerticalAlignment="Center">
                 Поддержка:
                 <Hyperlink NavigateUri="mailto:flownder@mail.ru" RequestNavigate="Hyperlink_OnRequestNavigate">flownder@mail.ru</Hyperlink>
             </TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="4" Text="2024 г."/>
+            <TextBlock Grid.Column="1" Grid.Row="5" Text="2024 г." VerticalAlignment="Center"/>
         </Grid>
     </Grid>
 </Window>

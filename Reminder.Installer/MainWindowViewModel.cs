@@ -288,10 +288,8 @@ namespace Reminder.Installer
                 const string icoName = "App.ico";
                 string icoPath = Path.Combine(InstallFolderPath, icoName);
                 string result = Path.Combine(appDataFolder, icoName);
-                if (File.Exists(result) == false)
-                    File.Move(icoPath, result);
-                else
-                    File.Delete(icoPath);
+                File.Copy(icoPath, result, true);
+                File.Delete(icoPath);
                 return result;
             });
         }
@@ -306,6 +304,7 @@ namespace Reminder.Installer
                     {
                         av.SetValue("DisplayName", APP_NAME, RegistryValueKind.String);
                         av.SetValue("DisplayIcon", InQuotation(icoPath), RegistryValueKind.String);
+                        av.SetValue("Publisher", "Alexey Silaev");
                         av.SetValue("UninstallString", InQuotation(Path.Combine(InstallFolderPath, "uninst000.exe")), RegistryValueKind.String);
                     }
                 }

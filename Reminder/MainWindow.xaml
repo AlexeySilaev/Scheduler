@@ -16,7 +16,7 @@
         MinWidth="{Binding MainWindowWidth, Mode=OneTime}" 
         MaxWidth="{Binding MainWindowWidth, Mode=OneTime}" 
         MinHeight="{Binding MainWindowMinHeight, Mode=OneTime}" 
-        Icon="/Resources/About.png">
+        Icon="/App.ico">
     <Window.DataContext>
         <vm:MainViewModel/>
     </Window.DataContext>
