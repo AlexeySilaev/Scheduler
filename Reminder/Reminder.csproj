@@ -68,6 +68,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\ImageBehavior.cs" />
     <Compile Include="Converters\AlarmTimeToStringConverter.cs" />
     <Compile Include="Converters\CharactersEnteredConverter.cs" />
     <Compile Include="Converters\DaysRangeActivityConverter.cs" />

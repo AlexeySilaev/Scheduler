@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="clr-namespace:Reminder.UI"
-        xmlns:viewModels="clr-namespace:Reminder.ViewModels"
+        xmlns:behaviors="clr-namespace:Reminder.Behaviors"
         xmlns:converters="clr-namespace:Reminder.Converters"
+        xmlns:viewModels="clr-namespace:Reminder.ViewModels"
         xmlns:templateSelectors="clr-namespace:Reminder.TemplateSelectors"
         mc:Ignorable="d" 
         WindowStyle="ToolWindow"
@@ -31,17 +32,15 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
+
         <MediaElement LoadedBehavior="Manual" x:Name="Media"/>
 
         <TextBlock Grid.Row="0"  Grid.Column="1" Margin="10,10" Foreground="{StaticResource Introductory}"
                    Visibility="{Binding TipVisibility}"
                    Text="Вновь возникающие уведомления будут добавлены в общий список." TextAlignment="Center"  TextWrapping="Wrap"/>
 
-        <Image Grid.Row="1" Grid.Column="0" Stretch="None">
-            <Image.Source>
-                <BitmapImage UriSource="/Resources/reminder.gif" />
-            </Image.Source>
-        </Image>
+        <Image Grid.Row="1" Grid.Column="0" behaviors:ImageBehavior.AnimatedSource="../Resources/reminder.gif" Stretch="None"/>
+
         <ScrollViewer Grid.Column="1"  Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                       VerticalAlignment="Center">
             <ItemsControl ItemsSource="{Binding Items}" Margin="10" >
