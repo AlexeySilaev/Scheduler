@@ -80,7 +80,7 @@ namespace Reminder.ViewModels
             {
                 // пусть пользователь успеет увидеть ввод
                 await Task.Delay(TimeSpan.FromSeconds(1));
-                _reminderWindowViewModel.Window.Close();
+                _reminderWindowViewModel.Window?.Close(); // Window? если ловкий пользователь закрыл окно
                 _reminderWindowViewModel = null;
             }
         }
