@@ -55,13 +55,14 @@ namespace Reminder.ViewModels
         public abstract bool IsOneTimeReminder { get; }
         public abstract string PeriodicityDescription { get; }
 
+        public DateTime ReminderDateTime { get; private set; }
+
         protected ReminderItemViewModel(ReminderItem item) : base(item)
         {
             _state = ReminderState.Active;
             _ringtone = ReminderRingtone.AsIs;
         }
 
-        public abstract DateTime GetReminderDateTime();
         public abstract PostponeItem GetDefaultPostponeItem();
         public abstract void OnPostponeAccepted(PostponeItem postpone);
 
@@ -76,6 +77,8 @@ namespace Reminder.ViewModels
             return State == ReminderState.Active;
         }
 
+        protected abstract DateTime CalculateReminderDateTime();
+
         public override string Validate(bool isNew)
         {
             string result = base.Validate(isNew);
@@ -85,6 +88,11 @@ namespace Reminder.ViewModels
                     result = "Сохранение неактивных напоминаний запрещено.";
             }
             return result;
+        }
+
+        public void Update()
+        {
+            ReminderDateTime = CalculateReminderDateTime();
         }
     }
 }

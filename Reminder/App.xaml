@@ -151,7 +151,7 @@
                             <TextBlock.Text>
                                 <MultiBinding Converter="{StaticResource EventDateToStringConverter}">
                                     <Binding Path="State" />
-                                    <Binding Path="NearestEventDate" />
+                                    <Binding Path="ReminderDateTime" />
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>

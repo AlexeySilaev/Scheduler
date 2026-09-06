@@ -8,7 +8,7 @@ namespace Reminder.Models
 
         public NoteItem()
         {
-            CreationDate = DateTime.Now;
+            CreationDate = TimeProvider.Now;
         }
     }
 }

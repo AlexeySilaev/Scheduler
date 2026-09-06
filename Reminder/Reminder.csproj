@@ -99,6 +99,7 @@
     <Compile Include="Extensions\WindowPositioning.cs" />
     <Compile Include="Models\AlarmItem.cs" />
     <Compile Include="Models\Data.cs" />
+    <Compile Include="Models\DisposableObject.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\EventItem.cs" />
     <Compile Include="Models\NoteItem.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Models\ReminderModel.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Converters\PeriodicityToDataTemplateConverter.cs" />
+    <Compile Include="Models\TimeProvider.cs" />
     <Compile Include="Models\WeekDaysEnumerator.cs" />
     <Compile Include="TemplateSelectors\PostponeItemTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\ReminderItemTemplateSelector.cs" />

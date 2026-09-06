@@ -19,7 +19,7 @@ namespace Reminder.Models
         public AlarmItem()
         {
             AlarmTimeMinutes = 15;
-            NowDate = DateTime.Now;
+            NowDate = TimeProvider.Now;
             Ringtone = ReminderRingtone.AsIs;
         }
     }

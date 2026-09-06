@@ -12,7 +12,7 @@ namespace Reminder.Converters
         public object Convert(
             object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values[0] == DependencyProperty.UnsetValue)
+            if (values[0] == DependencyProperty.UnsetValue || values[1] == DependencyProperty.UnsetValue)
                 return null;
 
             ReminderState state = (ReminderState)values[0];

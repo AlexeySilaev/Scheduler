@@ -147,7 +147,7 @@ namespace Reminder.UI
                 prompt.StartStyle(timeStyle);
                 prompt.AppendText("Уведомление напониналки");
                 prompt.AppendBreak(TimeSpan.FromMilliseconds(1000));
-                prompt.AppendTextWithHint(DateTime.Now.ToString("HH:mm"), SayAs.Time24);
+                prompt.AppendTextWithHint(TimeProvider.Now.ToString("HH:mm"), SayAs.Time24);
                 prompt.AppendBreak(TimeSpan.FromMilliseconds(1500));
                 prompt.EndStyle();
                 prompt.AppendText(reminder.Source.Text);

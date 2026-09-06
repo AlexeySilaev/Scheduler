@@ -36,7 +36,7 @@ namespace Reminder.ViewModels
         public override void EndEdit()
         {
             base.EndEdit();
-            CreationDate = DateTime.Now;
+            CreationDate = TimeProvider.Now;
             NoteItem item = (NoteItem)_item;
             item.CreationDate = CreationDate;
         }

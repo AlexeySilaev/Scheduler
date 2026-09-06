@@ -31,18 +31,19 @@ namespace Reminder.ViewModels
         public TimeSpan RemainTime
         {
             get { return _remainTime; }
-            set
+            private set
             {
                 if (RemainTime == value) return;
                 _remainTime = value;
                 OnPropertyChanged(nameof(RemainTime));
+                OnPropertyChanged(nameof(ReminderDateTime));
             }
         }
 
         public DateTime NowDate
         {
             get { return _nowDate; }
-            set
+            private set
             {
                 if (NowDate == value) return;
                 _nowDate = value;
@@ -71,14 +72,16 @@ namespace Reminder.ViewModels
             _remainTime = TimeSpan.FromMinutes(item.AlarmTimeMinutes);
             _nowDate = item.NowDate;
             _ringtone = item.Ringtone;
-            UpdateRemainTime();
+            Update();
         }
 
-        public override DateTime GetReminderDateTime()
+        protected override DateTime CalculateReminderDateTime()
         {
-            return NowDate.AddHours(AlarmTime.Hours)
+            DateTime result = NowDate.AddHours(AlarmTime.Hours)
                 .AddMinutes(AlarmTime.Minutes)
                 .AddSeconds(AlarmTime.Seconds);
+            UpdateRemainTime(result);
+            return result;
         }
 
         public override PostponeItem GetDefaultPostponeItem()
@@ -90,17 +93,21 @@ namespace Reminder.ViewModels
 
         public void UpdateRemainTime()
         {
-            RemainTime = GetReminderDateTime() - DateTime.Now;
+            UpdateRemainTime(ReminderDateTime);
+        }
+
+        private void UpdateRemainTime(DateTime reminderDateTime)
+        {
+            RemainTime = reminderDateTime - TimeProvider.Now;
         }
 
         public override void EndEdit()
         {
             base.EndEdit();
             AlarmItem.AlarmTimeMinutes = Convert.ToInt32(AlarmTime.TotalMinutes);
-            NowDate = DateTime.Now;
+            NowDate = TimeProvider.Now;
             AlarmItem.NowDate = NowDate;
             AlarmItem.Ringtone = Ringtone;
-            UpdateRemainTime();
         }
 
         public override void CancelEdit()

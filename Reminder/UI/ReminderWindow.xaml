@@ -12,7 +12,7 @@
         WindowStyle="ToolWindow"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
-        Title="Уведомление" Height="285" Width="460" 
+        Title="Уведомление" Height="285" Width="484" 
         Topmost="{Binding TopMost, Mode=OneTime}">
     <Window.DataContext>
         <ui:ReminderWindowViewModel/>
@@ -62,7 +62,7 @@
                                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5">
                                     <TextBlock Text="{Binding Source.Type, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"
                                            VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding  ReminderDateTime,  StringFormat='dd.MM HH:mm'}"
+                                    <TextBlock Text="{Binding  ReminderDateTime,  StringFormat='dd.MM HH:mm', Mode=OneTime}"
                                            Foreground="{StaticResource GrayText}" Margin="10,0,0,0" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">

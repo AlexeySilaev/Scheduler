@@ -96,7 +96,8 @@ namespace Reminder.ViewModels
             IEnumerable<T> all = items.Select(e =>
             {
                 T viewModel = creator(e);
-                new TimerReminderItem(viewModel).CheckExpired(DateTime.Now);
+                viewModel.Update();
+                new TimerReminderItem(viewModel).CheckExpired(TimeProvider.Now);
                 return viewModel;
             }).ToArray();
             if (ReminderModel.Instance.Settings.DeleteExpiredRemindersOnStart)
@@ -117,8 +118,9 @@ namespace Reminder.ViewModels
         /// <summary>
         /// Получить все незавершенные напоминания.
         /// </summary>
-        public List<TimerReminderItem> GetTimerReminderItems()
+        public List<TimerReminderItem> CalculateTimerReminderItems()
         {
+            _allItems.ForEach(a => a.Update());
             return _allItems
                 .Where(a => a.State == ReminderState.Active || a.State == ReminderState.Expired)
                 .Select(a => new TimerReminderItem(a))

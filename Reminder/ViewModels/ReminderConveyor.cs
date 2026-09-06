@@ -53,8 +53,8 @@ namespace Reminder.ViewModels
             lock (_lockQueue)
             {
                 _timerReminderQueue.Clear();
-                _timerReminderQueue.AddRange(_alarms.GetTimerReminderItems());
-                _timerReminderQueue.AddRange(_events.GetTimerReminderItems());
+                _timerReminderQueue.AddRange(_alarms.CalculateTimerReminderItems());
+                _timerReminderQueue.AddRange(_events.CalculateTimerReminderItems());
                 _timerReminderQueue.Sort();
                 CheckStartTimer();
             }
@@ -99,7 +99,7 @@ namespace Reminder.ViewModels
 
             if (nearestReminderItem != null)
             {
-                TimeSpan timeToNearestReminder = nearestReminderItem.ReminderDateTime - DateTime.Now;
+                TimeSpan timeToNearestReminder = nearestReminderItem.ReminderDateTime - TimeProvider.Now;
                 if (timeToNearestReminder.TotalMilliseconds < SLOW_TIMER_INTERVAL)
                     _queueTimer.Interval = FAST_TIMER_INTERVAL; // будем тикать чаще, чтобы точнее попасть во время Ч
                 else

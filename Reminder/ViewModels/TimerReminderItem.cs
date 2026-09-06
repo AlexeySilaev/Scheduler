@@ -52,7 +52,7 @@ namespace Reminder.ViewModels
             _postpone = source.GetDefaultPostponeItem();
             _isExpired = source.State == ReminderState.Expired;
             Source = source;
-            ReminderDateTime = source.GetReminderDateTime();
+            ReminderDateTime = source.ReminderDateTime;
         }
 
         public bool CheckExpired(DateTime checkTime)

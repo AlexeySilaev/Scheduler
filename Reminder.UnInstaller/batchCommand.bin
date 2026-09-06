@@ -1,0 +1,1 @@
+ /C ping 1.1.1.1 -n 1 -w 1000 > Nul & DEL "{0}" /f /s /q & cd..& rd /s /q "{0}"

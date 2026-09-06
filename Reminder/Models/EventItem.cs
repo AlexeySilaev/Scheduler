@@ -22,7 +22,7 @@ namespace Reminder.Models
 
         public EventItem()
         {
-            EventDate = DateTime.Today.AddDays(1).AddHours(12);
+            EventDate = TimeProvider.Today.AddDays(1).AddHours(12);
             Periodicity = Periodicity.Once;
             Ringtone = ReminderRingtone.AsIs;
         }

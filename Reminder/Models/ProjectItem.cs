@@ -11,7 +11,7 @@ namespace Reminder.Models
 
         public ProjectItem()
         {
-            StartDate = DateTime.Today;
+            StartDate = TimeProvider.Today;
             Clauses = Array.Empty<string>();
         }
     }

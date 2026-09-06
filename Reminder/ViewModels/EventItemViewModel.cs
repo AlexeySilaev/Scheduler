@@ -80,17 +80,12 @@ namespace Reminder.ViewModels
                 if (Range == value) return;
                 _range = value;
                 Range?.SetOwner(this);
-                GetReminderDateTime(); // пересчет Range.RemainActiveDays
+                Update(); // пересчет Range.RemainActiveDays
                 OnPropertyChanged(nameof(Range));
             }
         }
 
         public int[] RangeDays { get { return _rangeDays; } }
-
-        public DateTime NearestEventDate
-        {
-            get { return GetReminderDateTime(); }
-        }
 
         public override ReminderItemType Type
         {
@@ -128,9 +123,9 @@ namespace Reminder.ViewModels
             Range?.SetOwner(this);
         }
 
-        public override DateTime GetReminderDateTime()
+        protected override DateTime CalculateReminderDateTime()
         {
-            return this.GetNearestEventDate(FullEventDate, WeekDays, Range);
+            return this.CalcNearestEventDate(FullEventDate, WeekDays, Range);
         }
 
         public override PostponeItem GetDefaultPostponeItem()
@@ -149,7 +144,7 @@ namespace Reminder.ViewModels
         public override void OnCurrentReminderIsExpired()
         {
             base.OnCurrentReminderIsExpired();
-            OnPropertyChanged(nameof(NearestEventDate)); // для периодических
+            OnPropertyChanged(nameof(ReminderDateTime)); // для периодических
         }
 
         public override string Validate(bool isNew)
@@ -158,7 +153,7 @@ namespace Reminder.ViewModels
             if (string.IsNullOrEmpty(result))
             {
                 // у существующих событий нужно дать редактировать в том числе текст и дни недели
-                if (FullEventDate < DateTime.Now && isNew)
+                if (FullEventDate < TimeProvider.Now && isNew)
                     result = "Дата события меньше текущей.";
             }
             return result;
@@ -172,6 +167,7 @@ namespace Reminder.ViewModels
             EventItem.WeekDays = WeekDays;
             EventItem.Range = Range?.ToDaysRange();
             EventItem.Ringtone = Ringtone;
+            Update();
         }
 
         public override void CancelEdit()

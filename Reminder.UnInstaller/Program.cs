@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Win32;
 
 namespace Reminder.UnInstaller
 {
@@ -68,19 +69,26 @@ namespace Reminder.UnInstaller
 
         private static void SelfDelete()
         {
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            StringBuilder sb = new StringBuilder();
-            sb.Append(@" /C ping 1.1.1.1 -n 1 -w 1000 > Nul"); //Ping, other than 1 second, no output
-            sb.Append(" & DEL \""); //Delete Files
-            sb.Append(baseDirectory);
-            sb.Append("\" /f /s /q");
-            sb.Append(@" & cd.."); //When you delete a file, you will take up the current file handle? Need to exit the current folder or turn off the current folder, then call the RD to delete the folder.
-            sb.Append(string.Format("& rd /s /q \"{0}\"", baseDirectory));
-            ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", sb.ToString());
-            psi.WindowStyle = ProcessWindowStyle.Hidden;
-            psi.CreateNoWindow = true;
-            Process.Start(psi);
-            Application.Exit();
+            using (Stream stream = Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("Reminder.UnInstaller.batchCommand.bin"))
+            {
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    // некоторым антивирусам не нравится, когда файл удаляет сам себя
+                    // поднимем текст команды из ресурсов
+                    stream.CopyTo(memoryStream);
+                    byte[] bytes = memoryStream.ToArray();
+                    string commandFormat = Encoding.UTF8.GetString(bytes);
+
+                    ProcessStartInfo psi = new ProcessStartInfo("cmd.exe",
+                        String.Format(commandFormat, AppDomain.CurrentDomain.BaseDirectory));
+                    psi.WindowStyle = ProcessWindowStyle.Hidden;
+                    psi.CreateNoWindow = true;
+                    psi.UseShellExecute = false;
+                    Process.Start(psi);
+                    Application.Exit();
+                }
+            }
         }
     }
 }

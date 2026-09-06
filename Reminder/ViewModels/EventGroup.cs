@@ -48,7 +48,7 @@ namespace Reminder.ViewModels
 
         public void OnEventActivated(string searchText)
         {
-            _allItems = _allItems.OrderBy(item => item.NearestEventDate)
+            _allItems = _allItems.OrderBy(item => item.ReminderDateTime)
                 .ToList();
             Filter(searchText);
         }
@@ -60,14 +60,14 @@ namespace Reminder.ViewModels
 
         protected override IOrderedEnumerable<EventItemViewModel> OrderItems(IEnumerable<EventItemViewModel> events)
         {
-            return events.OrderBy(item => item.NearestEventDate);
+            return events.OrderBy(item => item.ReminderDateTime);
         }
 
 
         // сортировка по возрастанию времени срабатывания
         protected override int Compare(EventItemViewModel x, EventItemViewModel y)
         {
-            return x.NearestEventDate.CompareTo(y.NearestEventDate);
+            return x.ReminderDateTime.CompareTo(y.ReminderDateTime);
         }
 
     }
