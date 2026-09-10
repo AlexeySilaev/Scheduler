@@ -20,7 +20,7 @@
         <TextBlock Grid.Row="1" Text="{Binding InstallError}" TextAlignment="Center" Visibility="{Binding InstallErrorVisibility}"
                    Foreground="Red" TextWrapping="Wrap" VerticalAlignment="Center"/>
         <DockPanel Grid.Row="2" LastChildFill="False">
-            <Button DockPanel.Dock="Left" Command="{Binding BackParametersCommand}" Content="&lt; Назад" Padding="{StaticResource ButtonPadding}"/>
+            <Button DockPanel.Dock="Left" Command="{Binding BackSecretsCommand}" Content="&lt; Назад" Padding="{StaticResource ButtonPadding}"/>
             <Button DockPanel.Dock="Right" Command="{Binding NextFinishCommand}" Content="Установить" Padding="{StaticResource ButtonPadding}"/>
         </DockPanel>
     </Grid>

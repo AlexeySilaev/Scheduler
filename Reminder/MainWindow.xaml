@@ -27,12 +27,14 @@
             EventTemplate="{StaticResource EventItemTemplate}"
             NoteTemplate="{StaticResource NoteItemTemplate}"
             ProjectTemplate="{StaticResource ProjectItemTemplate}"
+            SecretTemplate="{StaticResource SecretItemTemplate}"
             x:Key="ReminderItemTemplateSelector"/>
         <templateSelectors:ReminderItemTemplateSelector
             AlarmTemplate="{StaticResource EditAlarmItemTemplate}"
             EventTemplate="{StaticResource EditEventItemTemplate}"
             NoteTemplate="{StaticResource EditNoteItemTemplate}"
             ProjectTemplate="{StaticResource EditProjectItemTemplate}"
+            SecretTemplate="{StaticResource EditSecretItemTemplate}"
             x:Key="EditorItemTemplateSelector"/>
     </Window.Resources>
     <Grid>

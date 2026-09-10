@@ -266,7 +266,8 @@ namespace Reminder.ViewModels
         public MainViewModel()
         {
             _searchText = string.Empty;
-            Groups = new[] { new EventGroup(), new AlarmGroup(), (ISchedulerGroup)new NoteGroup(), (ISchedulerGroup)new ProjectGroup() };
+            Groups = new[] { new EventGroup(), new AlarmGroup(), (ISchedulerGroup)new NoteGroup(),
+                (ISchedulerGroup)new ProjectGroup(), (ISchedulerGroup)new SecretGroup() };
             _reminderConveyor = new ReminderConveyor(Alarms, Events, OnConveyorRefresh);
             _popupRect = Rect.Empty;
             SelectedGroup = Groups[0];

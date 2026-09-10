@@ -34,6 +34,7 @@ namespace Reminder.Models
         public List<EventItem> Events { get; }
         public List<NoteItem> Notes { get; }
         public List<ProjectItem> Projects { get; }
+        public List<SecretItem> Secrets { get; }
         public Settings Settings { get; private set; }
         public bool IsLoaded { get; private set; }
 
@@ -43,6 +44,7 @@ namespace Reminder.Models
             Events = new List<EventItem>();
             Notes = new List<NoteItem>();
             Projects = new List<ProjectItem>();
+            Secrets = new List<SecretItem>();
             Settings = new Settings();
         }
 
@@ -50,7 +52,7 @@ namespace Reminder.Models
         {
             try
             {
-                XmlSerializer xmlSerializer = XmlSerializer.FromTypes(new [] { typeof(Data) })[0];
+                XmlSerializer xmlSerializer = XmlSerializer.FromTypes(new[] { typeof(Data) })[0];
                 using (FileStream fs = new FileStream(FilePath, FileMode.OpenOrCreate))
                 {
                     Data data = xmlSerializer.Deserialize(fs) as Data;
@@ -58,6 +60,7 @@ namespace Reminder.Models
                     Events.AddRange(data.Events);
                     Notes.AddRange(data.Notes);
                     Projects.AddRange(data.Projects);
+                    Secrets.AddRange(data.Secrets);
                     Settings = data.Settings;
                     Settings.ValidateMainWindowBounds();
                 }
@@ -141,6 +144,7 @@ namespace Reminder.Models
                       Events = Events.ToArray(),
                       Notes = Notes.ToArray(),
                       Projects = Projects.ToArray(),
+                      Secrets = Secrets.ToArray(),
                       Settings = Settings
                   };
 

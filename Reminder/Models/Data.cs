@@ -13,6 +13,7 @@ namespace Reminder.Models
         public EventItem[] Events { get; set; }
         public NoteItem[] Notes { get; set; }
         public ProjectItem[] Projects { get; set; }
+        public SecretItem[] Secrets { get; set; }
         public Settings Settings { get; set; }
     }
 }

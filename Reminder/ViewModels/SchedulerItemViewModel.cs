@@ -9,7 +9,8 @@ namespace Reminder.ViewModels
         [Description("Событие")] Event,
         [Description("Напоминание")] Alarm,
         [Description("Заметка")] Note,
-        [Description("Проект")] Project
+        [Description("Проект")] Project,
+        [Description("Секрeт")] Secret
     }
 
     public abstract class SchedulerItemViewModel : BaseViewModel

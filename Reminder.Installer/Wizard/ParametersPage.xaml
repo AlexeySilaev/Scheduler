@@ -26,7 +26,7 @@
             <CheckBox IsChecked="{Binding DesktopLink}" Content="Создать ярлык на рабочем столе"
                   Margin="0,15,0,0"/>
         </StackPanel>
-        <Button Grid.Row="1" Content="Далее &gt;" HorizontalAlignment="Right" Command="{Binding NextInstallCommand}"
+        <Button Grid.Row="1" Content="Далее &gt;" HorizontalAlignment="Right" Command="{Binding NextSecretsCommand}"
                 Padding="{StaticResource ButtonPadding}"/>
     </Grid>
 </Page>

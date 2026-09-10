@@ -68,6 +68,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\Reminder\Cipher\MD5Extensions.cs">
+      <Link>Infrastructure\MD5Extensions.cs</Link>
+    </Compile>
+    <Compile Include="Wizard\FolderBackupCopy.cs" />
+    <Compile Include="Wizard\SecretsPage.xaml.cs">
+      <DependentUpon>SecretsPage.xaml</DependentUpon>
+    </Compile>
     <Page Include="Wizard\FinishPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -95,6 +102,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Wizard\ParametersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Wizard\SecretsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -128,6 +139,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <EmbeddedResource Include="Resources\Content.zip" />
+    <Resource Include="Resources\password.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -158,5 +170,10 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\eye_closed.png" />
+    <Resource Include="Resources\eye_opened.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,6 @@
 ﻿using Microsoft.Win32;
+using Reminder.Installer.Wizard;
+using Reminder.Cipher;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -13,6 +15,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Xml;
 
 namespace Reminder.Installer
 {
@@ -22,12 +25,33 @@ namespace Reminder.Installer
 
         private string _title;
         private string _installFolderPath;
+        private string _unlockSecretsPassword;
         private bool _desktopLink;
         private bool _launchApplication;
+        private bool _showPassword;
+        private Visibility _passwordTipVisibility;
+        private Guid? _prevUnlockKey;
         private int _installCounter;
         private string _installError;
 
         private PropertyChangedEventHandler _propertyChanged;
+
+        private Guid? PrevUnlockKey
+        {
+            get
+            {
+                if (_prevUnlockKey == Guid.Empty)
+                {
+                    _prevUnlockKey = null;
+                    XmlDocument prevDoc = GetXmlData(out _);
+                    XmlNode prevPassword = prevDoc.SelectSingleNode("/Data/Settings/UnlockSecretsKey");
+                    if (string.IsNullOrEmpty(prevPassword?.InnerText) == false)
+                        if (Guid.TryParse(prevPassword.InnerText, out Guid result))
+                            _prevUnlockKey = result;
+                }
+                return _prevUnlockKey;
+            }
+        }
 
         public string Title
         {
@@ -48,6 +72,18 @@ namespace Reminder.Installer
                 if (InstallFolderPath == value) return;
                 _installFolderPath = value;
                 OnPropertyChanged(nameof(InstallFolderPath));
+            }
+        }
+
+        public string UnlockSecretsPassword
+        {
+            get { return _unlockSecretsPassword; }
+            set
+            {
+                if (UnlockSecretsPassword == value) return;
+                _unlockSecretsPassword = value;
+                OnPropertyChanged(nameof(UnlockSecretsPassword));
+                UpdatePasswordTipVisibility();
             }
         }
 
@@ -73,9 +109,43 @@ namespace Reminder.Installer
             }
         }
 
+        public string EyeImage
+        {
+            get
+            {
+                if (_showPassword)
+                    return "/Resources/eye_opened.png";
+                else
+                    return "/Resources/eye_closed.png";
+            }
+        }
+        public string AppDataFolderPath
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APP_NAME);
+            }
+        }
+
         public bool IsInstalling
         {
             get { return Interlocked.CompareExchange(ref _installCounter, 0, 0) != 0; }
+        }
+
+        public bool ShowPassword
+        {
+            get { return _showPassword; }
+        }
+
+        public Visibility PasswordTipVisibility
+        {
+            get { return _passwordTipVisibility; }
+            private set
+            {
+                if (PasswordTipVisibility == value) return;
+                _passwordTipVisibility = value;
+                OnPropertyChanged(nameof(PasswordTipVisibility));
+            }
         }
 
         public Visibility InstallingVisibility
@@ -104,10 +174,13 @@ namespace Reminder.Installer
         public NavigationService NavigationService { get; set; }
 
         public ICommand BrowseFolderCommand { get; }
+
         public ICommand NextInstallCommand { get; }
+        public ICommand NextSecretsCommand { get; }
+        public ICommand NextFinishCommand { get; }
 
         public ICommand BackParametersCommand { get; }
-        public ICommand NextFinishCommand { get; }
+        public ICommand BackSecretsCommand { get; }
 
         public ICommand CompleteCommand { get; }
 
@@ -115,18 +188,27 @@ namespace Reminder.Installer
         {
             _installFolderPath = GetInstallFolderPath();
             _launchApplication = true;
+            _passwordTipVisibility = Visibility.Hidden;
+            _prevUnlockKey = Guid.Empty;
             BrowseFolderCommand = new CommandImpl(ExecuteBrowseFolder);
+            NextSecretsCommand = new CommandImpl(ExecuteGoSecrets);
             NextInstallCommand = new CommandImpl(ExecuteNextInstall);
-            BackParametersCommand = new CommandCanExecuteImpl(ExecuteBackParameters, CanNavigateFromInstall);
+            BackParametersCommand = new CommandImpl(ExecuteBackParameters);
+            BackSecretsCommand = new CommandCanExecuteImpl(ExecuteGoSecrets, CanNavigateFromInstall);
             NextFinishCommand = new CommandCanExecuteImpl(ExecuteNextFinish, CanNavigateFromInstall);
             CompleteCommand = new CommandImpl(ExecuteComplete);
         }
 
+        public bool ToggleShowPassword()
+        { 
+            _showPassword = !ShowPassword;
+            OnPropertyChanged(nameof(EyeImage));
+            return _showPassword;
+        }
+
         private string GetInstallFolderPath()
         {
-            string appDataFolderPath =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APP_NAME);
-            string dataPath = Path.Combine(appDataFolderPath, "data.xml");
+            string dataPath = Path.Combine(AppDataFolderPath, "data.xml");
             if (File.Exists(dataPath))
             {
                 string content = File.ReadAllText(dataPath);
@@ -172,6 +254,10 @@ namespace Reminder.Installer
             return path;
         }
 
+        private void ExecuteGoSecrets()
+        {
+            NavigationService.Navigate(new Uri("/Wizard/SecretsPage.xaml", UriKind.Relative));
+        }
 
         private void ExecuteNextInstall()
         {
@@ -188,33 +274,41 @@ namespace Reminder.Installer
             NavigationService.Navigate(new Uri("/Wizard/ParametersPage.xaml", UriKind.Relative));
         }
 
+        // если установка производится поверх прежней версии, нужна ее резерная копия
+        // в случае ошибки установки будет произведен откат
         private async void ExecuteNextFinish()
         {
             InstallError = null;
             Interlocked.Increment(ref _installCounter);
-            RaiseCanExecuteChanged(BackParametersCommand);
+            RaiseCanExecuteChanged(BackSecretsCommand);
             RaiseCanExecuteChanged(NextFinishCommand);
             OnPropertyChanged(nameof(InstallingVisibility));
-            try
+
+            using (FolderBackupCopy programFilesBackup = new FolderBackupCopy(InstallFolderPath),
+                appDataBackup = new FolderBackupCopy(AppDataFolderPath))
             {
-                await UnzipContentAsync();
-                string icoPath = await PrepareAppDataFolder();
-                await PrepareUninstaller(icoPath);
-                await SetAutoRun();
-                CheckCreateShortcut();
-                NavigationService.Navigate(new Uri("/Wizard/FinishPage.xaml", UriKind.Relative));
-            }
-            catch (Exception x)
-            {
-                InstallError = x.Message;
-                Directory.Delete(InstallFolderPath, true);
-            }
-            finally
-            {
-                Interlocked.Decrement(ref _installCounter);
-                RaiseCanExecuteChanged(BackParametersCommand);
-                RaiseCanExecuteChanged(NextFinishCommand);
-                OnPropertyChanged(nameof(InstallingVisibility));
+                try
+                {
+                    await UnzipContentAsync();
+                    string icoPath = await PrepareAppDataFolder();
+                    await PrepareUninstaller(icoPath);
+                    await SetAutoRun();
+                    CheckCreateShortcut();
+                    NavigationService.Navigate(new Uri("/Wizard/FinishPage.xaml", UriKind.Relative));
+                }
+                catch (Exception x)
+                {
+                    programFilesBackup.EnableRestoreSource();
+                    appDataBackup.EnableRestoreSource();
+                    InstallError = x.Message;
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref _installCounter);
+                    RaiseCanExecuteChanged(BackSecretsCommand);
+                    RaiseCanExecuteChanged(NextFinishCommand);
+                    OnPropertyChanged(nameof(InstallingVisibility));
+                }
             }
         }
 
@@ -228,6 +322,15 @@ namespace Reminder.Installer
         {
             return Task.Factory.StartNew(() =>
             {
+                var reminders = Process.GetProcessesByName("AvReminder");
+                if (reminders.Any())
+                {
+                    // достаточно первого, он один
+                    Process avReminder = reminders.First();
+                    if (avReminder.WaitForExit(3000) == false) // Ждем до 3 секунды
+                        avReminder.Kill();
+                }
+
                 EnsureFolderExists(InstallFolderPath);
                 using (Stream contentStream = Assembly.GetExecutingAssembly()
                            .GetManifestResourceStream("Reminder.Installer.Resources.Content.zip"))
@@ -237,17 +340,9 @@ namespace Reminder.Installer
                         foreach (PackagePart part in zip.GetParts())
                         {
                             string target = Path.GetFullPath(Path.Combine(InstallFolderPath, part.Uri.OriginalString.TrimStart('/')));
-                            if (File.Exists(target)) // отработать случай повторной установки в ту же папку
+                            if (File.Exists(target)) 
                             {
-                                var reminders = Process.GetProcessesByName("AvReminder");
-                                if (reminders.Any())
-                                {
-                                    // достаточно первого, он один
-                                    Process avReminder = reminders.First();
-                                    if (avReminder.WaitForExit(3000) == false) // Ждем до 3 секунды
-                                        avReminder.Kill();
-                                }
-
+                                // отработать случай повторной установки в ту же папку
                                 File.Delete(target);
                             }
 
@@ -275,23 +370,95 @@ namespace Reminder.Installer
 
         /// <summary>
         /// Минимальная подготовка. Папка есть - хорошо, нет - будет. Перенесем иконку для деинсталлятора.
-        /// Остальное выполнит само приложение.
+        /// Проверим пароль разблокировки для секретов. Остальное выполнит само приложение.
         /// </summary>
         private Task<string> PrepareAppDataFolder()
         {
             return Task.Factory.StartNew(() =>
             {
-                string appDataFolder =
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APP_NAME);
-                EnsureFolderExists(appDataFolder);
+                EnsureFolderExists(AppDataFolderPath);
+                ConfigureUnlockSecretsPassword();
 
                 const string icoName = "App.ico";
                 string icoPath = Path.Combine(InstallFolderPath, icoName);
-                string result = Path.Combine(appDataFolder, icoName);
+                string result = Path.Combine(AppDataFolderPath, icoName);
                 File.Copy(icoPath, result, true);
                 File.Delete(icoPath);
                 return result;
             });
+        }
+
+        private XmlDocument GetXmlData(out string dataPath)
+        {
+            dataPath = Path.Combine(AppDataFolderPath, "data.xml");
+            XmlDocument result = new XmlDocument();
+            if (File.Exists(dataPath))
+                result.Load(dataPath);
+            return result;
+        }
+
+        private void ConfigureUnlockSecretsPassword()
+        {
+            Guid? unlockSecretsKey = string.IsNullOrEmpty(UnlockSecretsPassword) ?
+                (Guid?)null : UnlockSecretsPassword.ToGuid();
+            XmlDocument doc = GetXmlData(out string dataPath);
+            if (doc.DocumentElement != null)
+            {
+                // XML загружен
+                XmlNode secrets = doc.SelectSingleNode("/Data/Secrets");
+                if (secrets == null)
+                    doc.DocumentElement.AppendChild(doc.CreateElement("Secrets"));
+
+                XmlNode settings = doc.SelectSingleNode("/Data/Settings");
+                if (settings == null)
+                {
+                    // невероятный случай, когда файл поврежден настолько, что в нем нет настроек.
+                    // выйдем. Пусть восстановится при следующем запуске клиента.
+                    return;
+                }
+                XmlNode password = doc.SelectSingleNode("/Data/Settings/UnlockSecretsKey");
+                if (unlockSecretsKey != null)
+                {
+                    if (password != null)
+                        password.InnerText = unlockSecretsKey.ToString();
+                    else
+                    {
+                        password = doc.CreateElement("UnlockSecretsKey");
+                        password.InnerText = unlockSecretsKey.ToString();
+                        if (settings != null)
+                            settings.AppendChild(password);
+                    }
+                }
+                else if (password != null)
+                    settings.RemoveChild(password);
+            }
+            else
+            {
+                // пустой шаблон с ключом разблокировки секретов
+                XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", null, null);
+                doc.AppendChild(xmlDeclaration);
+                XmlElement root = doc.CreateElement("Data");
+                doc.AppendChild(root);
+                XmlElement alarms = doc.CreateElement("Alarms");
+                root.AppendChild(alarms);
+                XmlElement events = doc.CreateElement("Events");
+                root.AppendChild(events);
+                XmlElement notes = doc.CreateElement("Notes");
+                root.AppendChild(notes);
+                XmlElement projects = doc.CreateElement("Projects");
+                root.AppendChild(projects);
+                XmlElement secrets = doc.CreateElement("Secrets");
+                root.AppendChild(secrets);
+                XmlElement settings = doc.CreateElement("Settings");
+                root.AppendChild(settings);
+                if (unlockSecretsKey != null)
+                {
+                    XmlElement password = doc.CreateElement("UnlockSecretsKey");
+                    password.InnerText = unlockSecretsKey.ToString();
+                    settings.AppendChild(password);
+                }
+            }
+            doc.Save(dataPath);
         }
 
         private Task PrepareUninstaller(string icoPath)
@@ -337,6 +504,20 @@ namespace Reminder.Installer
             shortcut.TargetPath = Path.Combine(InstallFolderPath, "AvReminder.exe");
             shortcut.Description = APP_NAME;
             shortcut.Save();
+        }
+
+        private void UpdatePasswordTipVisibility()
+        {
+            if (string.IsNullOrEmpty(UnlockSecretsPassword))
+                PasswordTipVisibility = Visibility.Hidden;
+            else if (PrevUnlockKey.HasValue)
+            {
+                Guid newUnlockKey = UnlockSecretsPassword.ToGuid();
+                PasswordTipVisibility = PrevUnlockKey.Value == newUnlockKey
+                    ? Visibility.Hidden : Visibility.Visible;
+            }
+            else
+                PasswordTipVisibility = Visibility.Hidden;
         }
 
         private void ExecuteComplete()

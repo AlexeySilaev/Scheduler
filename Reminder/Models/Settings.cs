@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using Reminder.Extensions;
 using Reminder.Resources;
@@ -24,14 +26,18 @@ namespace Reminder.Models
         /// </summary>
         public bool ShowComingDayAboutEvents { get; set; }
         public bool IntroductoryMode { get; set; }
-        // --- служебные настройки, наружу не видны ---
+        // ↓↓↓ служебные настройки, наружу не видны ↓↓↓
         public bool IsFirstMinimize { get; set; }
         public string InstalledFolder { get; set; } // если приложение уже установлено, инсталлятор покажет эту папку
+        // хэш пароля для разблокировки секретов
+        [DefaultValue(null)]
+        public Guid? UnlockSecretsKey { get; set; }
         public double MainWindowLeft { get; set; }
         public double MainWindowTop { get; set; }
         public double MainWindowHeight { get; set; }
         public double MainWindowWidth { get { return 730; } }
         public double MainWindowMinHeight { get { return 485; } }
+        // ↑↑↑ окончание блока служебных настроек ↑↑↑
 
         public Settings()
         {

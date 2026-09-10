@@ -322,6 +322,39 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
+        <DataTemplate x:Key="SecretItemTemplate" DataType="{x:Type viewModels:SecretItemViewModel}" >
+            <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
+                <Grid Margin="{StaticResource ItemTemplateMargin}" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Edit}" />
+                    </Grid.InputBindings>
+                    <TextBlock Text="{Binding Text}" Style="{StaticResource ReminderItemText}"/>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="{StaticResource DetailsMargin}">
+                        <TextBlock Text="{Binding Kind, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"/>
+                    </StackPanel>
+                    <ContentControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="ImagesPanel"
+                        Template="{StaticResource ButtonPanel}" DataContext="{Binding}" Visibility="Hidden" />
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},
+                        Path=IsMouseOver}" Value="True">
+                    <Setter
+                        TargetName="ImagesPanel"
+                        Property="Visibility"
+                        Value="Visible"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
         <!-- Шаблоны для редактирования элементов ReminderItemViewModel -->
         <DataTemplate x:Key="RingtoneItemTemplate" DataType="{x:Type viewModels:ReminderItemViewModel}" >
             <StackPanel Orientation="Horizontal" >
@@ -523,6 +556,32 @@
                         </Grid>
                     </StackPanel>
                 </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="EditSecretItemTemplate" DataType="{x:Type viewModels:SecretItemViewModel}" >
+            <Grid Margin="{StaticResource EditTemplateMargin}" FocusManager.FocusedElement="{Binding ElementName=SecretText}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Описание" Margin="{StaticResource TextBlockMargin}"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <TextBox x:Name="SecretText" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
+                        MaxLength="{Binding Text, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                        Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                </ScrollViewer>
+                <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                    TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10" Height="{StaticResource OneLineElementsHeight}">
+                    <TextBlock Text="Тип" VerticalAlignment="Center"/>
+                    <ComboBox ItemsSource="{x:Static extensions:EnumExtensions.SecretKindInfos}" IsEditable="False"  Margin="5,0,25,0" 
+                        SelectedValue="{Binding Kind}" SelectedValuePath="Member" DisplayMemberPath="Description"
+                        IsEnabled="{Binding Text, Converter={StaticResource StringIsNullOrEmptyConverter}, Mode=OneTime}"
+                        VerticalContentAlignment="Center" MinWidth="70"/>
+                </StackPanel>
             </Grid>
         </DataTemplate>
 

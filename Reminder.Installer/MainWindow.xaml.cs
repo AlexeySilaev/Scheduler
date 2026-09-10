@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Page = System.Windows.Controls.Page;
 
 namespace Reminder.Installer
@@ -46,8 +35,7 @@ namespace Reminder.Installer
 
         private void FrameworkElement_OnLoaded(object sender, RoutedEventArgs e)
         {
-            MainWindowViewModel dataContext = (MainWindowViewModel)DataContext;
-            dataContext.NavigationService = ((Frame)sender).NavigationService;
+            DataContext.NavigationService = ((Frame)sender).NavigationService;
         }
     }
 }

@@ -44,6 +44,17 @@ namespace Reminder.Extensions
             }
         }
 
+        private static List<EnumInfo> _secretKindInfos;
+        public static List<EnumInfo> SecretKindInfos
+        {
+            get
+            {
+                if (_secretKindInfos == null)
+                    _secretKindInfos = GetEnumInfos<SecretKind>();
+                return _secretKindInfos;
+            }
+        }
+
         private static List<EnumInfo> GetEnumInfos<TEnum>() where TEnum : Enum
         {
             TEnum[] array = (TEnum[])Enum.GetValues(typeof(TEnum));

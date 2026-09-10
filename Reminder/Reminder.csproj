@@ -75,6 +75,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviors\ImageBehavior.cs" />
+    <Compile Include="Cipher\FileCipher.cs" />
+    <Compile Include="Cipher\MD5Extensions.cs" />
+    <Compile Include="Cipher\ReminderCipher.cs" />
+    <Compile Include="Cipher\StringCipher.cs" />
     <Compile Include="Converters\AlarmTimeToStringConverter.cs" />
     <Compile Include="Converters\CharactersEnteredConverter.cs" />
     <Compile Include="Converters\DaysRangeActivityConverter.cs" />
@@ -112,6 +116,7 @@
     <Compile Include="Models\ProjectItem.cs" />
     <Compile Include="Models\ReminderItem.cs" />
     <Compile Include="Models\ReminderModel.cs" />
+    <Compile Include="Models\SecretItem.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Converters\PeriodicityToDataTemplateConverter.cs" />
     <Compile Include="Models\TimeProvider.cs" />
@@ -164,6 +169,8 @@
     <Compile Include="ViewModels\ReminderItemViewModel.cs" />
     <Compile Include="ViewModels\ReminderGroup.cs" />
     <Compile Include="ViewModels\SchedulerItemViewModel.cs" />
+    <Compile Include="ViewModels\SecretGroup.cs" />
+    <Compile Include="ViewModels\SecretItemViewModel.cs" />
     <Compile Include="ViewModels\TimerReminderItem.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -271,6 +278,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\project32x32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\secret32x32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
