@@ -24,6 +24,7 @@ namespace Reminder.ViewModels
         public abstract string Name { get; }
         public abstract string ImagePath { get; }
         public abstract string Description { get; }
+        public virtual bool IsVisible { get { return true; } }
 
         public abstract void Initialize();
         public abstract SchedulerItemViewModel CreateNewItem();

@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="Reminder.UI.ManagementControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Reminder.UI"
+             mc:Ignorable="d" 
+             Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+             d:DesignHeight="430" d:DesignWidth="560"
+             d:DataContext="{d:DesignInstance local:ManagementViewModel}" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <GroupBox Header="Блокировка/разблокировка секретов" Padding="10,10"
+                  Visibility="{Binding ShowSecretsGroup, Mode=OneTime, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
+            <StackPanel Orientation="Horizontal" Height="{StaticResource OneLineElementsHeight}">
+                <TextBlock Text="Пароль для секретов" VerticalAlignment="Center"/>
+                <PasswordBox PasswordChanged="OnSecretsPasswordChanged" MinWidth="250" Margin="10,0,20,0"/>
+                <Button Content="Разблокировать" Command="{Binding LockOrUnlockSecrectsCommand}" Padding="5,0"
+                        Visibility="{Binding AllowUnblock, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"/>
+                <Button Content="Заблокировать" Command="{Binding LockOrUnlockSecrectsCommand}" Padding="5,0"
+                        Visibility="{Binding AllowUnblock, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=True}"/>
+            </StackPanel>
+        </GroupBox>            
+    </Grid>
+</UserControl>

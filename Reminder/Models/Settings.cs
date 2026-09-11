@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Reminder.Extensions;
+using Reminder.Resources;
+using System;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.IO;
 using System.Windows;
-using Reminder.Extensions;
-using Reminder.Resources;
+using System.Xml.Serialization;
 
 namespace Reminder.Models
 {
@@ -30,8 +32,7 @@ namespace Reminder.Models
         public bool IsFirstMinimize { get; set; }
         public string InstalledFolder { get; set; } // если приложение уже установлено, инсталлятор покажет эту папку
         // хэш пароля для разблокировки секретов
-        [DefaultValue(null)]
-        public Guid? UnlockSecretsKey { get; set; }
+        public Guid UnlockSecretsKey { get; set; }
         public double MainWindowLeft { get; set; }
         public double MainWindowTop { get; set; }
         public double MainWindowHeight { get; set; }
@@ -80,6 +81,11 @@ namespace Reminder.Models
             Point location = WindowPositioning.GetValidLocation(windowBounds, setCentered);
             MainWindowLeft = location.X;
             MainWindowTop = location.Y;
+        }
+
+        public bool ShouldSerializeUnlockSecretsKey()
+        {
+            return UnlockSecretsKey != Guid.Empty;
         }
     }
 }

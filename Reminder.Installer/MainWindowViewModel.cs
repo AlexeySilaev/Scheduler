@@ -8,7 +8,6 @@ using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -208,20 +207,10 @@ namespace Reminder.Installer
 
         private string GetInstallFolderPath()
         {
-            string dataPath = Path.Combine(AppDataFolderPath, "data.xml");
-            if (File.Exists(dataPath))
-            {
-                string content = File.ReadAllText(dataPath);
-                string pattern = @"<InstalledFolder>(.*?)</InstalledFolder>";
-                var regex = new Regex(pattern);
-                var matches = regex.Matches(content);
-                if (matches.Count > 0)
-                {
-                    string result = matches[0].Groups[1].Value;
-                    if (Directory.Exists(result))
-                        return result; // предлагаем обновить установленное приложение
-                }
-            }
+            XmlDocument doc = GetXmlData(out _);
+            XmlNode installedFolder = doc.SelectSingleNode("/Data/Settings/InstalledFolder");
+            if (Directory.Exists(installedFolder?.InnerText))
+                return installedFolder?.InnerText; // предлагаем обновить установленное приложение
 
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), APP_NAME);
         }

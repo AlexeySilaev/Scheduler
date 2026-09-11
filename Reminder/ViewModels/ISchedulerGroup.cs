@@ -8,6 +8,7 @@ namespace Reminder.ViewModels
         string ImagePath { get; }
         ICollection Items { get; }
         string Description { get; }
+        bool IsVisible { get; }
 
         void Initialize();
         void InitializeComplete();

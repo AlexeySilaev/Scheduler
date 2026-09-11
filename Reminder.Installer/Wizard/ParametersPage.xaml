@@ -17,11 +17,11 @@
         <StackPanel Grid.Row="0">
             <TextBlock Grid.Row="0" Text="Путь к папке установки" VerticalAlignment="Center"
                    Margin="0,5,0,5"/>
-            <DockPanel LastChildFill="True">
+            <DockPanel LastChildFill="True" FocusManager.FocusedElement="{Binding ElementName=tbFolderPath}">
                 <Button ToolTip="Выбрать" Command="{Binding BrowseFolderCommand}" DockPanel.Dock="Right" >
                     <Image Source="/Resources/Folder.png" Height="16" Stretch="Uniform"/>
                 </Button>
-                <TextBox Text="{Binding InstallFolderPath}" IsReadOnly="True" VerticalContentAlignment="Center"/>
+                <TextBox x:Name="tbFolderPath" Text="{Binding InstallFolderPath}" IsReadOnly="True" VerticalContentAlignment="Center"/>
             </DockPanel>
             <CheckBox IsChecked="{Binding DesktopLink}" Content="Создать ярлык на рабочем столе"
                   Margin="0,15,0,0"/>

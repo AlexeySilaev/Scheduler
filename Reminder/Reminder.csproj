@@ -88,6 +88,7 @@
     <Compile Include="Converters\EventDateToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\FoundItemsCountConverter.cs" />
+    <Compile Include="Converters\HostContentConverter.cs" />
     <Compile Include="Converters\IndexedStringItemCollectionConverter.cs" />
     <Compile Include="Converters\InvertBoolToVisibilityConverter.cs" />
     <Compile Include="Converters\DateTimeMethodToValueConverter.cs" />
@@ -138,6 +139,10 @@
       <DependentUpon>DaysRangeControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\FrameworkNotifyIcon.cs" />
+    <Compile Include="UI\ManagementControl.xaml.cs">
+      <DependentUpon>ManagementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ManagementViewModel.cs" />
     <Compile Include="UI\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
@@ -148,6 +153,10 @@
     </Compile>
     <Compile Include="UI\ReminderWindowViewModel.cs" />
     <Compile Include="UI\TimeTextBox.cs" />
+    <Compile Include="UI\UnlockSecretsControl.xaml.cs">
+      <DependentUpon>UnlockSecretsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\UnlockSecretsViewModel.cs" />
     <Compile Include="UI\WeekDaysControl.xaml.cs">
       <DependentUpon>WeekDaysControl.xaml</DependentUpon>
     </Compile>
@@ -157,7 +166,9 @@
     <Compile Include="ViewModels\Command.cs" />
     <Compile Include="ViewModels\EventItemViewModel.cs" />
     <Compile Include="ViewModels\EventGroup.cs" />
+    <Compile Include="ViewModels\HostContent.cs" />
     <Compile Include="ViewModels\ISchedulerGroup.cs" />
+    <Compile Include="ViewModels\ISupportHostContent.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NoteItemViewModel.cs" />
     <Compile Include="ViewModels\NoteGroup.cs" />
@@ -200,11 +211,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\ManagementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ReminderWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\SettingsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\UnlockSecretsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -281,6 +300,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\secret32x32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\management24x24.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -11,7 +11,7 @@ using Reminder.ViewModels;
 
 namespace Reminder.UI
 {
-    public class SettingsViewModel :  BaseViewModel
+    internal class SettingsViewModel :  BaseViewModel
     {
         private readonly Settings _settings;
         private readonly Timer _showErrorTimer;

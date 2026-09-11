@@ -36,6 +36,7 @@
         <Thickness x:Key="EditTemplateMargin" Left="10" Top="5" Right="10" Bottom="5"/>
         <Thickness x:Key="ItemTemplateMargin" Left="2" Top="2" Right="2" Bottom="2"/>
         <Thickness x:Key="TimeTextBoxPadding" Left="2" Top="0" Right="2" Bottom="0"/>
+        <Thickness x:Key="OneLineElementsHeightMargin" Left="0" Top="10" Right="0" Bottom="10"/>
         <system:Double x:Key="OneLineElementsHeight">24</system:Double>
         <system:Int32 x:Key="MaxReminderLength">500</system:Int32>
         <system:Int32 x:Key="MaxNoteLength">1000</system:Int32>
@@ -388,7 +389,7 @@
                 </ScrollViewer>
                 <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
                     TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10" Height="{StaticResource OneLineElementsHeight}">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="{StaticResource OneLineElementsHeightMargin}" Height="{StaticResource OneLineElementsHeight}">
                     <TextBlock Text="Повтор" VerticalAlignment="Center"/>
                     <ComboBox ItemsSource="{x:Static extensions:EnumExtensions.PeriodicityInfos}" IsEditable="False"  Margin="5,0,25,0" 
                         SelectedValue="{Binding Periodicity}" SelectedValuePath="Member" DisplayMemberPath="Description"
@@ -447,7 +448,7 @@
                 </ScrollViewer>
                 <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
                     TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10" Height="{StaticResource OneLineElementsHeight}">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="{StaticResource OneLineElementsHeightMargin}" Height="{StaticResource OneLineElementsHeight}">
                     <TextBlock Text="Сигнал через" VerticalAlignment="Center"/>
                     <ui:TimeTextBox Time="{Binding AlarmTime}"  VerticalContentAlignment="Center"
                          Margin="{StaticResource Left5Margin}" Padding="{StaticResource TimeTextBoxPadding}"/>
@@ -575,7 +576,7 @@
                 </ScrollViewer>
                 <TextBlock Grid.Row="2" Text="{Binding Text, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
                     TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10" Height="{StaticResource OneLineElementsHeight}">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="{StaticResource OneLineElementsHeightMargin}" Height="{StaticResource OneLineElementsHeight}">
                     <TextBlock Text="Тип" VerticalAlignment="Center"/>
                     <ComboBox ItemsSource="{x:Static extensions:EnumExtensions.SecretKindInfos}" IsEditable="False"  Margin="5,0,25,0" 
                         SelectedValue="{Binding Kind}" SelectedValuePath="Member" DisplayMemberPath="Description"

@@ -1,15 +1,13 @@
 ﻿using Reminder.Models;
+using Reminder.UI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reminder.ViewModels
 {
-    public class SecretGroup : SchedulerGroup<SecretItemViewModel>
+    public class SecretGroup : SchedulerGroup<SecretItemViewModel>, ISupportHostContent
     {
         public override string Name
         {
@@ -24,6 +22,11 @@ namespace Reminder.ViewModels
         public override string Description
         {
             get { return "Секрет - это зашифрованная строка или файл, представляющие конфиденциальные данные: пароли, ссылки, заклинания и т.п. Сортируются по частоте просмотров."; }
+        }
+
+        public override bool IsVisible
+        {
+            get { return ReminderModel.Instance.Settings.UnlockSecretsKey != Guid.Empty; }
         }
 
         public override void Initialize()
@@ -63,5 +66,24 @@ namespace Reminder.ViewModels
             return y.ViewCounter.CompareTo(x.ViewCounter);
         }
 
+        #region ISupportHostContent
+        bool _isUnlocked;
+
+        bool ISupportHostContent.IsHostContentAllowed 
+        {
+            get { return _isUnlocked == false; }
+        }
+
+        HostContent ISupportHostContent.GetHostContent()
+        {
+            return new HostContent(new UnlockSecretsControl(), new UnlockSecretsViewModel());
+        }
+
+        void ISupportHostContent.SetHostContentAllowed(bool value)
+        { 
+            _isUnlocked = value;
+        }
+
+        #endregion ISupportHostContent
     }
 }

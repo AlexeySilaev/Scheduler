@@ -17,6 +17,7 @@ namespace Reminder.ViewModels
             POPUP_WIDTH = 350,
             POPUP_HEIGHT = 215;
         private readonly ReminderConveyor _reminderConveyor;
+        private readonly SettingsViewModel _settings;
 
         private ISchedulerGroup _selectedGroup;
         private SchedulerItemViewModel _selectedItem;
@@ -29,7 +30,7 @@ namespace Reminder.ViewModels
         private ConfirmDeleteViewModel _confirmDelete;
         private ComingDayEventsViewModel _comingDayEvents;
         private SchedulerItemViewModel _editingItem;
-        private SettingsViewModel _settings;
+        private HostContent _hostContent;
 
         private EventGroup Events
         {
@@ -51,9 +52,12 @@ namespace Reminder.ViewModels
                 if (SelectedGroup == value) return;
                 SearchText = string.Empty;
                 OnCancelEditItem();
-                Settings = null;
                 _selectedGroup = value;
                 OnPropertyChanged(nameof(SelectedGroup));
+                if (SelectedGroup is ISupportHostContent hostContentGroup && hostContentGroup.IsHostContentAllowed)
+                    SetHostContent(hostContentGroup.GetHostContent(), SelectedGroup);
+                else
+                    HostContent = null;
             }
         }
 
@@ -150,18 +154,14 @@ namespace Reminder.ViewModels
             }
         }
 
-        public SettingsViewModel Settings
+        public HostContent HostContent
         {
-            get { return _settings; }
+            get { return _hostContent; }
             private set
             {
-                if (Settings == value) return;
-                if(Settings != null)
-                    Settings.PropertyChanged -= Settings_OnPropertyChanged;
-                _settings = value;
-                if (Settings != null)
-                    Settings.PropertyChanged += Settings_OnPropertyChanged;
-                OnPropertyChanged(nameof(Settings));
+                if (HostContent?.ViewModel == value?.ViewModel) return;
+                _hostContent = value;
+                OnPropertyChanged(nameof(HostContent));
             }
         }
 
@@ -258,6 +258,7 @@ namespace Reminder.ViewModels
         public ICommand AddItemCommand { get; }
         public ICommand SaveItemCommand { get; }
         public ICommand CancelEditItemCommand { get; }
+        public ICommand ManagementCommand { get; }
         public ICommand SettingsCommand { get; }
 
         public NotifyIconHandler NotifyIconHandler { get; }
@@ -265,16 +266,20 @@ namespace Reminder.ViewModels
 
         public MainViewModel()
         {
-            _searchText = string.Empty;
             Groups = new[] { new EventGroup(), new AlarmGroup(), (ISchedulerGroup)new NoteGroup(),
                 (ISchedulerGroup)new ProjectGroup(), (ISchedulerGroup)new SecretGroup() };
+            _settings = new SettingsViewModel(AppSettings);
+            _settings.PropertyChanged += Settings_OnPropertyChanged;
+
+            _searchText = string.Empty;
             _reminderConveyor = new ReminderConveyor(Alarms, Events, OnConveyorRefresh);
             _popupRect = Rect.Empty;
             SelectedGroup = Groups[0];
             AddItemCommand = new Command(OnAddItem);
             SaveItemCommand = new Command(OnEndEditItem);
             CancelEditItemCommand = new Command(OnCancelEditItem);
-            SettingsCommand = new Command(OnSettingsCommand);
+            ManagementCommand = new Command(OnManagement);
+            SettingsCommand = new Command(OnSettings);
             NotifyIconHandler = new NotifyIconHandler();
         }
 
@@ -397,12 +402,23 @@ namespace Reminder.ViewModels
             }
         }
 
-        private void OnSettingsCommand()
+        private void OnManagement()
+        {
+            ManagementViewModel management = new ManagementViewModel((ISupportHostContent)Groups[4]);
+            SetHostContent(new HostContent(new ManagementControl(), management), null);
+        }
+
+        private void OnSettings()
+        {
+            SetHostContent(new HostContent(new SettingsControl(), _settings), null);
+        }
+
+        private void SetHostContent(HostContent hostContent, ISchedulerGroup selectedGroup)
         {
             ConfirmDelete = null;
-            SelectedGroup = null;
+            SelectedGroup = selectedGroup;
             OnCancelEditItem();
-            Settings = new SettingsViewModel(AppSettings);
+            HostContent = hostContent;
         }
 
         private void OnConveyorRefresh(EventItemViewModel[] newDayAboutEvents)
