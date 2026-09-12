@@ -1,6 +1,6 @@
 ﻿using Microsoft.Win32;
 using Reminder.Installer.Wizard;
-using Reminder.Cipher;
+using Reminder.Resources.Cipher;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

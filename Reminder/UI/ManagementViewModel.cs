@@ -1,5 +1,5 @@
-﻿using Reminder.Cipher;
-using Reminder.Models;
+﻿using Reminder.Models;
+using Reminder.Resources.Cipher;
 using Reminder.ViewModels;
 using System;
 

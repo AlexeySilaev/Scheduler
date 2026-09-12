@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace Reminder.Models
 {
@@ -6,6 +7,7 @@ namespace Reminder.Models
     {
         public int ViewCounter { get; set; }
         public SecretKind Kind { get; set; }
+        public Guid Value { get; set; }
 
         public SecretItem()
         {

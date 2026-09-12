@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Reminder.Cipher
+namespace Reminder.Resources.Cipher
 {
     public static class MD5Extensions
     {

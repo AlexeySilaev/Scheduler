@@ -47,11 +47,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cipher\FileCipher.cs" />
+    <Compile Include="Cipher\MD5Extensions.cs" />
+    <Compile Include="Cipher\ReminderCipher.cs" />
+    <Compile Include="Cipher\StringCipher.cs" />
     <Compile Include="EmbeddedResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Storage\Secrets.cs" />
+    <Compile Include="Storage\StringSecrets.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="bell.mp3" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

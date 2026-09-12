@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Reminder.Cipher
+namespace Reminder.Resources.Cipher
 {
     public class StringCipher : ReminderCipher
     {
@@ -20,10 +20,8 @@ namespace Reminder.Cipher
         public string Decrypt(string cipherTextBase64)
         {
             byte[] cipherBytes = Convert.FromBase64String(cipherTextBase64);
-
-            using(Stream decrypted = Decrypt(cipherBytes))
-            using (var sr = new StreamReader(decrypted))
-                return sr.ReadToEnd(); // UTF8 по умолчанию
+            byte[] decrypted = Decrypt(cipherBytes);
+            return Encoding.UTF8.GetString(decrypted);
         }
     }
 }

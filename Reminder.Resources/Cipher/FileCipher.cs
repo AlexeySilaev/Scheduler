@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Reminder.Cipher
+namespace Reminder.Resources.Cipher
 {
     public class FileCipher : ReminderCipher
     {
@@ -18,13 +18,8 @@ namespace Reminder.Cipher
         public void Decrypt(string sourcePath, string targetPath)
         {
             byte[] cipherBytes = File.ReadAllBytes(sourcePath);
-
-            using (Stream decrypted = Decrypt(cipherBytes))
-            using (FileStream fs = new FileStream(targetPath, FileMode.Create))
-            {
-                decrypted.Position = 0;
-                decrypted.CopyTo(fs);
-            }
+            byte[] decrypted = Decrypt(cipherBytes);
+            File.WriteAllBytes(targetPath, decrypted);
         }
     }
 }

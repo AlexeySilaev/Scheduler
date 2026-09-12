@@ -31,6 +31,12 @@ namespace Reminder.ViewModels
 
         public override void Initialize()
         {
+            if (ReminderModel.Instance.Secrets.Any())
+            {
+                // зачем давать разрастаться числу просмотров? Нормализуем относительно минимального
+                int minViewCount = ReminderModel.Instance.Secrets.Min(x => x.ViewCounter);
+                ReminderModel.Instance.Secrets.ForEach(s => s.ViewCounter -= minViewCount - 1);
+            }
             _allItems = ReminderModel.Instance.Secrets.Select(n => new SecretItemViewModel(n))
                 .OrderByDescending(n => n.ViewCounter)
                 .ToList();

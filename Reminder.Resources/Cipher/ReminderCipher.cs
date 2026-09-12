@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 
-namespace Reminder.Cipher
+namespace Reminder.Resources.Cipher
 {
     public class ReminderCipher
     {
@@ -55,7 +55,7 @@ namespace Reminder.Cipher
             }
         }
 
-        public Stream Decrypt(byte[] cipherBytes)
+        public byte[] Decrypt(byte[] cipherBytes)
         {
             int dataSize = SALT_SIZE + IV_SIZE;
             if (cipherBytes.Length < dataSize)
@@ -78,7 +78,12 @@ namespace Reminder.Cipher
                 using (var aes = CreateAes(key, iv))
                 using (var decryptor = aes.CreateDecryptor())
                 using (var ms = new MemoryStream(encryptedData))
-                    return new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+                using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                using (var result = new MemoryStream())
+                {
+                    cs.CopyTo(result);
+                    return result.ToArray();
+                }
             }
         }
 

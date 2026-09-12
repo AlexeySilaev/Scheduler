@@ -75,10 +75,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviors\ImageBehavior.cs" />
-    <Compile Include="Cipher\FileCipher.cs" />
-    <Compile Include="Cipher\MD5Extensions.cs" />
-    <Compile Include="Cipher\ReminderCipher.cs" />
-    <Compile Include="Cipher\StringCipher.cs" />
     <Compile Include="Converters\AlarmTimeToStringConverter.cs" />
     <Compile Include="Converters\CharactersEnteredConverter.cs" />
     <Compile Include="Converters\DaysRangeActivityConverter.cs" />
@@ -101,6 +97,7 @@
     <Compile Include="Converters\ReminderItemPostponeItemsSourceConverter.cs" />
     <Compile Include="Converters\StaticResourceToIntConverter.cs" />
     <Compile Include="Converters\StringIsNullOrEmptyConverter.cs" />
+    <Compile Include="Converters\StringSecretPresentationConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\SubstringConverter.cs" />
     <Compile Include="Converters\WeekDayToInvertBoolConverter.cs" />

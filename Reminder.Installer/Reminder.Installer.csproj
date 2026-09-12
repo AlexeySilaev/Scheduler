@@ -68,7 +68,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="..\Reminder\Cipher\MD5Extensions.cs">
+    <Compile Include="..\Reminder.Resources\Cipher\MD5Extensions.cs">
       <Link>Infrastructure\MD5Extensions.cs</Link>
     </Compile>
     <Compile Include="Wizard\FolderBackupCopy.cs" />
