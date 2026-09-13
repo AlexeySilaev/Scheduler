@@ -55,7 +55,7 @@ namespace Reminder.Resources.Cipher
             }
         }
 
-        public byte[] Decrypt(byte[] cipherBytes)
+        protected byte[] Decrypt(byte[] cipherBytes)
         {
             int dataSize = SALT_SIZE + IV_SIZE;
             if (cipherBytes.Length < dataSize)

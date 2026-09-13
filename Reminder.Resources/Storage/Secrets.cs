@@ -11,6 +11,7 @@ namespace Reminder.Resources.Storage
         public static Secrets Instance { get; } = new Secrets();
 
         private readonly StringCipher _stringCipher;
+        private readonly FileCipher _fileCipher;
 
         private IsolatedStorageFile _storage;
         private StringSecrets _stringSecrets;
@@ -68,9 +69,56 @@ namespace Reminder.Resources.Storage
             return result;
         }
 
+        public bool GetFileSecret(Guid key, string targetPath)
+        {
+            string fileName = GetFileSecretName(key);
+            if (Storage.FileExists(fileName) == false)
+                return false;
+            using (IsolatedStorageFileStream stream = Storage.OpenFile(fileName, FileMode.Open, FileAccess.Read))
+            {
+                _fileCipher.Decrypt(stream, targetPath);
+                return true;
+            }
+        }
+
+        public Guid AddFileSecret(string path)
+        {
+            return _fileCipher.Encrypt(path, key =>
+            {
+                string fileName = GetFileSecretName(key);
+                return Storage.OpenFile(fileName, FileMode.CreateNew, FileAccess.Write);
+            });
+        }
+
+        public Guid UpdateFileSecret(string path)
+        {
+            return _fileCipher.Encrypt(path, key =>
+            {
+                string fileName = GetFileSecretName(key);
+                return Storage.OpenFile(fileName, FileMode.Create, FileAccess.Write);
+            });
+        }
+
+        public bool RemoveFileSecret(Guid key)
+        {
+            string fileName = GetFileSecretName(key);
+            if (Storage.FileExists(fileName))
+            { 
+                Storage.DeleteFile(fileName);
+                return true;
+            }
+            return false;
+        }
+
+        static string GetFileSecretName(Guid key)
+        {
+            return Path.ChangeExtension(key.ToString(), "crpt");
+        }
+
         private Secrets()
         {
             _stringCipher = new StringCipher();
+            _fileCipher = new FileCipher();
         }
 
         ~Secrets()

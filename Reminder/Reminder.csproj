@@ -81,8 +81,10 @@
     <Compile Include="Converters\DaysRangeControlVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\EnumToStringConverter.cs" />
+    <Compile Include="Converters\EnumToVisibilityConverter.cs" />
     <Compile Include="Converters\EventDateToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\FileSecretPresentationConverter.cs" />
     <Compile Include="Converters\FoundItemsCountConverter.cs" />
     <Compile Include="Converters\HostContentConverter.cs" />
     <Compile Include="Converters\IndexedStringItemCollectionConverter.cs" />
@@ -95,6 +97,7 @@
     <Compile Include="Converters\PostponeDescriptionConverter.cs" />
     <Compile Include="Converters\DaysRangeToBoolConverter.cs" />
     <Compile Include="Converters\ReminderItemPostponeItemsSourceConverter.cs" />
+    <Compile Include="Converters\SecretKindToDataTemplateConverter.cs" />
     <Compile Include="Converters\StaticResourceToIntConverter.cs" />
     <Compile Include="Converters\StringIsNullOrEmptyConverter.cs" />
     <Compile Include="Converters\StringSecretPresentationConverter.cs" />
@@ -300,6 +303,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\management24x24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\openfile24x24.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

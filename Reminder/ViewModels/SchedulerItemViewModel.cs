@@ -84,6 +84,10 @@ namespace Reminder.ViewModels
             Text = _item.Text;
         }
 
+        public virtual void EndDelete()
+        { 
+        }
+
         public abstract void Save();
 
         public override string ToString()

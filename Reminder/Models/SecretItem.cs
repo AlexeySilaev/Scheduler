@@ -8,6 +8,8 @@ namespace Reminder.Models
         public int ViewCounter { get; set; }
         public SecretKind Kind { get; set; }
         public Guid Value { get; set; }
+        [DefaultValue(null)]
+        public SecretFile File { get; set; }
 
         public SecretItem()
         {
@@ -20,4 +22,11 @@ namespace Reminder.Models
         [Description("Строка")] String,
         [Description("Файл")] File
     }
+
+    public class SecretFile
+    { 
+        public string Name { get; set; }
+        public long Length { get; set; }
+    }
+
 }

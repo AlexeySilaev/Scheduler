@@ -8,9 +8,15 @@ namespace Reminder.Resources.Cipher
     {
         public static Guid ToGuid(this string text)
         {
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+            return bytes.ToGuid();
+        }
+
+        public static Guid ToGuid(this byte[] bytes)
+        {
             using (HashAlgorithm md5 = MD5.Create())
             {
-                byte[] guid = md5.ComputeHash(Encoding.UTF8.GetBytes(text));
+                byte[] guid = md5.ComputeHash(bytes);
                 return new Guid(guid);
             }
         }

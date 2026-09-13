@@ -357,6 +357,7 @@ namespace Reminder.ViewModels
         {
             int index = Convert.ToInt32(schedulerItemViewModel.Type);
             Groups[index].Remove(schedulerItemViewModel);
+            schedulerItemViewModel.EndDelete();
             if (Groups[index] == SelectedGroup)
                 OnPropertyChanged(nameof(SelectedGroup)); // обновим количество найденных элементов
             SaveToModel();

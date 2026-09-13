@@ -23,11 +23,14 @@
         <converters:StaticResourceToIntConverter x:Key="StaticResourceToIntConverter"/>
         <converters:PeriodicityToDataTemplateConverter x:Key="PeriodicityToDataTemplateConverter"/>
         <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <converters:EnumToVisibilityConverter x:Key="EnumToVisibilityConverter" />
         <converters:ItemCountToVisibilityConverter x:Key="ItemCountToVisibilityConverter" />
         <converters:IndexedStringItemCollectionConverter x:Key="IndexedStringItemCollectionConverter" />
         <converters:DaysRangeControlVisibilityConverter x:Key="DaysRangeControlVisibilityConverter" />
         <converters:DaysRangeActivityConverter x:Key="DaysRangeActivityConverter" />
         <converters:StringSecretPresentationConverter x:Key="StringSecretPresentationConverter" />
+        <converters:FileSecretPresentationConverter x:Key="FileSecretPresentationConverter" />
+        <converters:SecretKindToDataTemplateConverter x:Key="SecretKindToDataTemplateConverter" />
         <SolidColorBrush x:Key="GrayText" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
         <SolidColorBrush x:Key="WindowText" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}"/>
         <SolidColorBrush x:Key="Introductory" Color="{DynamicResource {x:Static SystemColors.GrayTextColorKey}}"/>
@@ -167,10 +170,16 @@
             </StackPanel>
         </ControlTemplate>
 
-        <ControlTemplate x:Key="StringSecretButtonPanel">
+        <ControlTemplate x:Key="SecretItemButtonPanel" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Height="20" Width="20" Command="{Binding Copy}" Margin="2,0"
-                    Template="{StaticResource CopyToClipboardImageButton}" ToolTip="Копировать"/>
+                    Template="{StaticResource CopyToClipboardImageButton}" ToolTip="Копировать"
+                    Visibility="{Binding Kind, Converter={StaticResource EnumToVisibilityConverter},
+                       ConverterParameter={x:Static models:SecretKind.String}}"/>
+                <Button Height="20" Width="20" Command="{Binding Download}" Margin="2,0"
+                    Template="{StaticResource DownloadImageButton}" ToolTip="Выгрузить"
+                    Visibility="{Binding Kind, Converter={StaticResource EnumToVisibilityConverter},
+                       ConverterParameter={x:Static models:SecretKind.File}}"/>
                 <Button Height="20" Width="20" Command="{Binding Edit}" Margin="2,0"
                     Template="{StaticResource EditImageButton}" ToolTip="{Binding EditToolTip}"/>
                 <Button Height="20" Width="20" Command="{Binding Delete}" Margin="2,0"
@@ -384,14 +393,25 @@
                         <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Edit}" />
                     </Grid.InputBindings>
                     <TextBlock Text="{Binding Text}" Style="{StaticResource ReminderItemText}"/>
-                    <DockPanel Grid.Row="1" LastChildFill="False">
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Foreground="{StaticResource GrayText}" Margin="{StaticResource DetailsMargin}"
+                            Text="{Binding SecretString, Converter={StaticResource StringSecretPresentationConverter}}"
+                            Visibility="{Binding Kind, Converter={StaticResource EnumToVisibilityConverter},
+                                ConverterParameter={x:Static models:SecretKind.String}}" />
                         <TextBlock DockPanel.Dock="Left" Foreground="{StaticResource GrayText}" Margin="{StaticResource DetailsMargin}"
-                            Text="{Binding SecretString, Converter={StaticResource StringSecretPresentationConverter}}" />
-                        <TextBlock DockPanel.Dock="Right" Foreground="{StaticResource GrayText}" Margin="{StaticResource DetailsMargin}"
+                            Text="{Binding SecretFile, Converter={StaticResource FileSecretPresentationConverter}}"
+                            Visibility="{Binding Kind, Converter={StaticResource EnumToVisibilityConverter},
+                                ConverterParameter={x:Static models:SecretKind.File}}"
+                            TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="1" Foreground="{StaticResource GrayText}" Margin="{StaticResource DetailsMargin}"
                             Text="{Binding Kind, Converter={StaticResource EnumToStringConverter}}" />
-                    </DockPanel>
+                    </Grid>
                     <ContentControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="ImagesPanel"
-                        Template="{StaticResource StringSecretButtonPanel}" DataContext="{Binding}" Visibility="Hidden" />
+                        Template="{StaticResource SecretItemButtonPanel}" DataContext="{Binding}" Visibility="Hidden" />
                 </Grid>
             </Border>
             <DataTemplate.Triggers>
@@ -464,7 +484,7 @@
 
         </DataTemplate>
 
-        <!-- Кастомизация редактирования EventItemViewModel в зависимости от периодичности -->
+        <!-- ↓ Кастомизация редактирования EventItemViewModel в зависимости от периодичности ↓ -->
         <DataTemplate x:Key="PeriodicityRepeated" DataType="{x:Type viewModels:EventItemViewModel}" >
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Начиная с" VerticalAlignment="Center"/>
@@ -477,8 +497,7 @@
                 <DatePicker SelectedDate="{Binding EventDate}" Margin="{StaticResource Left5Margin}"/>
             </StackPanel>
         </DataTemplate>
-
-        <!-- Конец кастомизация редактирования EventItemViewModel в зависимости от периодичности -->
+        <!-- ↑ Конец кастомизация редактирования EventItemViewModel в зависимости от периодичности ↑ -->
 
         <DataTemplate x:Key="EditAlarmItemTemplate" DataType="{x:Type viewModels:AlarmItemViewModel}" >
             <Grid Margin="{StaticResource EditTemplateMargin}" FocusManager.FocusedElement="{Binding ElementName=AlarmText}" >
@@ -609,11 +628,47 @@
             </Grid>
         </DataTemplate>
 
+        <!-- ↓ Кастомизация редактирования SecretItemViewModel в зависимости от типа секрета ↓ -->
+        <DataTemplate x:Key="SecretString" DataType="{x:Type viewModels:SecretItemViewModel}" >
+            <StackPanel>
+                <TextBlock Text="Значение" Margin="{StaticResource TextBlockMargin}"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBox Text="{Binding SecretString, UpdateSourceTrigger=PropertyChanged}" 
+                        MaxLength="{Binding SecretString, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                        Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                </ScrollViewer>
+                <TextBlock Text="{Binding SecretString, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
+                    TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
+            </StackPanel>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="SecretFile" DataType="{x:Type viewModels:SecretItemViewModel}" >
+            <StackPanel>
+                <TextBlock Text="Выбор файла" Margin="{StaticResource TextBlockMargin}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBox Text="{Binding SecretFile.Name}" VerticalAlignment="Center" IsReadOnly="True" Padding="1"/>
+                    <Button Grid.Column="1" Command="{Binding SelectFile}" Height="20" Margin="{StaticResource Left5Margin}">
+                        <Image Source="/Resources/openfile24x24.png" Stretch="Uniform"/>
+                    </Button>
+                    <TextBlock Grid.Row="1" Foreground="{StaticResource GrayText}" Margin="{StaticResource DetailsMargin}"
+                        Text="{Binding SelectFileTip, Mode=OneTime}" TextWrapping="Wrap" HorizontalAlignment="Center"
+                        Visibility="{Binding SelectFile, Converter={StaticResource StringToVisibilityConverter}}"/>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+        <!-- ↑ Конец кастомизация редактирования SecretItemViewModel в зависимости от типа секрета ↑ -->
+
         <DataTemplate x:Key="EditSecretItemTemplate" DataType="{x:Type viewModels:SecretItemViewModel}" >
             <Grid Margin="{StaticResource EditTemplateMargin}" FocusManager.FocusedElement="{Binding ElementName=SecretKey}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -635,14 +690,7 @@
                         IsEnabled="{Binding Text, Converter={StaticResource StringIsNullOrEmptyConverter}, Mode=OneTime}"
                         VerticalContentAlignment="Center" MinWidth="70"/>
                 </StackPanel>
-                <TextBlock Grid.Row="4" Text="Значение" Margin="{StaticResource TextBlockMargin}"/>
-                <ScrollViewer Grid.Row="5" VerticalScrollBarVisibility="Auto">
-                    <TextBox Text="{Binding SecretString, UpdateSourceTrigger=PropertyChanged}" 
-                        MaxLength="{Binding SecretString, Converter={StaticResource StaticResourceToIntConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
-                        Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                </ScrollViewer>
-                <TextBlock Grid.Row="6" Text="{Binding SecretString, Converter={StaticResource CharactersEnteredConverter}, ConverterParameter={StaticResource MaxReminderLength}}"
-                    TextAlignment="Right" Margin="{StaticResource TextBlockMargin}"/>
+                <ContentControl Grid.Row="4" Content="{Binding}" ContentTemplate="{Binding Kind, Converter={StaticResource SecretKindToDataTemplateConverter}}"/>
             </Grid>
         </DataTemplate>
 
