@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Reminder.Resources;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,8 +12,6 @@ namespace Reminder.UnInstaller
 {
     internal class Program
     {
-        private const string APP_NAME = "AV Reminder";
-
         static void Main(string[] args)
         {
             StopAvReminder();
@@ -23,7 +22,7 @@ namespace Reminder.UnInstaller
                        Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\",
                            true))
                 {
-                    uninst.DeleteSubKeyTree(APP_NAME);
+                    uninst.DeleteSubKeyTree(AssemblyContext.APP_NAME);
                 }
 
                 RegistryKey rk =
@@ -53,8 +52,7 @@ namespace Reminder.UnInstaller
 
         private static void DeleteAppData()
         {
-            string appDataFolder =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APP_NAME);
+            string appDataFolder = AssemblyContext.AppDataPath;
             if(Directory.Exists(appDataFolder))
                 Directory.Delete(appDataFolder, true);
         }

@@ -65,5 +65,11 @@
     <EmbeddedResource Include="batchCommand.bin" />
     <None Include="key.snk" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Reminder.Resources\Reminder.Resources.csproj">
+      <Project>{13a7e7b9-d51c-4f2b-b955-027294610b47}</Project>
+      <Name>Reminder.Resources</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

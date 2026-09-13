@@ -19,7 +19,7 @@ namespace Reminder.Resources.Storage
     [Serializable]
     public class StringSecrets
     {
-        public const string FILE_NAME = "strings.xml";
+        public static string FilePath => Path.Combine(AssemblyContext.AppDataPath, "strings.xml");
 
         private readonly List<StringSecret> _items;
 
@@ -38,12 +38,6 @@ namespace Reminder.Resources.Storage
             _items = new List<StringSecret>();
         }
 
-        public void Save(Stream stream)
-        {
-            XmlSerializer serializer = new XmlSerializer(GetType());
-            serializer.Serialize(stream, this);
-        }
-
         public string Get(Guid key)
         {
             StringSecret existing = _items.SingleOrDefault(x => x.Key == key);
@@ -53,6 +47,7 @@ namespace Reminder.Resources.Storage
         public void Add(StringSecret secret)
         {
             _items.Add(secret);
+            Save();
         }
 
         public void Update(Guid key, StringSecret secret)
@@ -62,6 +57,7 @@ namespace Reminder.Resources.Storage
             {
                 existing.Key = secret.Key;
                 existing.Value = secret.Value;
+                Save();
             }
         }
         
@@ -69,8 +65,21 @@ namespace Reminder.Resources.Storage
         {
             StringSecret existing = _items.SingleOrDefault(x => x.Key == key);
             if (existing != null)
-                return _items.Remove(existing);
+            {
+                bool result = _items.Remove(existing);
+                Save();
+                return result;
+            }
             return false;
+        }
+
+        private void Save()
+        {
+            using (Stream stream = File.Create(FilePath))
+            {
+                XmlSerializer serializer = new XmlSerializer(GetType());
+                serializer.Serialize(stream, this);
+            }
         }
     }
 }

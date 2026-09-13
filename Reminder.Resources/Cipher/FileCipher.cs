@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.IsolatedStorage;
 
 namespace Reminder.Resources.Cipher
 {
@@ -10,20 +9,12 @@ namespace Reminder.Resources.Cipher
         { 
         }
 
-        public void Encrypt(string sourcePath, string targetPath)
-        {
-            byte[] bytes = File.ReadAllBytes(sourcePath);
-            byte[] encrypted = Encrypt(bytes);
-            File.WriteAllBytes(targetPath, encrypted);
-        }
-
-        public Guid Encrypt(string sourcePath, Func<Guid, IsolatedStorageFileStream> targetStreamCreator)
+        public Guid Encrypt(string sourcePath, Func<Guid, string> getTargetPath)
         {
             byte[] bytes = File.ReadAllBytes(sourcePath);
             byte[] encrypted = Encrypt(bytes);
             Guid result = encrypted.ToGuid();
-            using (IsolatedStorageFileStream targetStream = targetStreamCreator(result))
-                targetStream.Write(encrypted, 0, encrypted.Length);
+            File.WriteAllBytes(getTargetPath(result), encrypted);
             return result;
         }
 
@@ -33,17 +24,5 @@ namespace Reminder.Resources.Cipher
             byte[] decrypted = Decrypt(cipherBytes);
             File.WriteAllBytes(targetPath, decrypted);
         }
-
-        public void Decrypt(IsolatedStorageFileStream sourceStream, string targetPath)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                sourceStream.CopyTo(ms);
-                byte[] cipherBytes = ms.ToArray();
-                byte[] decrypted = Decrypt(cipherBytes);
-                File.WriteAllBytes(targetPath, decrypted);
-            }
-        }
-
     }
 }

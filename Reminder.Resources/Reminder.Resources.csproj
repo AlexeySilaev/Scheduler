@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyContext.cs" />
     <Compile Include="Cipher\FileCipher.cs" />
     <Compile Include="Cipher\MD5Extensions.cs" />
     <Compile Include="Cipher\ReminderCipher.cs" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reminder.Resources;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -12,8 +13,7 @@ namespace Reminder.Models
         {
             get
             {
-                string result =
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AV Reminder");
+                string result = AssemblyContext.AppDataPath;
                 if (Directory.Exists(result) == false)
                     Directory.CreateDirectory(result);
                 return result;

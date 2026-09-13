@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Reminder.Resources.Cipher
 {
@@ -17,7 +19,19 @@ namespace Reminder.Resources.Cipher
 
         protected ReminderCipher()
         {
-            _password = Convert.ToBase64String(Assembly.GetExecutingAssembly().GetName().GetPublicKey());
+            _password = GeneratePassword();
+            Console.WriteLine(_password);
+        }
+
+        private static string GeneratePassword()
+        {
+            AssemblyName assemblyName = Assembly.GetExecutingAssembly().GetName();
+            byte[] keyToken = assemblyName.GetPublicKeyToken();
+            byte[] name = Encoding.UTF8.GetBytes(assemblyName.Name);
+            byte[] buffer = new byte[keyToken.Length + name.Length];
+            Array.Copy(keyToken.Reverse().ToArray(), 0, buffer, 0, keyToken.Length);
+            Array.Copy(name.Reverse().ToArray(), 0, buffer, keyToken.Length, name.Length);
+            return Convert.ToBase64String(buffer);
         }
 
         protected byte[] Encrypt(byte[] bytes)
