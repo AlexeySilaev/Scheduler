@@ -52,6 +52,27 @@ namespace Reminder.Installer
             }
         }
 
+        private bool ConsiderUnlockSecretsPassword
+        {
+            get { return string.IsNullOrEmpty(UnlockSecretsPassword) == false; }
+        }
+
+        private string AppDataFolderPath
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APP_NAME);
+            }
+        }
+
+        private string SecretsAppDataFolderPath
+        {
+            get
+            {
+                return Path.Combine(AppDataFolderPath, "Secrets");
+            }
+        }
+
         public string Title
         {
             get { return _title; }
@@ -116,13 +137,6 @@ namespace Reminder.Installer
                     return "/Resources/eye_opened.png";
                 else
                     return "/Resources/eye_closed.png";
-            }
-        }
-        public string AppDataFolderPath
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APP_NAME);
             }
         }
 
@@ -366,6 +380,8 @@ namespace Reminder.Installer
             return Task.Factory.StartNew(() =>
             {
                 EnsureFolderExists(AppDataFolderPath);
+                if (ConsiderUnlockSecretsPassword)
+                    ExtractEmbeddedResource("strings.xml", SecretsAppDataFolderPath);
                 ConfigureUnlockSecretsPassword();
 
                 const string icoName = "App.ico";
@@ -375,6 +391,17 @@ namespace Reminder.Installer
                 File.Delete(icoPath);
                 return result;
             });
+        }
+
+        private void ExtractEmbeddedResource(string resourceName, string targetFolderPath)
+        {
+            EnsureFolderExists(targetFolderPath);
+            using (FileStream fileStream = File.Create(Path.Combine(targetFolderPath, resourceName)))
+            {
+                using (Stream contentStream = Assembly.GetExecutingAssembly()
+                   .GetManifestResourceStream($"Reminder.Installer.Resources.{resourceName}"))
+                    contentStream.CopyTo(fileStream);
+            }
         }
 
         private XmlDocument GetXmlData(out string dataPath)
@@ -388,8 +415,8 @@ namespace Reminder.Installer
 
         private void ConfigureUnlockSecretsPassword()
         {
-            Guid? unlockSecretsKey = string.IsNullOrEmpty(UnlockSecretsPassword) ?
-                (Guid?)null : UnlockSecretsPassword.ToGuid();
+            Guid? unlockSecretsKey = ConsiderUnlockSecretsPassword 
+                ? UnlockSecretsPassword.ToGuid() : (Guid?)null;
             XmlDocument doc = GetXmlData(out string dataPath);
             if (doc.DocumentElement != null)
             {
@@ -424,26 +451,13 @@ namespace Reminder.Installer
             else
             {
                 // пустой шаблон с ключом разблокировки секретов
-                XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", null, null);
-                doc.AppendChild(xmlDeclaration);
-                XmlElement root = doc.CreateElement("Data");
-                doc.AppendChild(root);
-                XmlElement alarms = doc.CreateElement("Alarms");
-                root.AppendChild(alarms);
-                XmlElement events = doc.CreateElement("Events");
-                root.AppendChild(events);
-                XmlElement notes = doc.CreateElement("Notes");
-                root.AppendChild(notes);
-                XmlElement projects = doc.CreateElement("Projects");
-                root.AppendChild(projects);
-                XmlElement secrets = doc.CreateElement("Secrets");
-                root.AppendChild(secrets);
-                XmlElement settings = doc.CreateElement("Settings");
-                root.AppendChild(settings);
+                ExtractEmbeddedResource(Path.GetFileName(dataPath), Path.GetDirectoryName(dataPath));
                 if (unlockSecretsKey != null)
                 {
+                    doc = GetXmlData(out dataPath);
                     XmlElement password = doc.CreateElement("UnlockSecretsKey");
                     password.InnerText = unlockSecretsKey.ToString();
+                    XmlNode settings = doc.SelectSingleNode("/Data/Settings");
                     settings.AppendChild(password);
                 }
             }
@@ -497,7 +511,7 @@ namespace Reminder.Installer
 
         private void UpdatePasswordTipVisibility()
         {
-            if (string.IsNullOrEmpty(UnlockSecretsPassword))
+            if (ConsiderUnlockSecretsPassword == false)
                 PasswordTipVisibility = Visibility.Hidden;
             else if (PrevUnlockKey.HasValue)
             {

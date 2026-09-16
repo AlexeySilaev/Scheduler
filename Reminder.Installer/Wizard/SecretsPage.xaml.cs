@@ -16,6 +16,7 @@ namespace Reminder.Installer.Wizard
         {
             if (DataContext is MainWindowViewModel viewModel && viewModel.ShowPassword)
                 tbUnlockSecretsPassword.FontFamily = sourceFont.FontFamily;
+            tbUnlockSecretsPassword.Focus();
         }
 
         private void OnToggleShowPassword(object sender, System.Windows.Input.MouseButtonEventArgs e)

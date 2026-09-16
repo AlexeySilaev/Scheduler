@@ -88,6 +88,7 @@
     <Compile Include="Converters\FoundItemsCountConverter.cs" />
     <Compile Include="Converters\HostContentConverter.cs" />
     <Compile Include="Converters\IndexedStringItemCollectionConverter.cs" />
+    <Compile Include="Converters\InvertBoolConverter.cs" />
     <Compile Include="Converters\InvertBoolToVisibilityConverter.cs" />
     <Compile Include="Converters\DateTimeMethodToValueConverter.cs" />
     <Compile Include="Converters\ItemCountToVisibilityConverter.cs" />
@@ -99,10 +100,12 @@
     <Compile Include="Converters\ReminderItemPostponeItemsSourceConverter.cs" />
     <Compile Include="Converters\SecretKindToDataTemplateConverter.cs" />
     <Compile Include="Converters\StaticResourceToIntConverter.cs" />
+    <Compile Include="Converters\StringIsNotNullOrEmptyConverter.cs" />
     <Compile Include="Converters\StringIsNullOrEmptyConverter.cs" />
     <Compile Include="Converters\StringSecretPresentationConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\SubstringConverter.cs" />
+    <Compile Include="Converters\TimeSpanToStringConverter.cs" />
     <Compile Include="Converters\WeekDayToInvertBoolConverter.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
@@ -143,6 +146,10 @@
       <DependentUpon>ManagementControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ManagementViewModel.cs" />
+    <Compile Include="UI\ProcessControl.xaml.cs">
+      <DependentUpon>ProcessControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ProcessViewModel.cs" />
     <Compile Include="UI\SettingsControl.xaml.cs">
       <DependentUpon>SettingsControl.xaml</DependentUpon>
     </Compile>
@@ -212,6 +219,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\ManagementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\ProcessControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -306,6 +317,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\openfile24x24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\processing24x24.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

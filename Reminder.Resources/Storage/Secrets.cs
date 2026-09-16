@@ -85,7 +85,8 @@ namespace Reminder.Resources.Storage
 
         static string GetFileSecretName(Guid key)
         {
-            return Path.Combine(AssemblyContext.AppDataPath, Path.ChangeExtension(key.ToString(), "crpt"));
+            return Path.Combine(Path.Combine(AssemblyContext.AppDataPath,"Secrets"),
+                Path.ChangeExtension(key.ToString(), "crpt"));
         }
 
         private Secrets()

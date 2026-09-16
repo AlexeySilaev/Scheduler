@@ -19,7 +19,7 @@ namespace Reminder.Resources.Storage
     [Serializable]
     public class StringSecrets
     {
-        public static string FilePath => Path.Combine(AssemblyContext.AppDataPath, "strings.xml");
+        public static string FilePath => Path.Combine(AssemblyContext.SecretsAppDataPath, "strings.xml");
 
         private readonly List<StringSecret> _items;
 
