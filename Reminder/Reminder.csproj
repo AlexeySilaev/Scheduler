@@ -112,12 +112,14 @@
     <Compile Include="Extensions\WindowExtensions.cs" />
     <Compile Include="Extensions\WindowPositioning.cs" />
     <Compile Include="Models\AlarmItem.cs" />
+    <Compile Include="Models\Consts.cs" />
     <Compile Include="Models\Data.cs" />
     <Compile Include="Models\DisposableObject.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\EventItem.cs" />
     <Compile Include="Models\NoteItem.cs" />
     <Compile Include="Models\ProjectItem.cs" />
+    <Compile Include="Models\ReminderDataImport.cs" />
     <Compile Include="Models\ReminderItem.cs" />
     <Compile Include="Models\ReminderModel.cs" />
     <Compile Include="Models\SecretItem.cs" />

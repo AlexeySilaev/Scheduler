@@ -2,6 +2,7 @@
 using Reminder.Models;
 using Reminder.Resources;
 using Reminder.Resources.Cipher;
+using Reminder.Resources.Storage;
 using Reminder.ViewModels;
 using System;
 using System.Diagnostics;
@@ -96,11 +97,11 @@ namespace Reminder.UI
         {
             string exportPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "avreminder.bin");
-            await ExportData.PeformProcessAsync(exportPath, CreateExportFile,
+            await ExportData.PeformProcessAsync(exportPath, CreateExportFileAsync,
                 () => Process.Start("explorer.exe", $"/select,\"{exportPath}\""));
         }
 
-        private Task CreateExportFile(string exportPath)
+        private Task CreateExportFileAsync(string exportPath)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -124,32 +125,26 @@ namespace Reminder.UI
         private bool CanExecuteImportCommand()
         {
             return string.IsNullOrEmpty(ImportFilePath) == false;
-        }
+        } 
 
         private async void OnImport()
         {
-            await ImportData.PeformProcessAsync(SkipMatchingData, PerformImportData, null);
+            await ImportData.PeformProcessAsync(SkipMatchingData, PerformImportDataAsync, null);
+            if (ImportData.Status == ProcessResult.Ok)
+            {
+                MainViewModel mainViewModel = MainViewModel.FindInstance();
+                mainViewModel.OnImportCompleted();
+            }
         }
 
-        private Task PerformImportData(bool skipMatchingData)
+        private Task PerformImportDataAsync(bool skipMatchingData)
         {
             return Task.Factory.StartNew(() =>
             {
                 if (File.Exists(ImportFilePath) == false)
                     throw new FileNotFoundException();
-                string zip = Path.GetTempFileName();
-                try
-                {
-                    BitwiseScrambler scrambler = new BitwiseScrambler();
-                    scrambler.Scramble(ImportFilePath, zip);
-
-                    /* ZipPackage package = new ZipPackage(zip, AssemblyContext.AppDataPath);
-                     package.Unzip(skipMatchingData);*/
-                }
-                finally
-                {
-                    File.Delete(zip);
-                }
+                DataImport import = new ReminderDataImport(ImportFilePath, skipMatchingData);
+                import.Execute();
             });
         }
 

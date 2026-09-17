@@ -5,9 +5,11 @@ namespace Reminder.Resources
 {
     public static class AssemblyContext
     {
-        public const string 
-            APP_NAME = "AV Reminder",
-            SECRETS_SUB_FOLDER = "Secrets";
+        public const string APP_NAME = "AV Reminder";
+        internal const string
+            SECRETS_SUB_FOLDER = "Secrets",
+            SECRET_FILE_EXTENSION = "crpt",
+            SECRET_STRINS_FILE_NAME = "strings.xml";
 
         public static string AppDataPath
         {

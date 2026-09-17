@@ -28,7 +28,7 @@
                   Visibility="{Binding ShowSecretsGroup, Mode=OneTime, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
             <StackPanel Orientation="Horizontal" Height="{StaticResource OneLineElementsHeight}">
                 <TextBlock Text="Пароль для секретов" VerticalAlignment="Center"/>
-                <PasswordBox x:Name="tbSecretPassword" PasswordChanged="OnSecretsPasswordChanged" MinWidth="250" Margin="10,0,20,0" />
+                <PasswordBox x:Name="tbSecretPassword" PasswordChanged="OnSecretsPasswordChanged" MinWidth="245" Margin="10,0,20,0" />
                 <Button Content="Разблокировать" Command="{Binding LockOrUnlockSecrectsCommand}" Padding="5,0"
                         Visibility="{Binding AllowUnblock, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"/>
                 <Button Content="Заблокировать" Command="{Binding LockOrUnlockSecrectsCommand}" Padding="5,0"
@@ -55,7 +55,7 @@
                     Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2"  Orientation="Horizontal" HorizontalAlignment="Center"
                     DataContext="{Binding ExportData}" Margin="{StaticResource TextBlockMargin}">
-                    <TextBlock Text="{Binding Status, Converter={StaticResource EnumToStringConverter}}" />
+                    <TextBlock Text="{Binding Status, Converter={StaticResource EnumToStringConverter}}" FontSize="14"/>
                     <TextBlock Text="{Binding Time, Converter={StaticResource TimeSpanToStringConverter}}"
                         Visibility="{Binding Status, Converter={StaticResource EnumToVisibilityConverter},
                             ConverterParameter={x:Static local:ProcessResult.Ok}}" />
@@ -97,17 +97,17 @@
                             Content="Заменять данными импорта" GroupName="MatchingData" />
                     </UniformGrid>
                 </StackPanel>
-                <TextBlock Grid.Row="2" Text="Если делать замену, это коснется секретов с одинаковыми ключами и элементов с одинаковыми описаниями."
-                    Visibility="{Binding ExportData.IsProcessing, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
+                <TextBlock Grid.Row="2" Text="Сравнение элементов производится по описанию. По завершении операции данные визуально обновятся."
+                    Visibility="{Binding ImportData.IsProcessing, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
                     TextWrapping="Wrap" />
                 <Button Grid.Column="1" Grid.Row="2" Content="Импортировать" Padding="5,0" Height="{StaticResource OneLineElementsHeight}"
-                    Visibility="{Binding ExportData.IsProcessing, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
+                    Visibility="{Binding ImportData.IsProcessing, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
                     Command="{Binding ImportCommand}"  Margin="{StaticResource Left5Margin}" />
                 <ui:ProcessControl Grid.Row="2" DataContext="{Binding ImportData}" 
                     Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
                 <StackPanel Grid.Row="3" Grid.ColumnSpan="2"  Orientation="Horizontal" HorizontalAlignment="Center"
                     DataContext="{Binding ImportData}" Margin="{StaticResource TextBlockMargin}">
-                    <TextBlock Text="{Binding Status, Converter={StaticResource EnumToStringConverter}}" />
+                    <TextBlock Text="{Binding Status, Converter={StaticResource EnumToStringConverter}}" FontSize="14" />
                     <TextBlock Text="{Binding Time, Converter={StaticResource TimeSpanToStringConverter}}"
                         Visibility="{Binding Status, Converter={StaticResource EnumToVisibilityConverter},
                             ConverterParameter={x:Static local:ProcessResult.Ok}}" />

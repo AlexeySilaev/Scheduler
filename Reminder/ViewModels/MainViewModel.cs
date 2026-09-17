@@ -310,6 +310,7 @@ namespace Reminder.ViewModels
             SaveToModel();
         }
 
+        // замена использования DI
         public static MainViewModel FindInstance()
         {
             return App.Current.MainWindow.DataContext as MainViewModel;
@@ -401,6 +402,12 @@ namespace Reminder.ViewModels
                 // если это сделать на начале скроллинга (сразу на окончании редактирования), панель поедет задвигаться пустой
                 EditingItem = null;
             }
+        }
+
+        public void OnImportCompleted()
+        {
+            OnCancelEditItem();
+            InitializeAsync(App.Current.MainWindow.Dispatcher);
         }
 
         private void OnManagement()

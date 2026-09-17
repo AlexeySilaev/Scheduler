@@ -73,7 +73,7 @@ namespace Reminder.ViewModels
         }
 
         #region ISupportHostContent
-        bool _isUnlocked = true;
+        bool _isUnlocked;
 
         bool ISupportHostContent.IsHostContentAllowed 
         {

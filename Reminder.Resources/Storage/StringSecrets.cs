@@ -19,7 +19,7 @@ namespace Reminder.Resources.Storage
     [Serializable]
     public class StringSecrets
     {
-        public static string FilePath => Path.Combine(AssemblyContext.SecretsAppDataPath, "strings.xml");
+        private string _filePath;
 
         private readonly List<StringSecret> _items;
 
@@ -33,9 +33,22 @@ namespace Reminder.Resources.Storage
             }
         }
 
-        public StringSecrets()
+        /// <summary>
+        /// Конструктор для десериализации из xml.
+        /// </summary>
+        public StringSecrets() : this(string.Empty)
+        {
+        }
+
+        internal StringSecrets(string filePath)
         { 
+            _filePath = filePath;
             _items = new List<StringSecret>();
+        }
+
+        internal void OnDeserialized(string fromFilePath)
+        {
+            _filePath = fromFilePath;
         }
 
         public string Get(Guid key)
@@ -75,11 +88,32 @@ namespace Reminder.Resources.Storage
 
         private void Save()
         {
-            using (Stream stream = File.Create(FilePath))
+            using (Stream stream = File.Create(_filePath))
             {
                 XmlSerializer serializer = new XmlSerializer(GetType());
                 serializer.Serialize(stream, this);
             }
+        }
+
+        internal void Import(StringSecrets importSecrets, bool skipExisting)
+        {
+            importSecrets._items.ForEach(importSecret =>
+            {
+                StringSecret thisSecret = _items.SingleOrDefault(s => s.Key == importSecret.Key);
+                if (thisSecret == null)
+                    _items.Add(importSecret);
+                else if (skipExisting == false)
+                    thisSecret.Value = importSecret.Value;
+            });
+            Save();
+        }
+
+        internal void RemoveExcept(Guid[] stringSecrets)
+        {
+            StringSecret[] keepExisting = _items
+                .Where(item => stringSecrets.Contains(item.Key)).ToArray();
+            Items = keepExisting;
+            Save();
         }
     }
 }
