@@ -20,24 +20,27 @@ namespace Reminder.Resources.Cipher
 
         public void Unzip(bool skipExisting)
         {
-            using (var zip = Package.Open(File.OpenRead(ZipFilePath)))
+            using (FileStream zipStream = File.OpenRead(ZipFilePath))
             {
-                foreach (PackagePart part in zip.GetParts())
+                using (var zip = Package.Open(zipStream))
                 {
-                    string target = Path.GetFullPath(Path.Combine(PackageFolderPath, part.Uri.OriginalString.TrimStart('/')));
-                    if (File.Exists(target))
+                    foreach (PackagePart part in zip.GetParts())
                     {
-                        if (skipExisting)
-                            continue;
-                        File.Delete(target);
-                    }
-
-                    using (Stream source = part.GetStream(FileMode.Open, FileAccess.Read))
-                    {
-                        EnsureFolderExists(Path.GetDirectoryName(target));
-                        using (FileStream targetFile = File.OpenWrite(target))
+                        string target = Path.GetFullPath(Path.Combine(PackageFolderPath, part.Uri.OriginalString.TrimStart('/')));
+                        if (File.Exists(target))
                         {
-                            source.CopyTo(targetFile);
+                            if (skipExisting)
+                                continue;
+                            File.Delete(target);
+                        }
+
+                        using (Stream source = part.GetStream(FileMode.Open, FileAccess.Read))
+                        {
+                            EnsureFolderExists(Path.GetDirectoryName(target));
+                            using (FileStream targetFile = File.OpenWrite(target))
+                            {
+                                source.CopyTo(targetFile);
+                            }
                         }
                     }
                 }
@@ -59,9 +62,9 @@ namespace Reminder.Resources.Cipher
 
             string[] filePaths = filters.SelectMany(filter => Directory.GetFiles(PackageFolderPath, filter, SearchOption.AllDirectories)).ToArray();
 
-            foreach (string file in filePaths)
+            using (Package zip = Package.Open(ZipFilePath, FileMode.Create))
             {
-                using (Package zip = Package.Open(ZipFilePath, FileMode.Create))
+                foreach (string file in filePaths)
                 {
                     string destFilename = file.Substring(PackageFolderPath.Length);
                     Uri uri = PackUriHelper.CreatePartUri(new Uri(destFilename, UriKind.Relative));

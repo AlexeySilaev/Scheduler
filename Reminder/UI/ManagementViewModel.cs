@@ -2,6 +2,7 @@
 using Reminder.Models;
 using Reminder.Resources;
 using Reminder.Resources.Cipher;
+using Reminder.Resources.Storage;
 using Reminder.ViewModels;
 using System;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ using System.Windows.Input;
 
 namespace Reminder.UI
 {
-    public class ManagementViewModel : BaseViewModel
+    public class ManagementViewModel : BaseViewModel, IDisposable
     {
         private readonly ISupportHostContent _secretsHostContent;
         private bool _canExecuteSecretsCommand;
@@ -51,7 +52,25 @@ namespace Reminder.UI
             }
         }
 
+        public string ExportProcessDescription
+        {
+            get 
+            {
+                if (ReminderModel.Instance.Settings.IntroductoryMode)
+                    return "Файл экспорта отобразится в проводнике. Впоследствии его можно импортировать на другой машине.";
+                return "Сделать резервную копию данных.";
+            }
+        }
         public ProcessViewModel ExportData { get; }
+        public string ImportProcessDescription
+        {
+            get
+            {
+                if (ReminderModel.Instance.Settings.IntroductoryMode)
+                    return "Сравнение элементов производится по описанию. По завершении операции данные визуально обновятся.";
+                return "Восстановить данные из резервной копии.";
+            }
+        }
         public ProcessViewModel ImportData { get; }
         public Command LockOrUnlockSecrectsCommand { get; }
         public ICommand ExportCommand { get; }
@@ -61,6 +80,7 @@ namespace Reminder.UI
         public ManagementViewModel(ISupportHostContent secretsHostContent)
         { 
             _secretsHostContent = secretsHostContent;
+            _secretsHostContent.IsHostContentAllowedChanged += SecretsHostContent_IsHostContentAllowedChanged;
             _skipMatchingData = true;
             ExportData = new ProcessViewModel("Выполняется экспорт данных...");
             ImportData = new ProcessViewModel("Выполняется импорт данных...");
@@ -88,7 +108,7 @@ namespace Reminder.UI
 
         private void OnLockOrUnlockSecrects()
         {
-            _secretsHostContent.SetHostContentAllowed(_secretsHostContent.IsHostContentAllowed);
+            _secretsHostContent.IsHostContentAllowed = !_secretsHostContent.IsHostContentAllowed;
             OnPropertyChanged(nameof(AllowUnblock));
         }
 
@@ -96,11 +116,11 @@ namespace Reminder.UI
         {
             string exportPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "avreminder.bin");
-            await ExportData.PeformProcessAsync(exportPath, CreateExportFile,
+            await ExportData.PeformProcessAsync(exportPath, CreateExportFileAsync,
                 () => Process.Start("explorer.exe", $"/select,\"{exportPath}\""));
         }
 
-        private Task CreateExportFile(string exportPath)
+        private Task CreateExportFileAsync(string exportPath)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -124,32 +144,26 @@ namespace Reminder.UI
         private bool CanExecuteImportCommand()
         {
             return string.IsNullOrEmpty(ImportFilePath) == false;
-        }
+        } 
 
         private async void OnImport()
         {
-            await ImportData.PeformProcessAsync(SkipMatchingData, PerformImportData, null);
+            await ImportData.PeformProcessAsync(SkipMatchingData, PerformImportDataAsync, null);
+            if (ImportData.Status == ProcessResult.Ok)
+            {
+                MainViewModel mainViewModel = MainViewModel.FindInstance();
+                mainViewModel.OnImportCompleted();
+            }
         }
 
-        private Task PerformImportData(bool skipMatchingData)
+        private Task PerformImportDataAsync(bool skipMatchingData)
         {
             return Task.Factory.StartNew(() =>
             {
                 if (File.Exists(ImportFilePath) == false)
                     throw new FileNotFoundException();
-                string zip = Path.GetTempFileName();
-                try
-                {
-                    BitwiseScrambler scrambler = new BitwiseScrambler();
-                    scrambler.Scramble(ImportFilePath, zip);
-
-                    /* ZipPackage package = new ZipPackage(zip, AssemblyContext.AppDataPath);
-                     package.Unzip(skipMatchingData);*/
-                }
-                finally
-                {
-                    File.Delete(zip);
-                }
+                DataImport import = new ReminderDataImport(ImportFilePath, skipMatchingData);
+                import.Execute();
             });
         }
 
@@ -164,6 +178,16 @@ namespace Reminder.UI
             {
                 ImportFilePath = openFileDialog.FileName;
             }
+        }
+
+        void IDisposable.Dispose()
+        {
+            _secretsHostContent.IsHostContentAllowedChanged -= SecretsHostContent_IsHostContentAllowedChanged;
+        }
+
+        private void SecretsHostContent_IsHostContentAllowedChanged(object sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(AllowUnblock));
         }
     }
 }

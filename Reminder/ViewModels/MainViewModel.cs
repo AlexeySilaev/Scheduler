@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using Reminder.Models;
 using Reminder.UI;
 using Reminder.Extensions;
+using System.Timers;
 
 namespace Reminder.ViewModels
 {
@@ -18,6 +19,7 @@ namespace Reminder.ViewModels
             POPUP_HEIGHT = 215;
         private readonly ReminderConveyor _reminderConveyor;
         private readonly SettingsViewModel _settings;
+        private readonly Timer _autolockSecretsTimer;
 
         private ISchedulerGroup _selectedGroup;
         private SchedulerItemViewModel _selectedItem;
@@ -41,6 +43,13 @@ namespace Reminder.ViewModels
         {
             get { return (AlarmGroup)Groups[1]; }
         }
+
+        private SecretGroup Secrets
+        {
+            get { return (SecretGroup)Groups[4]; }
+        }
+
+        private  Dispatcher Dispatcher { get; set; }
 
         public ISchedulerGroup [] Groups { get; }
 
@@ -160,6 +169,8 @@ namespace Reminder.ViewModels
             private set
             {
                 if (HostContent?.ViewModel == value?.ViewModel) return;
+                if (HostContent?.ViewModel is IDisposable disposableViewModel)
+                    disposableViewModel.Dispose();
                 _hostContent = value;
                 OnPropertyChanged(nameof(HostContent));
             }
@@ -209,19 +220,6 @@ namespace Reminder.ViewModels
 
         Settings AppSettings { get { return ReminderModel.Instance.Settings; } }
 
-
-        private void Settings_OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Settings.IntroductoryMode))
-            {
-                // прокидываем изменившуюся настройку, мы находимся в настройках
-                // пользователь щелкат галку ознакомительного режима
-                // вынос в отдельное свойство обусловлен тем что свойство Settings всегда null,
-                // если не отображаются настройки, и биндинг Settings.IntroductoryMode не отработает
-                OnPropertyChanged(nameof(IntroductoryMode));
-            }
-        }
-
         /// <summary>
         /// Признак ознакомительного режима.
         /// </summary>
@@ -268,11 +266,14 @@ namespace Reminder.ViewModels
         {
             Groups = new[] { new EventGroup(), new AlarmGroup(), (ISchedulerGroup)new NoteGroup(),
                 (ISchedulerGroup)new ProjectGroup(), (ISchedulerGroup)new SecretGroup() };
+            Secrets.IsHostContentAllowedChanged += Secrets_IsHostContentAllowedChanged;
             _settings = new SettingsViewModel(AppSettings);
             _settings.PropertyChanged += Settings_OnPropertyChanged;
 
             _searchText = string.Empty;
             _reminderConveyor = new ReminderConveyor(Alarms, Events, OnConveyorRefresh);
+            _autolockSecretsTimer = new Timer();
+            _autolockSecretsTimer.Elapsed += AutolockSecretsTimer_Elapsed;
             _popupRect = Rect.Empty;
             SelectedGroup = Groups[0];
             AddItemCommand = new Command(OnAddItem);
@@ -285,6 +286,7 @@ namespace Reminder.ViewModels
 
         public void InitializeAsync(Dispatcher dispather)
         {
+            if (Dispatcher == null) Dispatcher = dispather;
             Task.Factory.StartNew(() =>
             {
                 Groups.ForEach(group => group.Initialize());
@@ -310,6 +312,7 @@ namespace Reminder.ViewModels
             SaveToModel();
         }
 
+        // замена использования DI
         public static MainViewModel FindInstance()
         {
             return App.Current.MainWindow.DataContext as MainViewModel;
@@ -403,15 +406,70 @@ namespace Reminder.ViewModels
             }
         }
 
+        public void OnImportCompleted()
+        {
+            OnCancelEditItem();
+            InitializeAsync(Dispatcher);
+        }
+
         private void OnManagement()
         {
-            ManagementViewModel management = new ManagementViewModel((ISupportHostContent)Groups[4]);
+            ManagementViewModel management = new ManagementViewModel(Secrets);
             SetHostContent(new HostContent(new ManagementControl(), management), null);
         }
 
         private void OnSettings()
         {
             SetHostContent(new HostContent(new SettingsControl(), _settings), null);
+        }
+
+        private void Settings_OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Settings.IntroductoryMode))
+            {
+                // прокидываем изменившуюся настройку, мы находимся в настройках
+                // пользователь щелкат галку ознакомительного режима
+                // вынос в отдельное свойство обусловлен тем что свойство Settings всегда null,
+                // если не отображаются настройки, и биндинг Settings.IntroductoryMode не отработает
+                OnPropertyChanged(nameof(IntroductoryMode));
+            }
+            else if (e.PropertyName == nameof(Settings.AutolockSecretsInterval) && Secrets.IsVisible)
+            {
+                CheckRestartAutolockSecretsTimer();
+            }
+        }
+
+        private void AutolockSecretsTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (SelectedGroup == Secrets)
+                {
+                    OnCancelEditItem();
+                    SetHostContent(Secrets.GetHostContent(), Secrets);
+                }
+                Secrets.IsHostContentAllowed = true;
+            }));
+            _autolockSecretsTimer.Stop();
+        }
+
+        private void Secrets_IsHostContentAllowedChanged(object sender, EventArgs e)
+        {
+            CheckRestartAutolockSecretsTimer();
+        }
+
+        private void CheckRestartAutolockSecretsTimer()
+        {
+            _autolockSecretsTimer.Stop();
+            if (Secrets.IsHostContentAllowed == false) // секреты разблокированы?
+            {
+                if (AppSettings.AutolockSecretsInterval > 0) // в настройках автоблокировка выставлена?
+                {
+                    _autolockSecretsTimer.Interval = 
+                        TimeSpan.FromMinutes(AppSettings.AutolockSecretsInterval).TotalMilliseconds;
+                    _autolockSecretsTimer.Start();
+                }
+            }
         }
 
         private void SetHostContent(HostContent hostContent, ISchedulerGroup selectedGroup)

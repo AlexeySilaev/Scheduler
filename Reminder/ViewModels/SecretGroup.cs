@@ -73,21 +73,31 @@ namespace Reminder.ViewModels
         }
 
         #region ISupportHostContent
-        bool _isUnlocked = true;
-
-        bool ISupportHostContent.IsHostContentAllowed 
+        // по умолчанию доступ к секретам запрещен, показываем экран блокировки
+        bool _isHostContentAllowed = true;
+        public bool IsHostContentAllowed 
         {
-            get { return _isUnlocked == false; }
+            get { return _isHostContentAllowed; }
+            set
+            {
+                if (_isHostContentAllowed != value)
+                {
+                    _isHostContentAllowed = value;
+                    _isHostContentAllowedChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
         }
 
-        HostContent ISupportHostContent.GetHostContent()
+        event EventHandler _isHostContentAllowedChanged;
+        public event EventHandler IsHostContentAllowedChanged
+        {
+            add { _isHostContentAllowedChanged += value; }
+            remove { _isHostContentAllowedChanged -= value; }
+        }
+
+        public HostContent GetHostContent()
         {
             return new HostContent(new UnlockSecretsControl(), new UnlockSecretsViewModel());
-        }
-
-        void ISupportHostContent.SetHostContentAllowed(bool value)
-        { 
-            _isUnlocked = value;
         }
 
         #endregion ISupportHostContent

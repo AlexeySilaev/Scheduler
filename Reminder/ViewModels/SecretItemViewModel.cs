@@ -141,6 +141,11 @@ namespace Reminder.ViewModels
 
             if (openFileDialog.ShowDialog() == true)
             {
+                // проверка на автозакрытие
+                MainViewModel mainViewModel = MainViewModel.FindInstance();
+                if (mainViewModel?.EditingItem != this)
+                    return;
+
                 SecretFile.Name = Path.GetFileName(openFileDialog.FileName);
                 SecretFile.Length = new FileInfo(openFileDialog.FileName).Length;
                 SecretFile.FullPath = openFileDialog.FileName;

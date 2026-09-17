@@ -2,10 +2,8 @@
 using Reminder.Resources;
 using System;
 using System.ComponentModel;
-using System.Data.SqlTypes;
 using System.IO;
 using System.Windows;
-using System.Xml.Serialization;
 
 namespace Reminder.Models
 {
@@ -38,6 +36,8 @@ namespace Reminder.Models
         public double MainWindowHeight { get; set; }
         public double MainWindowWidth { get { return 730; } }
         public double MainWindowMinHeight { get { return 485; } }
+        [DefaultValue(0)]
+        public int AutolockSecretsInterval { get; set; } // в минутах
         // ↑↑↑ окончание блока служебных настроек ↑↑↑
 
         public Settings()

@@ -1,9 +1,14 @@
-﻿namespace Reminder.ViewModels
+﻿using System;
+
+namespace Reminder.ViewModels
 {
     public interface ISupportHostContent
     {
-        bool IsHostContentAllowed { get; }
         HostContent GetHostContent();
-        void SetHostContentAllowed(bool value);
+        /// <summary>
+        /// Отображать ли previeм, а не содержимое.
+        /// </summary>
+        bool IsHostContentAllowed { get; set; }
+        event EventHandler IsHostContentAllowedChanged;
     }
 }

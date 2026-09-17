@@ -20,6 +20,7 @@
                 <LineSegment Point = "1, 10" />
             </PathFigure>
         </PathGeometry>
+        <converters:IntegerToBoolConverter x:Key="IntegerToBoolConverter" />
     </UserControl.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -29,14 +30,20 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0" Header="Запуск приложения" Margin="{StaticResource GroupMargin}">
-            <StackPanel Margin="{StaticResource StackPanelMargin}">
-                <CheckBox IsChecked="{Binding LaunchWithWindows}" 
+        <UniformGrid Grid.Row="0" Columns="2">
+            <GroupBox Grid.Column="0" Header="Запуск приложения" Margin="{StaticResource GroupMargin}">
+                <StackPanel Margin="{StaticResource StackPanelMargin}">
+                    <CheckBox IsChecked="{Binding LaunchWithWindows}" 
                           Content="Запускать вместе с Windows" />
-                <CheckBox IsChecked="{Binding MinimizeToTray}"
+                    <CheckBox IsChecked="{Binding MinimizeToTray}"
                           Content="Минимизировать в системный лоток" Margin="0,5,0,0"/>
-            </StackPanel>
-        </GroupBox>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Grid.Column="1"  Header="Ознакомительный режим" Margin="{StaticResource GroupMargin}">
+                <CheckBox  IsChecked="{Binding IntroductoryMode}" Margin="{StaticResource StackPanelMargin}"
+                      Content="Пояснения в интерфейсе"/>
+            </GroupBox>
+        </UniformGrid>
         <GroupBox Grid.Row="1" Header="Расположение окна уведомлений" Margin="{StaticResource GroupMargin}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -129,9 +136,15 @@
                 <CheckBox  IsChecked="{Binding ShowComingDayAboutEvents}" Margin="{StaticResource StackPanelMargin}"
                       Content="За сутки предупредить о наступлении"/>
             </GroupBox>
-            <GroupBox Grid.Column="1"  Header="Ознакомительный режим" Margin="{StaticResource GroupMargin}">
-                <CheckBox  IsChecked="{Binding IntroductoryMode}" Margin="{StaticResource StackPanelMargin}"
-                      Content="Пояснения в интерфейсе"/>
+            <GroupBox Grid.Column="1"  Header="Автоблокировка секретов" Margin="{StaticResource GroupMargin}">
+                <StackPanel Orientation="Horizontal" Margin="{StaticResource StackPanelMargin}">
+                    <CheckBox Content="Блокировать через" IsChecked="{Binding AutolockSecretsInterval,
+                        Converter={StaticResource IntegerToBoolConverter}, ConverterParameter='10'}" />
+                    <ComboBox IsEditable="False" Margin="5,-3,5,0" MinWidth="42"
+                        ItemsSource="{Binding AutolockSecretsMinites}"
+                        SelectedItem="{Binding AutolockSecretsInterval, TargetNullValue={x:Null}}"/>
+                    <TextBlock Text="минут" />
+                </StackPanel>
             </GroupBox>
         </UniformGrid>
     </Grid>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Timers;
 using System.Windows;
@@ -42,6 +43,16 @@ namespace Reminder.UI
             }
         }
 
+        public bool IntroductoryMode
+        {
+            get { return _settings.IntroductoryMode; }
+            set
+            {
+                if (IntroductoryMode == value) return;
+                _settings.IntroductoryMode = value;
+                OnPropertyChanged(nameof(IntroductoryMode));
+            }
+        }
 
         public bool TopMostNotificationsWindow
         {
@@ -134,17 +145,23 @@ namespace Reminder.UI
             }
         }
 
-        public bool IntroductoryMode
+        public int[] AutolockSecretsMinites { get; }
+
+        public int? AutolockSecretsInterval
         {
-            get { return _settings.IntroductoryMode; }
+            get 
+            {
+                if (AutolockSecretsMinites.Contains(_settings.AutolockSecretsInterval))
+                    return _settings.AutolockSecretsInterval;
+                return null; 
+            }
             set
             {
-                if (IntroductoryMode == value) return;
-                _settings.IntroductoryMode = value;
-                OnPropertyChanged(nameof(IntroductoryMode));
+                if (AutolockSecretsInterval == value) return;
+                _settings.AutolockSecretsInterval = value.GetValueOrDefault();
+                OnPropertyChanged(nameof(AutolockSecretsInterval));
             }
         }
-
 
         public MediaElement Media { get; set; }
 
@@ -157,7 +174,8 @@ namespace Reminder.UI
             _showErrorTimer = new Timer();
             _showErrorTimer.AutoReset = false;
             _showErrorTimer.Interval = 1500;
-            _showErrorTimer.Elapsed += ShowErrorTimer_Elapsed; 
+            _showErrorTimer.Elapsed += ShowErrorTimer_Elapsed;
+            AutolockSecretsMinites = new[] { 5, 10, 15 };
             SelectCustomFileCommand = new Command(OnSelectCustomFile);
             TestPlayFileCommand = new Command(OnTestPlayFile, CanExecuteTestPlayFile);
         }
