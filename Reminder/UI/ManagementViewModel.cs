@@ -21,7 +21,7 @@ namespace Reminder.UI
 
         public bool ShowSecretsGroup 
         {
-            get { return ReminderModel.Instance.Settings.UnlockSecretsKey != Guid.Empty; }
+            get { return ReminderModel.Instance.AreSecretsAllowed; }
         }
 
         public bool AllowUnblock
@@ -170,7 +170,7 @@ namespace Reminder.UI
         private void OnSelectImportFile()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            //openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             openFileDialog.Title = "Файл импорта";
             openFileDialog.Filter = "Файлы для импорта (*.bin)|*.bin|Все файлы (*.*)|*.*";
 

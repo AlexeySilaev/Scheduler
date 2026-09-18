@@ -16,6 +16,7 @@
         <converters:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter"/>
         <converters:InvertBoolConverter x:Key="InvertBoolConverter"/>
         <converters:StringIsNotNullOrEmptyConverter x:Key="StringIsNotNullOrEmptyConverter"/>
+        <converters:ProcessResultBrushConveter x:Key="ProcessResultBrushConveter"/>
     </UserControl.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -54,10 +55,12 @@
                     Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2"  Orientation="Horizontal" HorizontalAlignment="Center"
                     DataContext="{Binding ExportData}" Margin="{StaticResource TextBlockMargin}">
-                    <TextBlock Text="{Binding Status, Converter={StaticResource EnumToStringConverter}}" FontSize="14"/>
-                    <TextBlock Text="{Binding Time, Converter={StaticResource TimeSpanToStringConverter}}"
+                    <TextBlock Text="{Binding Status, Converter={StaticResource EnumToStringConverter}}" FontSize="14"
+                        Foreground="{Binding Status, Converter={StaticResource ProcessResultBrushConveter}}" />
+                    <TextBlock Text="{Binding Time, Converter={StaticResource TimeSpanToStringConverter}}" FontSize="14"
                         Visibility="{Binding Status, Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter={x:Static local:ProcessResult.Ok}}" />
+                            ConverterParameter={x:Static local:ProcessResult.Ok}}" 
+                        Foreground="{Binding Status, Converter={StaticResource ProcessResultBrushConveter}}" />
                 </StackPanel>
             </Grid>
         </GroupBox>
@@ -105,10 +108,12 @@
                     Visibility="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>
                 <StackPanel Grid.Row="3" Grid.ColumnSpan="2"  Orientation="Horizontal" HorizontalAlignment="Center"
                     DataContext="{Binding ImportData}" Margin="{StaticResource TextBlockMargin}">
-                    <TextBlock Text="{Binding Status, Converter={StaticResource EnumToStringConverter}}" FontSize="14" />
-                    <TextBlock Text="{Binding Time, Converter={StaticResource TimeSpanToStringConverter}}"
+                    <TextBlock Text="{Binding Status, Converter={StaticResource EnumToStringConverter}}" FontSize="14" 
+                        Foreground="{Binding Status, Converter={StaticResource ProcessResultBrushConveter}}"/>
+                    <TextBlock Text="{Binding Time, Converter={StaticResource TimeSpanToStringConverter}}" FontSize="14"
                         Visibility="{Binding Status, Converter={StaticResource EnumToVisibilityConverter},
-                            ConverterParameter={x:Static local:ProcessResult.Ok}}" />
+                            ConverterParameter={x:Static local:ProcessResult.Ok}}"
+                        Foreground="{Binding Status, Converter={StaticResource ProcessResultBrushConveter}}" />
                 </StackPanel>
             </Grid>
         </GroupBox>

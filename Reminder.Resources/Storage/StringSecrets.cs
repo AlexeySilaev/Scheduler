@@ -86,15 +86,6 @@ namespace Reminder.Resources.Storage
             return false;
         }
 
-        private void Save()
-        {
-            using (Stream stream = File.Create(_filePath))
-            {
-                XmlSerializer serializer = new XmlSerializer(GetType());
-                serializer.Serialize(stream, this);
-            }
-        }
-
         internal void Import(StringSecrets importSecrets, bool skipExisting)
         {
             importSecrets._items.ForEach(importSecret =>
@@ -114,6 +105,15 @@ namespace Reminder.Resources.Storage
                 .Where(item => stringSecrets.Contains(item.Key)).ToArray();
             Items = keepExisting;
             Save();
+        }
+
+        private void Save()
+        {
+            using (Stream stream = File.Create(_filePath))
+            {
+                XmlSerializer serializer = new XmlSerializer(GetType());
+                serializer.Serialize(stream, this);
+            }
         }
     }
 }

@@ -141,7 +141,7 @@ namespace Reminder.ViewModels
 
             if (openFileDialog.ShowDialog() == true)
             {
-                // проверка на автозакрытие
+                // проверка на CancelEdit() при автоблокировке
                 MainViewModel mainViewModel = MainViewModel.FindInstance();
                 if (mainViewModel?.EditingItem != this)
                     return;

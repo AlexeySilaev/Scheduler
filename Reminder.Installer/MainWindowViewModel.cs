@@ -382,6 +382,8 @@ namespace Reminder.Installer
                 EnsureFolderExists(AppDataFolderPath);
                 if (ConsiderUnlockSecretsPassword)
                     ExtractEmbeddedResource("strings.xml", SecretsAppDataFolderPath);
+                else if(Directory.Exists(SecretsAppDataFolderPath))
+                    Directory.Delete(SecretsAppDataFolderPath, true);
                 ConfigureUnlockSecretsPassword();
 
                 const string icoName = "App.ico";
@@ -424,6 +426,8 @@ namespace Reminder.Installer
                 XmlNode secrets = doc.SelectSingleNode("/Data/Secrets");
                 if (secrets == null)
                     doc.DocumentElement.AppendChild(doc.CreateElement("Secrets"));
+                else if (ConsiderUnlockSecretsPassword == false)
+                    secrets.RemoveAll();
 
                 XmlNode settings = doc.SelectSingleNode("/Data/Settings");
                 if (settings == null)
@@ -452,9 +456,9 @@ namespace Reminder.Installer
             {
                 // пустой шаблон с ключом разблокировки секретов
                 ExtractEmbeddedResource(Path.GetFileName(dataPath), Path.GetDirectoryName(dataPath));
+                doc = GetXmlData(out dataPath);
                 if (unlockSecretsKey != null)
                 {
-                    doc = GetXmlData(out dataPath);
                     XmlElement password = doc.CreateElement("UnlockSecretsKey");
                     password.InnerText = unlockSecretsKey.ToString();
                     XmlNode settings = doc.SelectSingleNode("/Data/Settings");

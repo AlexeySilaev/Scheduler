@@ -98,6 +98,7 @@
     <Compile Include="Converters\NotNullToVisibilityConverter.cs" />
     <Compile Include="Converters\PostponeDescriptionConverter.cs" />
     <Compile Include="Converters\DaysRangeToBoolConverter.cs" />
+    <Compile Include="Converters\ProcessResultBrushConveter.cs" />
     <Compile Include="Converters\ReminderItemPostponeItemsSourceConverter.cs" />
     <Compile Include="Converters\SecretKindToDataTemplateConverter.cs" />
     <Compile Include="Converters\StaticResourceToIntConverter.cs" />

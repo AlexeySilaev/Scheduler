@@ -39,6 +39,7 @@ namespace Reminder.Models
         public List<SecretItem> Secrets { get; }
         public Settings Settings { get; private set; }
         public bool IsLoaded { get; private set; }
+        internal bool AreSecretsAllowed { get { return Settings.UnlockSecretsKey != Guid.Empty; } }
 
         private ReminderModel()
         {
@@ -105,7 +106,10 @@ namespace Reminder.Models
             MergeData(Events, data.Events, skipExisting);
             MergeData(Notes, data.Notes, skipExisting);
             MergeData(Projects, data.Projects, skipExisting);
-            MergeData(Secrets, data.Secrets, skipExisting);
+            if (AreSecretsAllowed)
+                MergeData(Secrets, data.Secrets, skipExisting);
+            else
+                Secrets.Clear();
             Save();
         }
 
@@ -124,15 +128,18 @@ namespace Reminder.Models
 
         internal void ClearUnusedData()
         {
-            Guid[] stringSecrets = Secrets
-                .Where(s => s.Kind == SecretKind.String)
-                .Select(s => s.Value)
-                .ToArray();
-            Guid[] fileSecrets = Secrets
-                .Where(s => s.Kind == SecretKind.File)
-                .Select(s => s.Value)
-                .ToArray();
-            Resources.Storage.Secrets.Instance.DeleteExcept(stringSecrets, fileSecrets);
+            if (AreSecretsAllowed)
+            {
+                Guid[] stringSecrets = Secrets
+                    .Where(s => s.Kind == SecretKind.String)
+                    .Select(s => s.Value)
+                    .ToArray();
+                Guid[] fileSecrets = Secrets
+                    .Where(s => s.Kind == SecretKind.File)
+                    .Select(s => s.Value)
+                    .ToArray();
+                Resources.Storage.Secrets.Instance.DeleteExcept(stringSecrets, fileSecrets);
+            }
         }
     }
 }

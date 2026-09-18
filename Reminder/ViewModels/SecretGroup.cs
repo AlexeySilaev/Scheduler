@@ -26,7 +26,7 @@ namespace Reminder.ViewModels
 
         public override bool IsVisible
         {
-            get { return ReminderModel.Instance.Settings.UnlockSecretsKey != Guid.Empty; }
+            get { return ReminderModel.Instance.AreSecretsAllowed; }
         }
 
         public override void Initialize()
@@ -74,7 +74,7 @@ namespace Reminder.ViewModels
 
         #region ISupportHostContent
         // по умолчанию доступ к секретам запрещен, показываем экран блокировки
-        bool _isHostContentAllowed = true;
+        bool _isHostContentAllowed;
         public bool IsHostContentAllowed 
         {
             get { return _isHostContentAllowed; }
