@@ -381,8 +381,12 @@ namespace Reminder.Installer
             {
                 EnsureFolderExists(AppDataFolderPath);
                 if (ConsiderUnlockSecretsPassword)
-                    ExtractEmbeddedResource("strings.xml", SecretsAppDataFolderPath);
-                else if(Directory.Exists(SecretsAppDataFolderPath))
+                {
+                    const string strings_xml = "strings.xml";
+                    if (File.Exists(Path.Combine(SecretsAppDataFolderPath, strings_xml)) == false)
+                        ExtractEmbeddedResource(strings_xml, SecretsAppDataFolderPath);
+                }
+                else if (Directory.Exists(SecretsAppDataFolderPath))
                     Directory.Delete(SecretsAppDataFolderPath, true);
                 ConfigureUnlockSecretsPassword();
 

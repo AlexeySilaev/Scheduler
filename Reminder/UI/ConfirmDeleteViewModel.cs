@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using Reminder.ViewModels;
 using Reminder.Extensions;
+using Reminder.Resources.ViewModels;
 
 namespace Reminder.UI
 {

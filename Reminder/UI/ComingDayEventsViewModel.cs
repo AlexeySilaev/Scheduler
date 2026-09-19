@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Reminder.Resources.ViewModels;
 using Reminder.ViewModels;
 
 namespace Reminder.UI

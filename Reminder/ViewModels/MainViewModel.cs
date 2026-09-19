@@ -9,6 +9,7 @@ using Reminder.Models;
 using Reminder.UI;
 using Reminder.Extensions;
 using System.Timers;
+using Reminder.Resources.ViewModels;
 
 namespace Reminder.ViewModels
 {

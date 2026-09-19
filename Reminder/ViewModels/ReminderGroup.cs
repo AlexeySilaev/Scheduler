@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Reminder.Extensions;
 using Reminder.Models;
+using Reminder.Resources.ViewModels;
 
 namespace Reminder.ViewModels
 {

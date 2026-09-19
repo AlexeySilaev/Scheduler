@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using Reminder.Resources.ViewModels;
+using System.Windows.Controls;
 
 namespace Reminder.ViewModels
 {

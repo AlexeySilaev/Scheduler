@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Reminder.Extensions;
 using Reminder.Models;
+using Reminder.Resources.ViewModels;
 using Reminder.ViewModels;
 
 namespace Reminder.UI

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using Reminder.Models;
 using Reminder.Resources.Storage;
+using Reminder.Resources.ViewModels;
 using System;
 using System.IO;
 using System.Linq;
@@ -124,7 +125,7 @@ namespace Reminder.ViewModels
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Title = "Выгрузить файл";
             saveFileDialog.FileName = SecretFile.Name;
-            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+           // saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -137,7 +138,7 @@ namespace Reminder.ViewModels
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Title = "Выбор файла";
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            //openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             if (openFileDialog.ShowDialog() == true)
             {

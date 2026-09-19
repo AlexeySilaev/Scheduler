@@ -5,7 +5,9 @@ namespace Reminder.Resources
 {
     public static class AssemblyContext
     {
-        public const string APP_NAME = "AV Reminder";
+        public const string
+            APP_NAME = "AV Reminder",
+            EXPORT_DATA_FILE_NAME = "avreminder.bin";
         internal const string
             SECRETS_SUB_FOLDER = "Secrets",
             SECRET_FILE_EXTENSION = "crpt",

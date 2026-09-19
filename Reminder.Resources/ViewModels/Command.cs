@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Reminder.ViewModels
+namespace Reminder.Resources.ViewModels
 {
     public class Command : ICommand
     {

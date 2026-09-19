@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 using Reminder.Models;
+using Reminder.Resources.ViewModels;
 
 namespace Reminder.ViewModels
 {

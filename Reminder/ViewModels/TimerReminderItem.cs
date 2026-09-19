@@ -1,4 +1,5 @@
 ﻿using Reminder.Extensions;
+using Reminder.Resources.ViewModels;
 using System;
 using System.Windows;
 

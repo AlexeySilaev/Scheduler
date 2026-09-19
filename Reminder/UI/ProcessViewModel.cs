@@ -1,4 +1,4 @@
-﻿using Reminder.ViewModels;
+﻿using Reminder.Resources.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

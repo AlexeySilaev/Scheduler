@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Reminder.ViewModels
+namespace Reminder.Resources.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {

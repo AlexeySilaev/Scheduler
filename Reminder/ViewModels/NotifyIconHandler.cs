@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Reminder.Extensions;
-using Reminder.Launch;
 using Reminder.Models;
+using Reminder.Resources.ViewModels;
 using Reminder.UI;
 
 namespace Reminder.ViewModels

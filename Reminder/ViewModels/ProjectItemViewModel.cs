@@ -1,10 +1,10 @@
 ﻿using Reminder.Extensions;
 using Reminder.Models;
+using Reminder.Resources.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Input;
 
 namespace Reminder.ViewModels
 {

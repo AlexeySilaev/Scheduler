@@ -3,6 +3,7 @@ using Reminder.Models;
 using Reminder.Resources;
 using Reminder.Resources.Cipher;
 using Reminder.Resources.Storage;
+using Reminder.Resources.ViewModels;
 using Reminder.ViewModels;
 using System;
 using System.Diagnostics;
@@ -115,7 +116,7 @@ namespace Reminder.UI
         private async void OnExport()
         {
             string exportPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "avreminder.bin");
+                AssemblyContext.EXPORT_DATA_FILE_NAME);
             await ExportData.PeformProcessAsync(exportPath, CreateExportFileAsync,
                 () => Process.Start("explorer.exe", $"/select,\"{exportPath}\""));
         }
@@ -124,20 +125,7 @@ namespace Reminder.UI
         {
             return Task.Factory.StartNew(() =>
             {
-                string zip = Path.GetTempFileName();
-                try
-                {
-                    ZipPackage package = new ZipPackage(zip, AssemblyContext.AppDataPath);
-                    string[] filters = { "*.xml", "*.crpt" };
-                    package.Zip(filters);
-
-                    BitwiseScrambler scrambler = new BitwiseScrambler();
-                    scrambler.Scramble(zip, exportPath);
-                }
-                finally
-                { 
-                    File.Delete(zip);
-                }
+                DataExportManager.CreateExportFile(exportPath);
             });
         }
 

@@ -74,7 +74,7 @@ namespace Reminder.ViewModels
 
         #region ISupportHostContent
         // по умолчанию доступ к секретам запрещен, показываем экран блокировки
-        bool _isHostContentAllowed;
+        bool _isHostContentAllowed = true;
         public bool IsHostContentAllowed 
         {
             get { return _isHostContentAllowed; }

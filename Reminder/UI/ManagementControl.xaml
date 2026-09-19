@@ -83,8 +83,8 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox IsReadOnly="True" VerticalAlignment="Center" Padding="1" 
-                            Text="{Binding ImportFilePath, Mode=OneWay}"/>
+                        <TextBox IsReadOnly="True" VerticalAlignment="Center" Padding="1,2" 
+                            Text="{Binding ImportFilePath, Mode=OneWay}" />
                         <Button Grid.Column="1" Command="{Binding SelectImportFileCommand}" Margin="{StaticResource Left5Margin}">
                             <Image Source="/Resources/openfile24x24.png" Stretch="Uniform" Height="20" />
                         </Button>
