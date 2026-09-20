@@ -6,13 +6,18 @@ namespace Reminder.ViewModels
     public class HostContent
     {
         public UserControl UserControl { get; }
-        public BaseViewModel ViewModel { get; }
+        public HostContentViewModel ViewModel { get; }
 
-        public HostContent(UserControl userControl, BaseViewModel viewModel)
+        public HostContent(UserControl userControl, HostContentViewModel viewModel)
         { 
             UserControl = userControl;
             ViewModel = viewModel;
             UserControl.DataContext = ViewModel;
         }
+    }
+
+    public abstract class HostContentViewModel : BaseViewModel
+    {
+        public abstract string Name { get; }
     }
 }

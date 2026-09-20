@@ -5,7 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 
-namespace Reminder.Behaviors
+namespace Reminder.Attached
 {
     public static class ImageBehavior
     {

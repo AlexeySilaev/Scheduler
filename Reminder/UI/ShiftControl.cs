@@ -56,6 +56,7 @@ namespace Reminder.UI
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
             var shiftPanel = (FrameworkElement)GetTemplateChild("shiftPanel");
+            if (shiftPanel == null) return arrangeBounds;
             shiftPanel.Width = 2 * arrangeBounds.Width;
             shiftPanel.Arrange(new Rect(0, 0, arrangeBounds.Width, arrangeBounds.Height));
             if (IsShifted)

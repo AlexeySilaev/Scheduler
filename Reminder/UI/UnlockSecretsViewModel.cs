@@ -4,8 +4,9 @@ using System.Windows.Input;
 
 namespace Reminder.UI
 {
-    internal class UnlockSecretsViewModel : BaseViewModel
+    internal class UnlockSecretsViewModel : HostContentViewModel
     {
+        public override string Name { get { return "Секреты"; } }
         public ICommand ManagementCommand { get; }
 
         public UnlockSecretsViewModel()

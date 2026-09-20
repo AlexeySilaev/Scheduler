@@ -74,7 +74,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Behaviors\ImageBehavior.cs" />
+    <Compile Include="Attached\ButtonProperties.cs" />
+    <Compile Include="Attached\ImageBehavior.cs" />
     <Compile Include="Converters\AlarmTimeToStringConverter.cs" />
     <Compile Include="Converters\CharactersEnteredConverter.cs" />
     <Compile Include="Converters\DaysRangeActivityConverter.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\EnumToStringConverter.cs" />
     <Compile Include="Converters\EnumToVisibilityConverter.cs" />
+    <Compile Include="Converters\EqualityToBackgroundBrushConverter.cs" />
     <Compile Include="Converters\EventDateToStringConverter.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\FileSecretPresentationConverter.cs" />

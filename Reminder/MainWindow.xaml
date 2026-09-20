@@ -3,13 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:attached="clr-namespace:Reminder.Attached"
         xmlns:vm="clr-namespace:Reminder.ViewModels"
         xmlns:converters="clr-namespace:Reminder.Converters"
         xmlns:templateSelectors="clr-namespace:Reminder.TemplateSelectors"
         xmlns:ui="clr-namespace:Reminder.UI"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="Мечта склеротика" 
+        Title="{Binding MainWindowTitle}" 
         Left="{Binding MainWindowLeft, Mode=TwoWay}"
         Top="{Binding MainWindowTop, Mode=TwoWay}"
         Height="{Binding MainWindowHeight, Mode=TwoWay}" 
@@ -82,29 +83,23 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type vm:ISchedulerGroup}">
                         <StackPanel Margin="5" Orientation="Horizontal" 
-                                Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
+                            Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
                             <Image Width="32" Height="32" Source="{Binding Path=ImagePath}" />
                             <TextBlock FontSize="16" VerticalAlignment="Center" Margin="5,0" Text="{Binding Path=Name}" HorizontalAlignment="Center" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Button Grid.Row="1" MinHeight="40" Command="{Binding ManagementCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Resources/management24x24.png" Width="24" Height="24" Margin="0,0,10,0"/>
-                    <TextBlock Text="Управление" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-            <Button Grid.Row="2" MinHeight="40" Command="{Binding SettingsCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Resources/settings32x32.png" Width="20" Height="20" Margin="0,0,10,0"/>
-                    <TextBlock Text="Настройки" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
+            <Button Grid.Row="1" attached:ButtonProperties.Image="../Resources/management24x24.png" 
+                Style="{StaticResource SelectedButtonStyle}" Content="Управление"
+                Command="{Binding ManagementCommand}" Tag="{Binding SelectedButton}" />
+            <Button Grid.Row="2" attached:ButtonProperties.Image="../Resources/settings32x32.png" 
+                Style="{StaticResource SelectedButtonStyle}" Content="Настройки"
+                Command="{Binding SettingsCommand}" Tag="{Binding SelectedButton}"/>
         </Grid>
         <!-- Список элементов / панель редактирования -->
         <ui:ShiftControl Grid.Row="1" Grid.Column="1" IsShifted="{Binding IsShifted}"
-                         IsShiftedChangedCompleted="ShiftControl_OnIsShiftedChangedCompleted">
+            IsShiftedChangedCompleted="ShiftControl_OnIsShiftedChangedCompleted">
             <ui:ShiftControl.LeftContent>
                 <!-- Список -->
                 <Grid>
@@ -132,10 +127,10 @@
                         </Button>
                     </DockPanel>
                     <ListBox Grid.Row="1" Margin="5"
-                             ItemsSource="{Binding SelectedGroup.Items}"
-                             SelectedValue="{Binding SelectedItem}"
-                             ItemTemplateSelector="{StaticResource ReminderItemTemplateSelector}"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        ItemsSource="{Binding SelectedGroup.Items}"
+                        SelectedValue="{Binding SelectedItem}"
+                        ItemTemplateSelector="{StaticResource ReminderItemTemplateSelector}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -166,15 +161,15 @@
                         </Button>
                     </DockPanel>
                     <ContentControl Grid.Row="1" Margin="5"  
-                                    ContentTemplateSelector="{StaticResource EditorItemTemplateSelector}" 
-                                    Content="{Binding EditingItem}"/>
+                        ContentTemplateSelector="{StaticResource EditorItemTemplateSelector}" 
+                        Content="{Binding EditingItem}"/>
                     <Border Grid.Row="2" Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
                             BorderBrush="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}"
                             BorderThickness="1" Margin="{StaticResource DetailsMargin}"
                             Visibility="{Binding ValidationWarning, Converter={StaticResource StringToVisibilityConverter}}">
                         <TextBlock Text="{Binding ValidationWarning}" 
-                                   TextAlignment="Center" TextWrapping="Wrap" Margin="10"
-                                   Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}"/>
+                            TextAlignment="Center" TextWrapping="Wrap" Margin="10"
+                            Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}"/>
                     </Border>
                 </Grid>
             </ui:ShiftControl.RightContent>

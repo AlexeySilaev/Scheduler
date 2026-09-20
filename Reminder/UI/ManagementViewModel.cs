@@ -13,12 +13,14 @@ using System.Windows.Input;
 
 namespace Reminder.UI
 {
-    public class ManagementViewModel : BaseViewModel, IDisposable
+    public class ManagementViewModel : HostContentViewModel, IDisposable
     {
         private readonly ISupportHostContent _secretsHostContent;
         private bool _canExecuteSecretsCommand;
         private string _importFilePath;
         private bool _skipMatchingData;
+
+        public override string Name { get { return "Управление"; } }
 
         public bool ShowSecretsGroup 
         {

@@ -13,7 +13,7 @@ using Reminder.ViewModels;
 
 namespace Reminder.UI
 {
-    internal class SettingsViewModel :  BaseViewModel
+    internal class SettingsViewModel :  HostContentViewModel
     {
         private readonly Settings _settings;
         private readonly Timer _showErrorTimer;
@@ -164,6 +164,7 @@ namespace Reminder.UI
             }
         }
 
+        public override string Name { get { return "Настройки"; } }
         public MediaElement Media { get; set; }
 
         public ICommand SelectCustomFileCommand { get; }

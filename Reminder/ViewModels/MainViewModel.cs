@@ -18,12 +18,15 @@ namespace Reminder.ViewModels
         private const double
             POPUP_WIDTH = 350,
             POPUP_HEIGHT = 215;
+        private const string COMMON_WINDOW_TITLE = "Мечта склеротика";
         private readonly ReminderConveyor _reminderConveyor;
         private readonly SettingsViewModel _settings;
         private readonly Timer _autolockSecretsTimer;
 
         private ISchedulerGroup _selectedGroup;
         private SchedulerItemViewModel _selectedItem;
+        private string _mainWindowTitle;
+        private string _selectedButton;
         private string _searchText;
         private string _error;
         private string _validationWarning;
@@ -169,11 +172,23 @@ namespace Reminder.ViewModels
             get { return _hostContent; }
             private set
             {
+                UpdateMainWindowTitle(value);
                 if (HostContent?.ViewModel == value?.ViewModel) return;
                 if (HostContent?.ViewModel is IDisposable disposableViewModel)
                     disposableViewModel.Dispose();
                 _hostContent = value;
                 OnPropertyChanged(nameof(HostContent));
+            }
+        }
+
+        public string MainWindowTitle
+        {
+            get { return _mainWindowTitle; }
+            private set
+            {
+                if (MainWindowTitle == value) return;
+                _mainWindowTitle = value;
+                OnPropertyChanged(nameof(MainWindowTitle));
             }
         }
 
@@ -206,6 +221,17 @@ namespace Reminder.ViewModels
                 if (MainWindowHeight == value) return;
                 AppSettings.MainWindowHeight = value;
                 OnPropertyChanged(nameof(MainWindowHeight));
+            }
+        }
+
+        public string SelectedButton
+        {
+            get { return _selectedButton; }
+            private set
+            {
+                if (SelectedButton == value) return;
+                _selectedButton = value;
+                OnPropertyChanged(nameof(SelectedButton));
             }
         }
 
@@ -271,6 +297,7 @@ namespace Reminder.ViewModels
             _settings = new SettingsViewModel(AppSettings);
             _settings.PropertyChanged += Settings_OnPropertyChanged;
 
+            _mainWindowTitle = COMMON_WINDOW_TITLE;
             _searchText = string.Empty;
             _reminderConveyor = new ReminderConveyor(Alarms, Events, OnConveyorRefresh);
             _autolockSecretsTimer = new Timer();
@@ -479,6 +506,25 @@ namespace Reminder.ViewModels
             SelectedGroup = selectedGroup;
             OnCancelEditItem();
             HostContent = hostContent;
+        }
+
+        private void UpdateMainWindowTitle(HostContent currentHostContent)
+        {
+            if (SelectedGroup != null)
+            {
+                MainWindowTitle = $"{COMMON_WINDOW_TITLE} - {SelectedGroup.Name}";
+                SelectedButton = null;
+            }
+            else if (currentHostContent != null)
+            {
+                MainWindowTitle = $"{COMMON_WINDOW_TITLE} - {currentHostContent.ViewModel.Name}";
+                SelectedButton = currentHostContent.ViewModel.Name;
+            }
+            else
+            {
+                MainWindowTitle = COMMON_WINDOW_TITLE;
+                SelectedButton = null;
+            }
         }
 
         private void OnConveyorRefresh(EventItemViewModel[] newDayAboutEvents)
