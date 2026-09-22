@@ -49,6 +49,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -68,8 +69,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="..\Reminder.Launch\ClientProcessProxy.cs">
+      <Link>Infrastructure\ClientProcessProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\Reminder.Launch\IReminderClientProcess.cs">
+      <Link>Infrastructure\IReminderClientProcess.cs</Link>
+    </Compile>
     <Compile Include="..\Reminder.Resources\Cipher\MD5Extensions.cs">
       <Link>Infrastructure\MD5Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Reminder.Resources\Storage\DiskHelper.cs">
+      <Link>Infrastructure\DiskHelper.cs</Link>
     </Compile>
     <Compile Include="Wizard\FolderBackupCopy.cs" />
     <Compile Include="Wizard\SecretsPage.xaml.cs">

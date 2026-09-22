@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reminder.Resources.Storage;
+using System;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace Reminder.Resources.Cipher
                         {
                             if (skipExisting)
                                 continue;
-                            File.Delete(target);
+                            DiskHelper.DeleteFile(target);
                         }
 
                         using (Stream source = part.GetStream(FileMode.Open, FileAccess.Read))

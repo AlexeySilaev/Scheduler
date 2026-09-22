@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reminder.Resources.Storage;
+using System;
 using System.IO;
 
 namespace Reminder.Installer.Wizard
@@ -29,7 +30,7 @@ namespace Reminder.Installer.Wizard
                     ClearAll(source);
                     CopyAll(new DirectoryInfo(_backupPathPath), source);
                 }
-                Directory.Delete(_backupPathPath, true);
+                DiskHelper.DeleteFolder(_backupPathPath, true);
             }
         }
 
@@ -58,13 +59,12 @@ namespace Reminder.Installer.Wizard
         {
             foreach (FileInfo file in target.EnumerateFiles())
             {
-                file.Delete();
+                DiskHelper.DeleteFile(file.FullName);
             }
             foreach (DirectoryInfo dir in target.EnumerateDirectories())
             {
-                dir.Delete(true);
+                DiskHelper.DeleteFolder(dir.FullName, true);
             }
         }
-
     }
 }

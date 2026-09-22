@@ -7,5 +7,9 @@ namespace Reminder.Launch
     {
         [OperationContract(IsOneWay = true)]
         void ShowMainWindow();
+
+        [OperationContract]
+        void Shutdown();
+
     }
 }

@@ -7,9 +7,7 @@ namespace Reminder.Launch
         public ClientProcessServiceHost()
             : base(typeof(ReminderClientProcess))
         {
-            AddServiceEndpoint(typeof(IReminderClientProcess), new NetNamedPipeBinding(), ServiceUri);
+            AddServiceEndpoint(typeof(IReminderClientProcess), new NetNamedPipeBinding(), ClientProcessProxy.ServiceUri);
         }
-
-        public const string ServiceUri = "net.pipe://localhost/ISchedulerClientProcess/";
     }
 }

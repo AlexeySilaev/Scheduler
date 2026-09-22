@@ -20,7 +20,6 @@ namespace Reminder.Resources.Cipher
         protected ReminderCipher()
         {
             _password = GeneratePassword();
-            Console.WriteLine(_password);
         }
 
         private static string GeneratePassword()

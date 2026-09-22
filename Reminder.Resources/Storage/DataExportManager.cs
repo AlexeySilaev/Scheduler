@@ -16,10 +16,11 @@ namespace Reminder.Resources.Storage
 
                 BitwiseScrambler scrambler = new BitwiseScrambler();
                 scrambler.Scramble(zip, exportPath);
+                File.SetAttributes(exportPath, FileAttributes.Encrypted);
             }
             finally
             {
-                File.Delete(zip);
+                DiskHelper.DeleteFile(zip);
             }
         }
     }

@@ -100,6 +100,13 @@ namespace Reminder
             }));
         }
 
+        void IReminderClientProcess.Shutdown()
+        {
+            LaunchChecker.UnregisterClientProcess(this);
+            App.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            Environment.Exit(0);
+        }
+
         private void ShiftControl_OnIsShiftedChangedCompleted(object sender, EventArgs e)
         {
             ShiftControl shiftControl = (ShiftControl)sender;

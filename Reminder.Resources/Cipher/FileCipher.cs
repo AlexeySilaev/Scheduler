@@ -14,7 +14,9 @@ namespace Reminder.Resources.Cipher
             byte[] bytes = File.ReadAllBytes(sourcePath);
             byte[] encrypted = Encrypt(bytes);
             Guid result = encrypted.ToGuid();
-            File.WriteAllBytes(getTargetPath(result), encrypted);
+            string targetPath = getTargetPath(result);
+            File.WriteAllBytes(targetPath, encrypted);
+            File.SetAttributes(targetPath, FileAttributes.Encrypted);
             return result;
         }
 

@@ -9,5 +9,11 @@ namespace Reminder.Launch
             Debug.Assert(LaunchChecker.ThisClientProcess != null);
             LaunchChecker.ThisClientProcess.ShowMainWindow();
         }
+
+        public void Shutdown()
+        {
+            Debug.Assert(LaunchChecker.ThisClientProcess != null);
+            LaunchChecker.ThisClientProcess.Shutdown();
+        }
     }
 }

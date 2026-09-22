@@ -1,5 +1,4 @@
-﻿using System.Security.Policy;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 
 namespace Reminder.Launch
 {
@@ -34,6 +33,15 @@ namespace Reminder.Launch
         public static void RegisterClientProcess(IReminderClientProcess thisClientProcess)
         {
             ThisClientProcess = thisClientProcess;
+        }
+
+        public static void UnregisterClientProcess(IReminderClientProcess thisClientProcess)
+        {
+            if (ThisClientProcess == thisClientProcess)
+            {
+                ThisClientProcess = null;
+                IsRunning = true;
+            }
         }
     }
 }

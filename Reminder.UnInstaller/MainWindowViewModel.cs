@@ -1,12 +1,15 @@
 ﻿using Microsoft.Win32;
+using Reminder.Launch;
 using Reminder.Resources;
 using Reminder.Resources.Storage;
 using Reminder.Resources.ViewModels;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -94,9 +97,25 @@ namespace Reminder.UnInstaller
 
         private static void StopAvReminder()
         {
-            var reminders = Process.GetProcessesByName("AvReminder");
-            if (reminders.Any())
-                reminders[0].Kill(); // достаточно первого, он один
+            try
+            {
+                ClientProcessProxy proxy = new ClientProcessProxy();
+                proxy.Shutdown();
+                proxy.Close();
+            }
+            catch (CommunicationException)
+            {
+                try
+                {
+                    var reminders = Process.GetProcessesByName("AvReminder");
+                    if (reminders.Any())
+                        reminders[0].Kill(); // достаточно первого, он один
+                }
+                catch (Win32Exception)
+                { 
+                    // отказано в доступе, процесс завершен
+                }
+            }
         }
 
         private static void ClearRegistry()
@@ -134,7 +153,7 @@ namespace Reminder.UnInstaller
         {
             string appDataFolder = AssemblyContext.AppDataPath;
             if (Directory.Exists(appDataFolder))
-                Directory.Delete(appDataFolder, true);
+                DiskHelper.DeleteFolder(appDataFolder, true);
         }
 
         private static void DeleteShortcut()
@@ -142,7 +161,7 @@ namespace Reminder.UnInstaller
             string shortcutPath =
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "AvReminder.lnk");
             if (File.Exists(shortcutPath))
-                File.Delete(shortcutPath);
+                DiskHelper.DeleteFile(shortcutPath);
         }
 
         private static void SelfDelete()
@@ -164,7 +183,7 @@ namespace Reminder.UnInstaller
                     psi.CreateNoWindow = true;
                     psi.UseShellExecute = false;
                     Process.Start(psi);
-                    Application.Current.Shutdown();
+                    Environment.Exit(0);
                 }
             }
         }

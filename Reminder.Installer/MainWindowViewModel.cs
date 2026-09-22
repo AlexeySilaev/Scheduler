@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using Reminder.Installer.Wizard;
+using Reminder.Launch;
 using Reminder.Resources.Cipher;
+using Reminder.Resources.Storage;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -8,6 +10,7 @@ using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Reflection;
+using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -277,7 +280,7 @@ namespace Reminder.Installer
             NavigationService.Navigate(new Uri("/Wizard/ParametersPage.xaml", UriKind.Relative));
         }
 
-        // если установка производится поверх прежней версии, нужна ее резерная копия
+        // если установка производится поверх прежней версии, нужна ее резервная копия
         // в случае ошибки установки будет произведен откат
         private async void ExecuteNextFinish()
         {
@@ -325,14 +328,7 @@ namespace Reminder.Installer
         {
             return Task.Factory.StartNew(() =>
             {
-                var reminders = Process.GetProcessesByName("AvReminder");
-                if (reminders.Any())
-                {
-                    // достаточно первого, он один
-                    Process avReminder = reminders.First();
-                    if (avReminder.WaitForExit(3000) == false) // Ждем до 3 секунды
-                        avReminder.Kill();
-                }
+                ShutdownAvReminderProcess();
 
                 EnsureFolderExists(InstallFolderPath);
                 using (Stream contentStream = Assembly.GetExecutingAssembly()
@@ -343,10 +339,10 @@ namespace Reminder.Installer
                         foreach (PackagePart part in zip.GetParts())
                         {
                             string target = Path.GetFullPath(Path.Combine(InstallFolderPath, part.Uri.OriginalString.TrimStart('/')));
-                            if (File.Exists(target)) 
+                            if (File.Exists(target))
                             {
                                 // отработать случай повторной установки в ту же папку
-                                File.Delete(target);
+                                DiskHelper.DeleteFile(target);
                             }
 
                             using (Stream source = part.GetStream(FileMode.Open, FileAccess.Read))
@@ -359,6 +355,29 @@ namespace Reminder.Installer
                     }
                 }
             });
+        }
+
+        private void ShutdownAvReminderProcess()
+        {
+            try
+            {
+                ClientProcessProxy proxy = new ClientProcessProxy();
+                proxy.Shutdown();
+                proxy.Close();
+            }
+            catch (CommunicationException)
+            { 
+                // если не получилось остановить через контракт, возможно он устарел
+                // срубим процесс
+                var reminders = Process.GetProcessesByName("AvReminder");
+                if (reminders.Any())
+                {
+                    // достаточно первого, он один
+                    Process avReminder = reminders.First();
+                    if (avReminder.WaitForExit(3000) == false) // ждем 3 секунды
+                        avReminder.Kill();
+                }
+            }
         }
 
         private static void EnsureFolderExists(string folderPath)
@@ -387,14 +406,14 @@ namespace Reminder.Installer
                         ExtractEmbeddedResource(strings_xml, SecretsAppDataFolderPath);
                 }
                 else if (Directory.Exists(SecretsAppDataFolderPath))
-                    Directory.Delete(SecretsAppDataFolderPath, true);
+                    DiskHelper.DeleteFolder(SecretsAppDataFolderPath, true);
                 ConfigureUnlockSecretsPassword();
 
                 const string icoName = "App.ico";
                 string icoPath = Path.Combine(InstallFolderPath, icoName);
                 string result = Path.Combine(AppDataFolderPath, icoName);
                 File.Copy(icoPath, result, true);
-                File.Delete(icoPath);
+                DiskHelper.DeleteFile(icoPath);
                 return result;
             });
         }

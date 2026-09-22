@@ -22,7 +22,7 @@ namespace Reminder.Resources.Storage
         {
             string unpackFolderPath = Path.Combine(Path.GetTempPath(), "AvReminder.Import");
             if (Directory.Exists(unpackFolderPath))
-                Directory.Delete(unpackFolderPath, true);
+                DiskHelper.DeleteFolder(unpackFolderPath, true);
             Directory.CreateDirectory(unpackFolderPath);
 
             try
@@ -34,7 +34,7 @@ namespace Reminder.Resources.Storage
             }
             finally
             {
-                Directory.Delete(unpackFolderPath, true);
+                DiskHelper.DeleteFolder(unpackFolderPath, true);
             }
         }
 
@@ -51,7 +51,7 @@ namespace Reminder.Resources.Storage
             }
             finally
             {
-                File.Delete(zip);
+                DiskHelper.DeleteFile(zip);
             }
         }
 

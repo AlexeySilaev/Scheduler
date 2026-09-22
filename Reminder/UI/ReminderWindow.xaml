@@ -9,6 +9,7 @@
         xmlns:viewModels="clr-namespace:Reminder.ViewModels"
         xmlns:templateSelectors="clr-namespace:Reminder.TemplateSelectors"
         mc:Ignorable="d" 
+        Loaded="ReminderWindow_Loaded"
         WindowStyle="ToolWindow"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
@@ -43,7 +44,7 @@
 
         <ScrollViewer Grid.Column="1"  Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                       VerticalAlignment="Center">
-            <ItemsControl ItemsSource="{Binding Items}" Margin="10" >
+            <ItemsControl x:Name="ReminderItems" ItemsSource="{Binding Items}" Margin="10" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type viewModels:TimerReminderItem}">
                         <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >

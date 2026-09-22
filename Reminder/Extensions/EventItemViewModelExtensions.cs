@@ -28,7 +28,6 @@ namespace Reminder.Extensions
                     return CalcNearestPeriodicalMonthDate(eventDate, range, 12);
             }
 
-            Console.WriteLine(eventDate);
             return eventDate;
         }
 
@@ -40,7 +39,6 @@ namespace Reminder.Extensions
                 .AddMinutes(eventDate.Minute).AddSeconds(eventDate.Second);
             if (result < TimeProvider.Now)
                 result = result.AddDays(1);
-            Console.WriteLine(result);
             return result;
         }
 
@@ -52,7 +50,6 @@ namespace Reminder.Extensions
             List<DateTime> nearestWeekDates = new List<DateTime>();
             days.ForEach(day => nearestWeekDates.Add(GetNearestPeriodicalWeekDate(baseWeekDate, day)));
             nearestWeekDates.Sort();
-            Console.WriteLine(nearestWeekDates.First());
             return nearestWeekDates.First();
 
             // получение ближайшей даты по дню недели
@@ -77,7 +74,6 @@ namespace Reminder.Extensions
             if (eventDate > now)
             {
                 range?.Clear();
-                Console.WriteLine(eventDate);
                 return eventDate;
             }
             // сколько месяцев между месяцем даты события и месяцем текущей даты?
@@ -111,7 +107,6 @@ namespace Reminder.Extensions
             // что, если событие приходится на текущий месяц, но дата дня уже прошла?
             if (result < now)
                 result = result.AddMonths(months);
-            Console.WriteLine(result);
             return result;
         }
 

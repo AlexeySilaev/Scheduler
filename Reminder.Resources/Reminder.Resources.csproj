@@ -59,6 +59,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\DataExportManager.cs" />
     <Compile Include="Storage\DataImport.cs" />
+    <Compile Include="Storage\DiskHelper.cs" />
     <Compile Include="Storage\Secrets.cs" />
     <Compile Include="Storage\StringSecrets.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

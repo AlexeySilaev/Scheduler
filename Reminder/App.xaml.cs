@@ -15,13 +15,12 @@ namespace Reminder
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            base.OnStartup(e);
             if (LaunchChecker.IsRunning)
             {
                 Current.Shutdown();
                 return;
             }
-
-            base.OnStartup(e);
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("RU-ru");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainUnhandledException;
             Dispatcher.UnhandledException += Dispatcher_UnhandledException;
@@ -47,7 +46,8 @@ namespace Reminder
             Current.Dispatcher.Invoke(() =>
             {
                 MainViewModel viewModel = MainViewModel.FindInstance();
-                viewModel.Error = $"{title}: {message}";
+                if (viewModel != null)
+                    viewModel.Error = $"{title}: {message}";
             });
         }
     }

@@ -49,6 +49,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -97,6 +98,10 @@
     <Resource Include="App.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Reminder.Launch\Reminder.Launch.csproj">
+      <Project>{12514632-d030-4853-b78a-9d359587f83b}</Project>
+      <Name>Reminder.Launch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Reminder.Resources\Reminder.Resources.csproj">
       <Project>{13A7E7B9-D51C-4F2B-B955-027294610B47}</Project>
       <Name>Reminder.Resources</Name>

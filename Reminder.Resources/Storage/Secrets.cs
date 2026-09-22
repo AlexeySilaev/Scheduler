@@ -79,8 +79,8 @@ namespace Reminder.Resources.Storage
         {
             string fileName = GetFileSecretName(key);
             if (File.Exists(fileName))
-            { 
-                File.Delete(fileName);
+            {
+                DiskHelper.DeleteFile(fileName);
                 return true;
             }
             return false;
@@ -95,7 +95,7 @@ namespace Reminder.Resources.Storage
                     $"*.{AssemblyContext.SECRET_FILE_EXTENSION}")
                     .Where(file => fileSecrets.Contains(Guid.Parse(Path.GetFileNameWithoutExtension(file))) == false)
                     .ToList();
-                files.ForEach(file => File.Delete(file));
+                files.ForEach(file => DiskHelper.DeleteFile(file));
             }
         }
 
