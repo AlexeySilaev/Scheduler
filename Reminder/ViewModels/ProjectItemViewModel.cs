@@ -3,12 +3,13 @@ using Reminder.Models;
 using Reminder.Resources.ViewModels;
 using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 
 namespace Reminder.ViewModels
 {
-    public class ProjectItemViewModel : SchedulerItemViewModel
+    public class ProjectItemViewModel : ReminderItemViewModel
     {
         private string _name;
         private DateTime _startDate;
@@ -50,8 +51,15 @@ namespace Reminder.ViewModels
             set
             {
                 if (EndDate == value) return;
-                _endDate = value;
+                if (value.HasValue)
+                    _endDate = value.Value.Date
+                        .AddHours(StartDate.Hour)
+                        .AddMinutes(StartDate.Minute)
+                        .AddSeconds(StartDate.Second);
+                else
+                    _endDate = null;
                 OnPropertyChanged(nameof(EndDate));
+                UpdateState();
             }
         }
 
@@ -84,7 +92,23 @@ namespace Reminder.ViewModels
         {
             get { return ReminderItemType.Project; }
         }
-        
+
+        public override bool IsOneTimeReminder
+        {
+            get { return true; }
+        }
+
+        public override string PeriodicityDescription
+        {
+            get { return string.Empty; }
+        }
+
+        public override bool AllowAutoDeleteOnExpired
+        { 
+            get { return false; } 
+        }
+
+
         public Command AddClause { get; }
         public Command EditClause { get; }
         public Command DeleteClause { get; }
@@ -105,9 +129,26 @@ namespace Reminder.ViewModels
             CancelClause = new Command(OnCancelClause, CanExecuteCancelClause);
         }
 
-        protected override bool CanExecuteEdit()
+        protected override DateTime CalculateReminderDateTime()
         {
-            return true;
+            UpdateState();
+            if (EndDate.HasValue == false)
+                return DateTime.MinValue;
+            return EndDate.Value;
+        }
+
+        public override PostponeItem GetDefaultPostponeItem()
+        {
+            return CompleteItem.Instance;
+        }
+
+        public override void OnPostponeAccepted(PostponeItem postpone) 
+        {
+            if (postpone is ProjectEndDateItem endDateItem)
+            {
+                EndDate = endDateItem.EndDate;
+                EndEdit();
+            }
         }
 
         public override void EndEdit()
@@ -156,6 +197,21 @@ namespace Reminder.ViewModels
         {
             ReminderModel.Instance.Projects.Add((ProjectItem)_item);
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+        private void UpdateState()
+        {
+            if (EndDate.HasValue)
+            {
+                State = EndDate.Value < TimeProvider.Now ? ReminderState.Expired : ReminderState.Active;
+            }
+            else
+                State = ReminderState.Disabled;
+        }
+
 
         #region Функционал для пунктов проекта
 
@@ -244,7 +300,6 @@ namespace Reminder.ViewModels
             }
             ClauseMode = EditingClauseMode.ViewItems;
         }
-
 
         public class ProjectClause : BaseViewModel
         {

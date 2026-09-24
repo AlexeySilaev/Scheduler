@@ -11,8 +11,13 @@ namespace Reminder.Models
 
         public ProjectItem()
         {
-            StartDate = TimeProvider.Today;
+            StartDate = TimeProvider.Today.AddHours(12);
             Clauses = Array.Empty<string>();
+        }
+
+        public bool ShouldSerializeEndDate()
+        {
+            return EndDate.HasValue;
         }
     }
 }

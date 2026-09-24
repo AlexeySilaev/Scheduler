@@ -8,6 +8,7 @@ namespace Reminder.ViewModels
     {
         public string Description { get; }
         public int Minutes { get; protected set; }
+        public virtual bool AllowPostponeToAlarms { get { return true; } }
 
         public PostponeItem(string description, int minutes)
         {
@@ -78,13 +79,15 @@ namespace Reminder.ViewModels
             Instance = new ContinueIntervalItem();
         }
 
+        public override bool AllowPostponeToAlarms { get { return false; } } // элемент "Завтра" пересчитается в событиях
+
         private ContinueIntervalItem() : base("Завтра", 1440)
         {
         }
     }
 
     /// <summary>
-    /// Для событий с активным интервалом отложить на сутки.
+    /// Цель достугнута, на сутки не переносим.
     /// </summary>
     public class BreakIntervalItem : PostponeItem
     {
@@ -99,4 +102,19 @@ namespace Reminder.ViewModels
         {
         }
     }
+
+    /// <summary>
+    /// Перенести дату окончания проекта.
+    /// </summary>
+    public class ProjectEndDateItem : PostponeItem
+    {
+        public override bool AllowPostponeToAlarms { get { return false; } }
+        public DateTime EndDate { get; }
+
+        public ProjectEndDateItem(DateTime endDate) : base(endDate.ToShortDateString(), 0)
+        {
+            EndDate = endDate;
+        }
+    }
+
 }

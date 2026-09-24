@@ -78,6 +78,7 @@
     <Compile Include="Attached\ImageBehavior.cs" />
     <Compile Include="Converters\AlarmTimeToStringConverter.cs" />
     <Compile Include="Converters\CharactersEnteredConverter.cs" />
+    <Compile Include="Converters\PostponeToDateConverter.cs" />
     <Compile Include="Converters\DaysRangeActivityConverter.cs" />
     <Compile Include="Converters\DaysRangeControlVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Converters\DaysRangeToBoolConverter.cs" />
     <Compile Include="Converters\ProcessResultBrushConveter.cs" />
     <Compile Include="Converters\ReminderItemPostponeItemsSourceConverter.cs" />
+    <Compile Include="Converters\ReminderItemTypeToVisibilityConverter.cs" />
     <Compile Include="Converters\SecretKindToDataTemplateConverter.cs" />
     <Compile Include="Converters\StaticResourceToIntConverter.cs" />
     <Compile Include="Converters\StringIsNotNullOrEmptyConverter.cs" />
@@ -165,6 +167,7 @@
       <DependentUpon>ReminderWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ReminderWindowViewModel.cs" />
+    <Compile Include="UI\SimpleDatePicker.cs" />
     <Compile Include="UI\TimeTextBox.cs" />
     <Compile Include="UI\UnlockSecretsControl.xaml.cs">
       <DependentUpon>UnlockSecretsControl.xaml</DependentUpon>

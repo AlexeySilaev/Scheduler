@@ -366,16 +366,23 @@ namespace Reminder.Installer
                 proxy.Close();
             }
             catch (CommunicationException)
-            { 
+            {
                 // если не получилось остановить через контракт, возможно он устарел
                 // срубим процесс
-                var reminders = Process.GetProcessesByName("AvReminder");
-                if (reminders.Any())
+                try
                 {
-                    // достаточно первого, он один
-                    Process avReminder = reminders.First();
-                    if (avReminder.WaitForExit(3000) == false) // ждем 3 секунды
-                        avReminder.Kill();
+                    var reminders = Process.GetProcessesByName("AvReminder");
+                    if (reminders.Any())
+                    {
+                        // достаточно первого, он один
+                        Process avReminder = reminders.First();
+                        if (avReminder.WaitForExit(3000) == false) // ждем 3 секунды
+                            avReminder.Kill();
+                    }
+                }
+                catch (Win32Exception)
+                {
+                    // отказано в доступе, процесс завершен
                 }
             }
         }

@@ -299,7 +299,7 @@ namespace Reminder.ViewModels
 
             _mainWindowTitle = COMMON_WINDOW_TITLE;
             _searchText = string.Empty;
-            _reminderConveyor = new ReminderConveyor(Alarms, Events, OnConveyorRefresh);
+            _reminderConveyor = new ReminderConveyor(Alarms, Events, (ProjectGroup)Groups[3], OnConveyorRefresh);
             _autolockSecretsTimer = new Timer();
             _autolockSecretsTimer.Elapsed += AutolockSecretsTimer_Elapsed;
             _popupRect = Rect.Empty;
@@ -348,9 +348,14 @@ namespace Reminder.ViewModels
 
         public void Postpone(ReminderItemViewModel reminderItemViewModel, PostponeItem postpone)
         {
-            if(postpone != ContinueIntervalItem.Instance) // элемент "Завтра" пересчитается в событиях
+            if (postpone.AllowPostponeToAlarms)
+            {
                 Alarms.AddPostponed(reminderItemViewModel, postpone.Minutes);
-            Alarms.Filter(SearchText);
+                Alarms.Filter(SearchText);
+            }
+            else
+                reminderItemViewModel.OnPostponeAccepted(postpone);
+            SaveToModel();
             _reminderConveyor.OnReminderItemPostponed();
         }
 

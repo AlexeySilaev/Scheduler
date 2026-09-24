@@ -80,7 +80,7 @@ namespace Reminder.ViewModels
         }
     }
 
-    public abstract class ReminderGroup<T> : SchedulerGroup<T> where T : ReminderItemViewModel
+    public abstract class ReminderGroup<T> : SchedulerGroup<T>, IReminderGroup where T : ReminderItemViewModel
     {
         protected abstract IEnumerable<T> FilterExpiredItems();
         protected abstract IOrderedEnumerable<T> OrderItems(IEnumerable<T> items);

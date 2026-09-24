@@ -1,11 +1,12 @@
 ﻿using Reminder.Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 
 namespace Reminder.ViewModels
 {
-    public class ProjectGroup : SchedulerGroup<ProjectItemViewModel>
+    public class ProjectGroup : ReminderGroup<ProjectItemViewModel>
     {
         public override string Name
         {
@@ -56,6 +57,16 @@ namespace Reminder.ViewModels
         protected override bool FilterPredicate(string searchText, ProjectItemViewModel item)
         {
             return base.FilterPredicate(searchText, item) || item.Name.ToLower().Contains(searchText.ToLower());
+        }
+
+        protected override IEnumerable<ProjectItemViewModel> FilterExpiredItems()
+        {
+            return FilterExpiredItems(ReminderModel.Instance.Projects, item => new ProjectItemViewModel(item));
+        }
+
+        protected override IOrderedEnumerable<ProjectItemViewModel> OrderItems(IEnumerable<ProjectItemViewModel> projects)
+        {
+            return projects.OrderByDescending(item => item.StartDate);
         }
 
         // сортировка по убыванию даты создания

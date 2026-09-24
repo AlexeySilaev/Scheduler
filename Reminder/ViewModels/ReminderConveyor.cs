@@ -1,29 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Timers;
-using System.Windows;
+﻿using Reminder.Extensions;
 using Reminder.Models;
 using Reminder.UI;
-using Reminder.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
 
 namespace Reminder.ViewModels
 {
- /* Работа алгоритма.
-    Для напоминаний и событий вычисляется ближайшее время срабатывания (в случае напоминаний и одноразовых событий
-    оно единственно). Это вреия инкапсулируется элементами TimerReminderItem, они сортируются по возрастанию времени
-    срабатывания ReminderDateTime и ставятся на конвейер _timerReminderQueue. После того, как наступает ближайшее
-    срабатывание, очередь перестраивается, чтобы обновить ближайшее время срабатывания для периодических событий.
-    Например, для сработавшего ежедевного события в очереди появится новый элемент, который будет обработан через сутки. */
+    /* Работа алгоритма.
+       Для событий, напоминаний и проектов вычисляется ближайшее время срабатывания (для одноразовых ReminderItemViewModel
+       оно единственно). Это вреия инкапсулируется элементами TimerReminderItem, они сортируются по возрастанию времени
+       срабатывания ReminderDateTime и ставятся на конвейер _timerReminderQueue. После того, как наступает ближайшее
+       срабатывание, очередь перестраивается, чтобы обновить ближайшее время срабатывания для периодических событий.
+       Например, для сработавшего ежедевного события в очереди появится новый элемент, который будет обработан через сутки. */
 
     internal class ReminderConveyor
     {
         private const double SLOW_TIMER_INTERVAL = 1000 * 30;
         private const double FAST_TIMER_INTERVAL = 1000 * 0.5;
 
-        private readonly AlarmGroup _alarms;
-        private readonly EventGroup _events;
+        private readonly IReminderGroup _alarms;
+        private readonly IReminderGroup _events;
+        private readonly IReminderGroup _projects;
         private readonly Action<EventItemViewModel[]> _onConveyorRefresh;
         private readonly Timer _queueTimer;
         private readonly object _lockQueue;
@@ -32,10 +33,12 @@ namespace Reminder.ViewModels
 
         private ReminderWindowViewModel _reminderWindowViewModel;
 
-        public ReminderConveyor(AlarmGroup alarms, EventGroup events, Action<EventItemViewModel[]> onConveyorRefresh)
+        public ReminderConveyor(IReminderGroup alarms, IReminderGroup events, IReminderGroup projects,
+            Action<EventItemViewModel[]> onConveyorRefresh)
         {
             _alarms = alarms;
             _events = events;
+            _projects = projects;
             _onConveyorRefresh = onConveyorRefresh;
             _timerReminderQueue = new List<TimerReminderItem>();
             _queueTimer = new Timer();
@@ -55,6 +58,7 @@ namespace Reminder.ViewModels
                 _timerReminderQueue.Clear();
                 _timerReminderQueue.AddRange(_alarms.CalculateTimerReminderItems());
                 _timerReminderQueue.AddRange(_events.CalculateTimerReminderItems());
+                _timerReminderQueue.AddRange(_projects.CalculateTimerReminderItems());
                 _timerReminderQueue.Sort();
                 CheckStartTimer();
             }
@@ -80,7 +84,7 @@ namespace Reminder.ViewModels
             {
                 // пусть пользователь успеет увидеть ввод
                 await Task.Delay(TimeSpan.FromSeconds(1));
-                _reminderWindowViewModel.Window?.Close(); // Window? если ловкий пользователь закрыл окно
+                _reminderWindowViewModel.Window?.Close(); // "Window?" если ловкий пользователь закрыл окно
                 _reminderWindowViewModel = null;
             }
         }
@@ -130,7 +134,6 @@ namespace Reminder.ViewModels
                     {
                         _timerReminderQueue.Remove(nearestReminderItem);
                         expired.Add(nearestReminderItem);
-
                     }
                     else break;
                 }
@@ -218,10 +221,9 @@ namespace Reminder.ViewModels
 
             expired.ForEach(reminder =>
             {
-                if (reminder.Source.IsOneTimeReminder)
+                if (reminder.Source.AllowAutoDeleteOnExpired)
                 {
-                    ISchedulerGroup group = reminder.Source.Type == ReminderItemType.Alarm ?
-                       (ISchedulerGroup)_alarms : (ISchedulerGroup)_events;
+                    ISchedulerGroup group = GroupByType(reminder.Source.Type);
                     group.Remove(reminder.Source);
                     MainViewModel mainViewModel = MainViewModel.FindInstance();
                     mainViewModel.SaveToModel();
@@ -230,6 +232,17 @@ namespace Reminder.ViewModels
 
             bool wasEvent = expired.Any(item => item.Source.Type == ReminderItemType.Event);
             MainViewModel.FindInstance().OnReminderActivated(wasEvent);
+        }
+
+        private IReminderGroup GroupByType(ReminderItemType type)
+        {
+            switch (type)
+            {
+                case ReminderItemType.Alarm: return _alarms;
+                case ReminderItemType.Event: return _events;
+                case ReminderItemType.Project: return _projects;
+            }
+            throw new ArgumentOutOfRangeException();
         }
     }
 }

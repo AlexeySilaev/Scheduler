@@ -8,7 +8,7 @@ namespace Reminder.ViewModels
     {
         [Description("Активно")] Active,
         [Description("Просрочено")] Expired,
-    //  [Description("Выполнено")] Completed
+        [Description("Отключено")] Disabled
     }
 
     public abstract class ReminderItemViewModel : SchedulerItemViewModel
@@ -19,7 +19,7 @@ namespace Reminder.ViewModels
         public ReminderState State
         {
             get { return _state; }
-            private set
+            protected set
             {
                 if (State == value) return;
                 _state = value;
@@ -56,6 +56,7 @@ namespace Reminder.ViewModels
         public abstract string PeriodicityDescription { get; }
 
         public DateTime ReminderDateTime { get; private set; }
+        public virtual bool AllowAutoDeleteOnExpired { get { return IsOneTimeReminder; }}
 
         protected ReminderItemViewModel(ReminderItem item) : base(item)
         {
@@ -74,7 +75,7 @@ namespace Reminder.ViewModels
 
         protected override bool CanExecuteEdit()
         {
-            return State == ReminderState.Active;
+            return State != ReminderState.Expired;
         }
 
         protected abstract DateTime CalculateReminderDateTime();

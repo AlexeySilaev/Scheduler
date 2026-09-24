@@ -357,11 +357,12 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.InputBindings>
                         <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Edit}" />
                     </Grid.InputBindings>
-                    <TextBlock Text="{Binding Name}" Style="{StaticResource ReminderItemText}"/>
+                    <TextBlock x:Name="ProjectName" Text="{Binding Name}" Style="{StaticResource ReminderItemText}"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5,5,5,0">
                         <TextBlock Text="В работе с " Style="{StaticResource ProjectElementText}" />
                         <TextBlock Text="{Binding StartDate, StringFormat='dd.MM.yyyy'}" Style="{StaticResource ProjectElementText}"/>
@@ -389,7 +390,11 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <ContentControl Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" x:Name="ImagesPanel" 
+                    <TextBlock Grid.Row="4" Text="Время выполнения проекта истекло"
+                        Foreground="{StaticResource GrayText}" Margin="{StaticResource DetailsMargin}"
+                        Visibility="{Binding State, Converter={StaticResource EnumToVisibilityConverter},
+                            ConverterParameter={x:Static viewModels:ReminderState.Expired}}"/>
+                    <ContentControl Grid.Row="0" Grid.RowSpan="5" Grid.Column="1" x:Name="ImagesPanel" 
                         Template="{StaticResource ButtonPanel}" DataContext="{Binding}" Visibility="Hidden" />
                 </Grid>
             </Border>
@@ -400,6 +405,10 @@
                         TargetName="ImagesPanel"
                         Property="Visibility"
                         Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding State}" Value="Expired">
+                    <Setter TargetName="ProjectName" Property="TextDecorations" Value="Strikethrough"/>
+                    <Setter TargetName="ProjectName" Property="FontStyle" Value="Oblique"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>

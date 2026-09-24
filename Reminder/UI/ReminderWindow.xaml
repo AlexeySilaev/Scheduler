@@ -22,6 +22,15 @@
         <templateSelectors:PostponeItemTemplateSelector x:Key="PostponeItemTemplateSelector"/>
         <converters:PostponeDescriptionConverter x:Key="PostponeDescriptionConverter"/>
         <converters:ReminderItemPostponeItemsSourceConverter x:Key="ReminderItemPostponeItemsSourceConverter" />
+        <converters:ReminderItemTypeToVisibilityConverter x:Key="ReminderItemTypeToVisibilityConverter" />
+        <converters:PostponeToDateConverter x:Key="PostponeToDateConverter" />
+        <x:Array x:Key="NotProject" Type="viewModels:ReminderItemType">
+            <viewModels:ReminderItemType>Alarm</viewModels:ReminderItemType>
+            <viewModels:ReminderItemType>Event</viewModels:ReminderItemType>
+        </x:Array>
+        <x:Array x:Key="Project" Type="viewModels:ReminderItemType">
+            <viewModels:ReminderItemType>Project</viewModels:ReminderItemType>
+        </x:Array>
     </Window.Resources>
     <Grid PreviewMouseLeftButtonDown="OnBeforeMouseLeftButtonDown">
         <Grid.ColumnDefinitions>
@@ -58,7 +67,7 @@
                                     <RowDefinition/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="{Binding Source.Text}" FontSize="14" FontWeight="DemiBold"
+                                <TextBlock Text="{Binding Source}" FontSize="14" FontWeight="DemiBold"
                                            LineHeight="18" MaxHeight="36" TextWrapping="Wrap" VerticalAlignment="Center" />
                                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="5">
                                     <TextBlock Text="{Binding Source.Type, Converter={StaticResource EnumToStringConverter}}" Foreground="{StaticResource GrayText}"
@@ -69,11 +78,32 @@
                                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="5">
                                     <TextBlock Text ="Повтор" VerticalAlignment="Center"/>
                                     <Grid Width="75" Margin="5,0">
-                                        <ComboBox IsEditable="False"
-                                            ItemTemplateSelector="{StaticResource PostponeItemTemplateSelector}"
-                                            Visibility="{Binding AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}"
-                                            ItemsSource="{Binding Source, Converter={StaticResource ReminderItemPostponeItemsSourceConverter}}"
-                                            SelectedItem="{Binding Postpone}"/>
+                                        <Grid Visibility="{Binding AllowPostpone, Converter={StaticResource InvertBoolToVisibilityConverter}, ConverterParameter=False}">
+                                            <ComboBox IsEditable="False" ItemTemplateSelector="{StaticResource PostponeItemTemplateSelector}"
+                                                ItemsSource="{Binding Source, Converter={StaticResource ReminderItemPostponeItemsSourceConverter}}"
+                                                SelectedItem="{Binding Postpone}"
+                                                Visibility="{Binding Source.Type, Converter={StaticResource ReminderItemTypeToVisibilityConverter},
+                                                    ConverterParameter={StaticResource NotProject}}"/>
+                                            <ui:SimpleDatePicker Visibility="{Binding Source.Type,
+                                                    Converter={StaticResource ReminderItemTypeToVisibilityConverter}, ConverterParameter={StaticResource Project}}"
+                                                DisplayDateStart="{Binding ReminderDateTime, Mode=OneWay}"
+                                                SelectedDate="{Binding Postpone, Converter={StaticResource PostponeToDateConverter}}">
+                                                <ui:SimpleDatePicker.Resources>
+                                                    <Style TargetType="{x:Type DatePickerTextBox}">
+                                                        <Setter Property="Control.Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate>
+                                                                    <TextBox x:Name="PART_TextBox" IsReadOnly="True" 
+                                                                        Text="{Binding Path=SelectedDate, StringFormat='dd.MM.yyyy', 
+                                                                        RelativeSource={RelativeSource AncestorType={x:Type DatePicker}},
+                                                                        TargetNullValue='(нет)'}" />
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                    </ui:SimpleDatePicker.Resources>
+                                            </ui:SimpleDatePicker>
+                                        </Grid>
                                         <TextBlock VerticalAlignment="Center"
                                             Text="{Binding Postpone, Converter={StaticResource PostponeDescriptionConverter}}"
                                             Visibility="{Binding AllowPostpone, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=False}"/>

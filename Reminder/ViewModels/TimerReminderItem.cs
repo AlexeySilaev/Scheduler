@@ -62,11 +62,6 @@ namespace Reminder.ViewModels
             return IsExpired;
         }
 
-        public void OnPostponeAccepted()
-        {
-            Source.OnPostponeAccepted(Postpone);
-        }
-
         public override string ToString()
         {
             return Source.ToString();

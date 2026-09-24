@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Reminder.ViewModels
 {
@@ -17,5 +18,10 @@ namespace Reminder.ViewModels
         void Save();
         void Remove(SchedulerItemViewModel item);
         void Filter(string searchText);
+    }
+
+    public interface IReminderGroup : ISchedulerGroup
+    {
+        List<TimerReminderItem> CalculateTimerReminderItems();
     }
 }

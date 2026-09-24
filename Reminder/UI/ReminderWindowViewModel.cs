@@ -6,7 +6,6 @@ using System.Linq;
 using System.Speech.Synthesis;
 using System.Windows;
 using System.Windows.Controls;
-using Reminder.Extensions;
 using Reminder.Models;
 using Reminder.Resources.ViewModels;
 using Reminder.ViewModels;
@@ -104,7 +103,6 @@ namespace Reminder.UI
             Items.CollectionChanged -= ItemsOnCollectionChanged;
             if (App.Current.MainWindow != null)
                 MainViewModel.FindInstance().PropertyChanged -= MainViewModel_PropertyChanged;
-            Items.ForEach(item => item.OnPostponeAccepted());
         }
 
         public bool IsAllItemsPostponed()
