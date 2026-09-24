@@ -26,7 +26,7 @@
                           VerticalAlignment="Center" Margin="10">
                 <ItemsControl ItemsSource="{Binding Items}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type viewModels:EventItemViewModel}">
+                        <DataTemplate DataType="{x:Type viewModels:DayAboutItemViewModel}">
                             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
                                 <Grid Margin="5" >
                                     <Grid.ColumnDefinitions>
@@ -36,7 +36,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Text="{Binding Text, Converter={StaticResource SubstringConverter}, ConverterParameter=40}"
+                                    <TextBlock Text="{Binding Title, Converter={StaticResource SubstringConverter}, ConverterParameter=40}"
                                            FontSize="14" FontWeight="DemiBold"  Margin="0,0,10,0"
                                            VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                     <TextBlock Grid.Column="1" Text="{Binding PeriodicityDescription}" 

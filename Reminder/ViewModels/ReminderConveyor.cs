@@ -2,6 +2,7 @@
 using Reminder.Models;
 using Reminder.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Reminder.ViewModels
        срабатывание, очередь перестраивается, чтобы обновить ближайшее время срабатывания для периодических событий.
        Например, для сработавшего ежедевного события в очереди появится новый элемент, который будет обработан через сутки. */
 
-    internal class ReminderConveyor
+    internal class ReminderConveyor : IEqualityComparer<DayAboutItemViewModel>
     {
         private const double SLOW_TIMER_INTERVAL = 1000 * 30;
         private const double FAST_TIMER_INTERVAL = 1000 * 0.5;
@@ -25,16 +26,16 @@ namespace Reminder.ViewModels
         private readonly IReminderGroup _alarms;
         private readonly IReminderGroup _events;
         private readonly IReminderGroup _projects;
-        private readonly Action<EventItemViewModel[]> _onConveyorRefresh;
+        private readonly Action<DayAboutItemViewModel[]> _onConveyorRefresh;
         private readonly Timer _queueTimer;
         private readonly object _lockQueue;
-        private readonly List<EventItemViewModel> _dayAboutEvents; // события, которые сработают через сутки
+        private readonly List<DayAboutItemViewModel> _dayAboutItems; // события и проекты, которые сработают через сутки
         private readonly List<TimerReminderItem> _timerReminderQueue;
 
         private ReminderWindowViewModel _reminderWindowViewModel;
 
         public ReminderConveyor(IReminderGroup alarms, IReminderGroup events, IReminderGroup projects,
-            Action<EventItemViewModel[]> onConveyorRefresh)
+            Action<DayAboutItemViewModel[]> onConveyorRefresh)
         {
             _alarms = alarms;
             _events = events;
@@ -45,7 +46,7 @@ namespace Reminder.ViewModels
             _queueTimer.AutoReset = false;
             _queueTimer.Elapsed += QueueTimer_Elapsed;
             _lockQueue = new object();
-            _dayAboutEvents = new List<EventItemViewModel>();
+            _dayAboutItems = new List<DayAboutItemViewModel>();
         }
 
         /// <summary>
@@ -148,9 +149,9 @@ namespace Reminder.ViewModels
                     CheckStartTimer();
 
                 bool updated = UpdateDayAboutEvents(e.SignalTime);
-                EventItemViewModel[] newDayAboutEvents =
-                    updated ? _dayAboutEvents.ToArray() : Array.Empty<EventItemViewModel>();
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => _onConveyorRefresh(newDayAboutEvents)));
+                DayAboutItemViewModel[] newDayAboutItems =
+                    updated ? _dayAboutItems.ToArray() : Array.Empty<DayAboutItemViewModel>();
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => _onConveyorRefresh(newDayAboutItems)));
             }
         }
 
@@ -161,19 +162,19 @@ namespace Reminder.ViewModels
         // потому что таймер конвейера тикает чаще раза в минуту.
         private bool UpdateDayAboutEvents(DateTime signalTime)
         {
-            List<EventItemViewModel> currentDayEvents = GetDayAboutEvents(signalTime.AddDays(1));
-            bool result = Enumerable.SequenceEqual(_dayAboutEvents, currentDayEvents) == false;
-            _dayAboutEvents.Clear();
-            _dayAboutEvents.AddRange(currentDayEvents);
+            List<DayAboutItemViewModel> currentDayItems = GetDayAboutItems(signalTime.AddDays(1));
+            bool result = Enumerable.SequenceEqual(_dayAboutItems, currentDayItems, this) == false;
+            _dayAboutItems.Clear();
+            _dayAboutItems.AddRange(currentDayItems);
             return result;
         }
 
-        private List<EventItemViewModel> GetDayAboutEvents(DateTime dayAboutTime)
+        private List<DayAboutItemViewModel> GetDayAboutItems(DateTime dayAboutTime)
         {
             // выравниваем время срабатывания по границе минуты
             DateTime from = dayAboutTime.Date.AddHours(dayAboutTime.Hour).AddMinutes(dayAboutTime.Minute);
             DateTime to = from.AddSeconds(59);
-            List<EventItemViewModel> result = _timerReminderQueue
+            List<EventItemViewModel> eventItems = _timerReminderQueue
                 .Where(reminder => reminder.Source.Type == ReminderItemType.Event 
                 && from <= reminder.ReminderDateTime && reminder.ReminderDateTime <= to)
                 .Select(reminder => (EventItemViewModel)reminder.Source)
@@ -197,7 +198,17 @@ namespace Reminder.ViewModels
                     return item.Range.State != DaysRangeState.Dormant; // покажем до входа в интервал
                 return false;
             };
-            result.RemoveAll(ev => allowRemovePredicate(ev));
+            eventItems.RemoveAll(ev => allowRemovePredicate(ev));
+
+            List<ProjectItemViewModel> projectItems = _timerReminderQueue
+                .Where(reminder => reminder.Source.Type == ReminderItemType.Project
+                && from <= reminder.ReminderDateTime && reminder.ReminderDateTime <= to)
+                .Select(reminder => (ProjectItemViewModel)reminder.Source)
+                .ToList();
+
+            List<DayAboutItemViewModel> result = new List<DayAboutItemViewModel>();
+            result.AddRange(eventItems.Select(source => new DayAboutItemViewModel(source)));
+            result.AddRange(projectItems.Select(source => new DayAboutItemViewModel(source)));
             return result;
         }
 
@@ -243,6 +254,16 @@ namespace Reminder.ViewModels
                 case ReminderItemType.Project: return _projects;
             }
             throw new ArgumentOutOfRangeException();
+        }
+
+        bool IEqualityComparer<DayAboutItemViewModel>.Equals(DayAboutItemViewModel x, DayAboutItemViewModel y)
+        {
+            return x.Source == y.Source;
+        }
+
+        int IEqualityComparer<DayAboutItemViewModel>.GetHashCode(DayAboutItemViewModel obj)
+        {
+            return obj.Source.GetHashCode();
         }
     }
 }

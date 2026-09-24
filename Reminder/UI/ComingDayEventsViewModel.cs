@@ -9,12 +9,12 @@ namespace Reminder.UI
         public double PopupWidth { get; }
         public double PopupHeight { get; }
 
-        public ObservableCollection<EventItemViewModel> Items { get; }
+        public ObservableCollection<DayAboutItemViewModel> Items { get; }
 
-        public ComingDayEventsViewModel(EventItemViewModel[] items,
+        public ComingDayEventsViewModel(DayAboutItemViewModel[] items,
             double popupWidth, double popupHeight)
         {
-            Items = new ObservableCollection<EventItemViewModel>(items);
+            Items = new ObservableCollection<DayAboutItemViewModel>(items);
             PopupWidth = popupWidth;
             PopupHeight = popupHeight;
         }

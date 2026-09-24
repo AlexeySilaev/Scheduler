@@ -532,18 +532,18 @@ namespace Reminder.ViewModels
             }
         }
 
-        private void OnConveyorRefresh(EventItemViewModel[] newDayAboutEvents)
+        private void OnConveyorRefresh(DayAboutItemViewModel[] newDayAboutItems)
         {
             Alarms.UpdateRemainTime();
             if (AppSettings.ShowComingDayAboutEvents == false
-                || newDayAboutEvents.IsEmpty())
+                || newDayAboutItems.IsEmpty())
                 return;
 
             PopupRect = WindowPositioning.GetRightBottomBounds(new Size(POPUP_WIDTH, POPUP_HEIGHT));
             if (ComingDayEvents == null)
-                ComingDayEvents = new ComingDayEventsViewModel(newDayAboutEvents, POPUP_WIDTH, POPUP_HEIGHT);
+                ComingDayEvents = new ComingDayEventsViewModel(newDayAboutItems, POPUP_WIDTH, POPUP_HEIGHT);
             else
-                newDayAboutEvents.ForEach(dayAbout => ComingDayEvents.Items.Add(dayAbout));
+                newDayAboutItems.ForEach(dayAbout => ComingDayEvents.Items.Add(dayAbout));
             IsShowComingDayAboutEvents = true;
         }
 

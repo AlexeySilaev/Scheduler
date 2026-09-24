@@ -178,6 +178,7 @@
     </Compile>
     <Compile Include="ViewModels\AlarmItemViewModel.cs" />
     <Compile Include="ViewModels\AlarmGroup.cs" />
+    <Compile Include="ViewModels\DayAboutItemViewModel.cs" />
     <Compile Include="ViewModels\EventItemViewModel.cs" />
     <Compile Include="ViewModels\EventGroup.cs" />
     <Compile Include="ViewModels\HostContent.cs" />

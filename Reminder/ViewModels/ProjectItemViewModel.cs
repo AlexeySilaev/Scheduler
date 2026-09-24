@@ -100,7 +100,7 @@ namespace Reminder.ViewModels
 
         public override string PeriodicityDescription
         {
-            get { return string.Empty; }
+            get { return Periodicity.Once.GetDescription(); }
         }
 
         public override bool AllowAutoDeleteOnExpired
