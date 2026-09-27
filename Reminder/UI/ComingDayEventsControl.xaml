@@ -5,14 +5,103 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reminder.UI"
              xmlns:viewModels="clr-namespace:Reminder.ViewModels"
-             xmlns:converters="clr-namespace:Reminder.Converters"
              mc:Ignorable="d" 
              Width="{Binding PopupWidth}"
              Height="{Binding PopupHeight}"
              Background="{x:Static SystemColors.InfoBrush}"
              d:DataContext="{d:DesignInstance local:ComingDayEventsViewModel}">
     <UserControl.Resources>
-        <converters:SubstringConverter x:Key="SubstringConverter"/>
+        <Style x:Key="ScrollBarLineButtonStyle" TargetType="{x:Type RepeatButton}">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Canvas Height="18">
+                            <Polygon Fill="White" Stroke="{DynamicResource  {x:Static SystemColors.ControlTextBrushKey}}"
+                                Points="3,15 15,15 9,3"></Polygon>
+                        </Canvas>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ScrollBarLineButtonBottomStyle" TargetType="{x:Type RepeatButton}">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Canvas Height="18">
+                            <Polygon Fill="White" Stroke="{DynamicResource  {x:Static SystemColors.ControlTextBrushKey}}"
+                                Points="3,3 9,15 15,3"></Polygon>
+                        </Canvas>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ScrollBarPageButtonStyle" TargetType="{x:Type RepeatButton}">
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border BorderBrush="Transparent"></Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ScrollBarThumbStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Margin" Value="1,0,1,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Rectangle Fill="Transparent" Stroke="{DynamicResource  {x:Static SystemColors.ControlTextBrushKey}}"
+                            Margin="2"></Rectangle>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition MaxHeight="18"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition MaxHeight="18"/>
+                </Grid.RowDefinitions>
+
+                <RepeatButton Grid.Row="0" Height="18"
+                          Style="{StaticResource ScrollBarLineButtonStyle}"
+                          Command="ScrollBar.LineUpCommand" >
+                </RepeatButton>
+                <Track Name="PART_Track" Grid.Row="1" 
+                   IsDirectionReversed="True">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}">
+                        </RepeatButton>
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Style="{StaticResource ScrollBarThumbStyle}">
+                        </Thumb>
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}">
+                        </RepeatButton>
+                    </Track.IncreaseRepeatButton>
+                </Track>
+                <RepeatButton Grid.Row="3" Height="18"
+                          Style="{StaticResource ScrollBarLineButtonBottomStyle}"
+                          Command="ScrollBar.LineDownCommand">
+                </RepeatButton>
+            </Grid>
+        </ControlTemplate>
+
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Template" Value="{StaticResource VerticalScrollBar}"/>
+        </Style>
     </UserControl.Resources>
     <Border BorderBrush="Black" BorderThickness="1">
         <Grid Margin="10">
@@ -28,20 +117,32 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="{x:Type viewModels:DayAboutItemViewModel}">
                             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource GrayText}" >
-                                <Grid Margin="5" >
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="{Binding Title, Converter={StaticResource SubstringConverter}, ConverterParameter=40}"
-                                           FontSize="14" FontWeight="DemiBold"  Margin="0,0,10,0"
-                                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding PeriodicityDescription}" 
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource GrayText}"/>
-                                </Grid>
+                                <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed" Margin="5"
+                                    IsExpanded="{Binding IsExpanded}">
+                                    <!-- Определение через стиль не хочет отрабатывать, делаем в самом элементе -->
+                                    <Expander.HeaderTemplate>
+                                        <DataTemplate DataType="{x:Type viewModels:DayAboutItemViewModel}">
+                                            <Grid>
+                                                <TextBlock x:Name="Title" TextTrimming="CharacterEllipsis"  Text="{Binding Path=DataContext.Title, Mode=OneTime,
+                                                    RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Border}}}"/>
+                                                <TextBlock x:Name="ItemInfo" HorizontalAlignment="Center" Visibility="Collapsed"
+                                                    Text="{Binding Path=DataContext.ItemInfo, Mode=OneTime,
+                                                    RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Border}}}"/>
+                                            </Grid>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding IsExpanded, RelativeSource={RelativeSource FindAncestor, 
+                                                    AncestorType={x:Type Expander}}}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed" TargetName="Title"/>
+                                                    <Setter Property="Visibility" Value="Visible" TargetName="ItemInfo"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </Expander.HeaderTemplate>
+                                    <Expander.Content>
+                                        <TextBlock FontSize="14" FontWeight="DemiBold" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,5,0,0"
+                                            Text="{Binding Title, Mode=OneTime}" />
+                                    </Expander.Content>
+                                </Expander>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

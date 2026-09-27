@@ -131,7 +131,11 @@
                           Content="Автоматически при запуске приложения"/>
             </GroupBox>
         </Grid>
-        <UniformGrid Grid.Row="4" Columns="2">
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
             <GroupBox Header="Предупреждение о событиях заранее" Margin="{StaticResource GroupMargin}">
                 <CheckBox  IsChecked="{Binding ShowComingDayAboutEvents}" Margin="{StaticResource StackPanelMargin}"
                       Content="За сутки предупредить о наступлении"/>
@@ -146,6 +150,6 @@
                     <TextBlock Text="минут" />
                 </StackPanel>
             </GroupBox>
-        </UniformGrid>
+        </Grid>
     </Grid>
 </UserControl>

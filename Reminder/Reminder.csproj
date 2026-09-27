@@ -110,7 +110,6 @@
     <Compile Include="Converters\StringIsNullOrEmptyConverter.cs" />
     <Compile Include="Converters\StringSecretPresentationConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
-    <Compile Include="Converters\SubstringConverter.cs" />
     <Compile Include="Converters\TimeSpanToStringConverter.cs" />
     <Compile Include="Converters\WeekDayToInvertBoolConverter.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />

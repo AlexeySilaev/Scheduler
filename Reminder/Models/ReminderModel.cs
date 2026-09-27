@@ -11,7 +11,7 @@ namespace Reminder.Models
     internal class ReminderModel
     {
         public static ReminderModel Instance { get; }
-        internal static string AppDataPath 
+        internal static string AppDataPath
         {
             get
             {
@@ -72,40 +72,40 @@ namespace Reminder.Models
             {
             }
             IsLoaded = true;
-      }
+        }
 
-      public void Save()
-      {
-          try
-          {
-              XmlSerializer xmlSerializer = new XmlSerializer(typeof(Data));
-              using (FileStream fs = new FileStream(FilePath, FileMode.Create))
-              {
-                  Data data = new Data
-                  {
-                      Alarms = Alarms.ToArray(),
-                      Events = Events.ToArray(),
-                      Notes = Notes.ToArray(),
-                      Projects = Projects.ToArray(),
-                      Secrets = Secrets.ToArray(),
-                      Settings = Settings
-                  };
+        public void Save()
+        {
+            try
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Data));
+                using (FileStream fs = new FileStream(FilePath, FileMode.Create))
+                {
+                    Data data = new Data
+                    {
+                        Alarms = Alarms.ToArray(),
+                        Events = Events.ToArray(),
+                        Notes = Notes.ToArray(),
+                        Projects = Projects.ToArray(),
+                        Secrets = Secrets.ToArray(),
+                        Settings = Settings
+                    };
 
-                  xmlSerializer.Serialize(fs, data);
+                    xmlSerializer.Serialize(fs, data);
 
-              }
-          }
-          catch (InvalidOperationException)
-          {
-          }
-      }
+                }
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
 
         internal void Merge(Data data, bool skipExisting)
         {
             MergeData(Alarms, data.Alarms, skipExisting);
             MergeData(Events, data.Events, skipExisting);
             MergeData(Notes, data.Notes, skipExisting);
-            MergeData(Projects, data.Projects, skipExisting);
+            MergeData(Projects, data.Projects, skipExisting, (x, y) => x.Name == y.Name);
             if (AreSecretsAllowed)
                 MergeData(Secrets, data.Secrets, skipExisting);
             else
@@ -113,12 +113,15 @@ namespace Reminder.Models
             Save();
         }
 
-        private static void MergeData<T>(List<T> items, T[] importItems, bool skipExisting)
+        private static void MergeData<T>(List<T> items, T[] importItems, bool skipExisting,
+            Func<T, T, bool> searchCriteria = null)
             where T : ReminderItem
         {
+            if (searchCriteria == null)
+                searchCriteria = (x, y) => x.Text == y.Text;
             importItems.ForEach(importItem =>
             {
-                int index = items.FindIndex(item => item.Text == importItem.Text);
+                int index = items.FindIndex(item => searchCriteria(item, importItem));
                 if (index == -1)
                     items.Add(importItem);
                 else if (skipExisting == false)

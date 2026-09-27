@@ -535,8 +535,7 @@ namespace Reminder.ViewModels
         private void OnConveyorRefresh(DayAboutItemViewModel[] newDayAboutItems)
         {
             Alarms.UpdateRemainTime();
-            if (AppSettings.ShowComingDayAboutEvents == false
-                || newDayAboutItems.IsEmpty())
+            if (AppSettings.ShowComingDayAboutEvents == false || newDayAboutItems.IsEmpty())
                 return;
 
             PopupRect = WindowPositioning.GetRightBottomBounds(new Size(POPUP_WIDTH, POPUP_HEIGHT));

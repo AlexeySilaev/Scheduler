@@ -11,7 +11,6 @@ namespace Reminder.Extensions
         public static DateTime CalcNearestEventDate(this EventItemViewModel viewModel,
             DateTime eventDate, int weekDays, DaysRangeViewModel range)
         {
-            Console.Write($"{viewModel.Periodicity}: {eventDate} - ");
             switch (viewModel.Periodicity)
             {
                 case Periodicity.Daily:
