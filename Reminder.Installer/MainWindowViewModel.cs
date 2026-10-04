@@ -331,6 +331,8 @@ namespace Reminder.Installer
                 ShutdownAvReminderProcess();
 
                 EnsureFolderExists(InstallFolderPath);
+                FolderBackupCopy.ClearAll(new DirectoryInfo(InstallFolderPath));
+
                 using (Stream contentStream = Assembly.GetExecutingAssembly()
                            .GetManifestResourceStream("Reminder.Installer.Resources.Content.zip"))
                 {

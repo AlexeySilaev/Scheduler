@@ -6,7 +6,7 @@ namespace Reminder.Installer.Wizard
 {
     internal class FolderBackupCopy : IDisposable
     {
-        private readonly string _sourcePath;
+        private readonly DirectoryInfo _sourcePath;
         private readonly string _backupPathPath;
         private bool _enableRestoreSource;
 
@@ -14,9 +14,9 @@ namespace Reminder.Installer.Wizard
         {
             if (Directory.Exists(sourcePath))
             {
-                _sourcePath = sourcePath;
+                _sourcePath = new DirectoryInfo(sourcePath);
                 _backupPathPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-                CopyAll(new DirectoryInfo(_sourcePath), new DirectoryInfo(_backupPathPath));
+                CopyAll(_sourcePath, new DirectoryInfo(_backupPathPath));
             }
         }
 
@@ -26,9 +26,8 @@ namespace Reminder.Installer.Wizard
             { 
                 if (_enableRestoreSource)
                 {
-                    DirectoryInfo source = new DirectoryInfo(_sourcePath);
-                    ClearAll(source);
-                    CopyAll(new DirectoryInfo(_backupPathPath), source);
+                    ClearAll(_sourcePath);
+                    CopyAll(new DirectoryInfo(_backupPathPath), _sourcePath);
                 }
                 DiskHelper.DeleteFolder(_backupPathPath, true);
             }
@@ -37,6 +36,18 @@ namespace Reminder.Installer.Wizard
         public void EnableRestoreSource()
         {
             _enableRestoreSource = true;
+        }
+
+        public static void ClearAll(DirectoryInfo target)
+        {
+            foreach (FileInfo file in target.EnumerateFiles())
+            {
+                DiskHelper.DeleteFile(file.FullName);
+            }
+            foreach (DirectoryInfo dir in target.EnumerateDirectories())
+            {
+                DiskHelper.DeleteFolder(dir.FullName, true);
+            }
         }
 
         private static void CopyAll(DirectoryInfo source, DirectoryInfo target)
@@ -52,18 +63,6 @@ namespace Reminder.Installer.Wizard
             {
                 DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
                 CopyAll(diSourceSubDir, nextTargetSubDir);
-            }
-        }
-
-        private static void ClearAll(DirectoryInfo target)
-        {
-            foreach (FileInfo file in target.EnumerateFiles())
-            {
-                DiskHelper.DeleteFile(file.FullName);
-            }
-            foreach (DirectoryInfo dir in target.EnumerateDirectories())
-            {
-                DiskHelper.DeleteFolder(dir.FullName, true);
             }
         }
     }

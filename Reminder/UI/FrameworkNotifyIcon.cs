@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Reminder.UI
 {
@@ -39,16 +40,66 @@ namespace Reminder.UI
                         ((FrameworkNotifyIcon)d)._notifyIcon?.ShowBalloonTip(r.Duration, r.Title, r.Text, r.Icon);
                     }));
 
-        private static readonly RoutedEvent OpenSelectedEvent = EventManager.RegisterRoutedEvent("OpenSelected",
-            RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkNotifyIcon));
 
-        private static readonly RoutedEvent AboutSelectedEvent = EventManager.RegisterRoutedEvent("AboutSelected",
-            RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkNotifyIcon));
+        public static readonly DependencyProperty OpenCommandProperty = DependencyProperty
+            .Register("OpenCommand", typeof(ICommand), typeof(FrameworkNotifyIcon), new FrameworkPropertyMetadata(null, OnOpenCommandChanged));
+        public static readonly DependencyProperty AboutCommandProperty = DependencyProperty
+            .Register("AboutCommand", typeof(ICommand), typeof(FrameworkNotifyIcon), new FrameworkPropertyMetadata(null, OnAboutCommandChanged));
+        public static readonly DependencyProperty ExitCommandProperty = DependencyProperty
+            .Register("ExitCommand", typeof(ICommand), typeof(FrameworkNotifyIcon), new FrameworkPropertyMetadata(null, OnExitCommandChanged));
 
-        private static readonly RoutedEvent ExitSelectedEvent = EventManager.RegisterRoutedEvent("ExitSelected",
-            RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkNotifyIcon));
+        private static void OnOpenCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            FrameworkNotifyIcon owner = (FrameworkNotifyIcon)d;
+            owner.SetCommand(OPEN_MENU_INDEX, (ICommand)args.NewValue);
+        }
+        private static void OnAboutCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            FrameworkNotifyIcon owner = (FrameworkNotifyIcon)d;
+            owner.SetCommand(ABOUT_MENU_INDEX, (ICommand)args.NewValue);
+        }
+        private static void OnExitCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
+        {
+            FrameworkNotifyIcon owner = (FrameworkNotifyIcon)d;
+            owner.SetCommand(EXIT_MENU_INDEX, (ICommand)args.NewValue);
+        }
 
+        private void SetCommand(int index, ICommand command)
+        {
+            if (DesignerProperties.GetIsInDesignMode(this) == false)
+                _stripMenuCommands[index].Command = command;
+        }
+
+        private const int
+            OPEN_MENU_INDEX = 0,
+            ABOUT_MENU_INDEX = 1,
+            EXIT_MENU_INDEX = 2;
         private readonly NotifyIcon _notifyIcon;
+        private StripMenuCommand[] _stripMenuCommands;
+
+        [Bindable(true)]
+        [Category("Action")]
+        public ICommand OpenCommand
+        {
+            get { return (ICommand)GetValue(OpenCommandProperty); }
+            set { SetValue(OpenCommandProperty, value); }
+        }
+
+        [Bindable(true)]
+        [Category("Action")]
+        public ICommand AboutCommand
+        {
+            get { return (ICommand)GetValue(AboutCommandProperty); }
+            set { SetValue(AboutCommandProperty, value); }
+        }
+
+        [Bindable(true)]
+        [Category("Action")]
+        public ICommand ExitCommand
+        {
+            get { return (ICommand)GetValue(ExitCommandProperty); }
+            set { SetValue(ExitCommandProperty, value); }
+        }
 
         public FrameworkNotifyIcon()
         {
@@ -60,7 +111,7 @@ namespace Reminder.UI
                 Visible = true,
                 ContextMenuStrip = CreateContextMenu()
             };
-            _notifyIcon.DoubleClick += OpenItemOnClick;
+            _stripMenuCommands[OPEN_MENU_INDEX].AddDoubleClickHandler(_notifyIcon);
             System.Windows.Application.Current.Exit += (obj, args) => { _notifyIcon.Dispose(); };
         }
 
@@ -87,55 +138,18 @@ namespace Reminder.UI
             _notifyIcon?.Dispose();
         }
 
-        public event RoutedEventHandler OpenSelected
-        {
-            add => AddHandler(OpenSelectedEvent, value);
-            remove => RemoveHandler(OpenSelectedEvent, value);
-        }
-
-        public event RoutedEventHandler AboutSelected
-        {
-            add => AddHandler(AboutSelectedEvent, value);
-            remove => RemoveHandler(AboutSelectedEvent, value);
-        }
-
-        public event RoutedEventHandler ExitSelected
-        {
-            add => AddHandler(ExitSelectedEvent, value);
-            remove => RemoveHandler(ExitSelectedEvent, value);
-        }
-
         private ContextMenuStrip CreateContextMenu()
         {
             ToolStripMenuItem openItem = new ToolStripMenuItem("Открыть");
-            openItem.Click += OpenItemOnClick;
             ToolStripMenuItem about = new ToolStripMenuItem("О программе");
-            about.Click += AboutItemOnClick;
             ToolStripMenuItem exitItem = new ToolStripMenuItem("Выход");
-            exitItem.Click += ExitItemOnClick;
+            _stripMenuCommands = new[] { new StripMenuCommand(openItem),
+                new StripMenuCommand(about), new StripMenuCommand(exitItem) };
             ContextMenuStrip result = new ContextMenuStrip
             {
                 Items = { openItem, about, new ToolStripSeparator(), exitItem }
             };
             return result;
-        }
-
-        private void OpenItemOnClick(object sender, EventArgs eventArgs)
-        {
-            var args = new RoutedEventArgs(OpenSelectedEvent);
-            RaiseEvent(args);
-        }
-
-        private void AboutItemOnClick(object sender, EventArgs eventArgs)
-        {
-            var args = new RoutedEventArgs(AboutSelectedEvent);
-            RaiseEvent(args);
-        }
-
-        private void ExitItemOnClick(object sender, EventArgs eventArgs)
-        {
-            var args = new RoutedEventArgs(ExitSelectedEvent);
-            RaiseEvent(args);
         }
 
         public class NotifyRequestRecord
@@ -144,6 +158,53 @@ namespace Reminder.UI
             public string Text { get; set; } = "";
             public int Duration { get; set; } = 1000;
             public ToolTipIcon Icon { get; set; } = ToolTipIcon.Info;
+        }
+
+        private class StripMenuCommand
+        {
+            private readonly ToolStripMenuItem _menuItem;
+            private ICommand _command;
+
+
+            public ICommand Command
+            {
+                get { return _command; }
+                set
+                {
+                    if (Command == value) return;
+                    if (Command != null)
+                        Command.CanExecuteChanged -= Command_CanExecuteChanged;
+                    _command = value;
+                    if (Command != null)
+                    {
+                        Command.CanExecuteChanged += Command_CanExecuteChanged;
+                        _menuItem.Enabled = Command.CanExecute(null);
+                    }
+                    else
+                        _menuItem.Enabled = false;
+                }
+            }
+
+            public StripMenuCommand(ToolStripMenuItem menuItem)
+            { 
+                _menuItem = menuItem;
+                _menuItem.Click += MenuItem_Click;
+            }
+
+            public void AddDoubleClickHandler(NotifyIcon notifyIcon)
+            {
+                notifyIcon.DoubleClick += MenuItem_Click;
+            }
+
+            private void MenuItem_Click(object sender, EventArgs e)
+            {
+                Command?.Execute(null);
+            }
+
+            private void Command_CanExecuteChanged(object sender, EventArgs e)
+            {
+                _menuItem.Enabled = _command.CanExecute(null);
+            }
         }
     }
 }

@@ -55,17 +55,15 @@
             <Setter Property="HorizontalContentAlignment" Value="Left" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
-        
-        <Style x:Key="ReminderItemText" TargetType="{x:Type TextBlock}">
-            <Setter Property="TextWrapping" Value="Wrap"/>
-            <Setter Property ="FontSize" Value="14"/>
-            <Setter Property ="FontWeight" Value="DemiBold"/>
-            <Setter Property ="VerticalAlignment" Value="Center"/>
-        </Style>
 
         <Style x:Key="ProjectElementText" TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property ="FontSize" Value="14"/>
+        </Style>
+
+        <Style x:Key="ReminderItemText" BasedOn="{StaticResource ProjectElementText}" TargetType="{x:Type TextBlock}">
+            <Setter Property ="FontWeight" Value="DemiBold"/>
+            <Setter Property ="VerticalAlignment" Value="Center"/>
         </Style>
 
         <Style x:Key="EditItemButton" TargetType="{x:Type Button}">
