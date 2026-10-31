@@ -19,6 +19,7 @@ namespace Reminder.UI
         private bool _canExecuteSecretsCommand;
         private string _importFilePath;
         private bool _skipMatchingData;
+        private event EventHandler _secretsUnblocked;
 
         public override string Name { get { return "Управление"; } }
 
@@ -80,6 +81,12 @@ namespace Reminder.UI
         public Command ImportCommand { get; }
         public ICommand SelectImportFileCommand { get; }
 
+        public event EventHandler SecretsUnblocked
+        {
+            add { _secretsUnblocked += value; }
+            remove { _secretsUnblocked -= value; }
+        }
+
         public ManagementViewModel(ISupportHostContent secretsHostContent)
         { 
             _secretsHostContent = secretsHostContent;
@@ -113,6 +120,8 @@ namespace Reminder.UI
         {
             _secretsHostContent.IsHostContentAllowed = !_secretsHostContent.IsHostContentAllowed;
             OnPropertyChanged(nameof(AllowUnblock));
+            if (_secretsHostContent.IsHostContentAllowed == false)
+                _secretsUnblocked?.Invoke(this, EventArgs.Empty);
         }
 
         private async void OnExport()

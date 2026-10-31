@@ -76,6 +76,7 @@ namespace Reminder.Models
 
         public void Save()
         {
+            // TODO: вынести в фоновый поток? Пока жить не мешает.
             try
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Data));

@@ -10,6 +10,7 @@ using Reminder.UI;
 using Reminder.Extensions;
 using System.Timers;
 using Reminder.Resources.ViewModels;
+using Reminder.Resources.Storage;
 
 namespace Reminder.ViewModels
 {
@@ -21,6 +22,7 @@ namespace Reminder.ViewModels
         private const string COMMON_WINDOW_TITLE = "Мечта склеротика";
         private readonly ReminderConveyor _reminderConveyor;
         private readonly SettingsViewModel _settings;
+        private readonly ManagementViewModel _management;
         private readonly Timer _autolockSecretsTimer;
 
         private ISchedulerGroup _selectedGroup;
@@ -296,6 +298,8 @@ namespace Reminder.ViewModels
             Secrets.IsHostContentAllowedChanged += Secrets_IsHostContentAllowedChanged;
             _settings = new SettingsViewModel(AppSettings);
             _settings.PropertyChanged += Settings_OnPropertyChanged;
+            _management = new ManagementViewModel(Secrets);
+            _management.SecretsUnblocked += Management_SecretsUnblocked;
 
             _mainWindowTitle = COMMON_WINDOW_TITLE;
             _searchText = string.Empty;
@@ -447,8 +451,12 @@ namespace Reminder.ViewModels
 
         private void OnManagement()
         {
-            ManagementViewModel management = new ManagementViewModel(Secrets);
-            SetHostContent(new HostContent(new ManagementControl(), management), null);
+            SetHostContent(new HostContent(new ManagementControl(), _management), null);
+        }
+
+        private void Management_SecretsUnblocked(object sender, EventArgs e)
+        {
+            SelectedGroup = Secrets;
         }
 
         private void OnSettings()
