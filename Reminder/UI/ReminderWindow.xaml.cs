@@ -38,7 +38,7 @@ namespace Reminder.UI
 
         private void PreviewChangeFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            // не даем закрыть TimeTextBox, е`ли мышь проходит над другим элементом
+            // не даем закрыть TimeTextBox, если мышь проходит над другим элементом
             // выпадающего списка
             if (e.Source == ReminderItems && e.NewFocus is ComboBoxItem && e.OldFocus is TimeTextBox)
                 e.Handled = true;

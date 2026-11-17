@@ -29,7 +29,8 @@
                   Visibility="{Binding ShowSecretsGroup, Mode=OneTime, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}">
             <StackPanel Orientation="Horizontal" Height="{StaticResource OneLineElementsHeight}">
                 <TextBlock Text="Пароль для секретов" VerticalAlignment="Center"/>
-                <PasswordBox x:Name="tbSecretPassword" PasswordChanged="OnSecretsPasswordChanged" MinWidth="245" Margin="10,0,20,0" />
+                <PasswordBox x:Name="tbSecretPassword" PasswordChanged="OnSecretsPasswordChanged" KeyDown="OnKeyDownInSecrectPassword"
+                        MinWidth="245" Margin="10,0,20,0" />
                 <Button Content="Разблокировать" Command="{Binding LockOrUnlockSecrectsCommand}" Padding="5,0"
                         Visibility="{Binding AllowUnblock, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=True}"/>
                 <Button Content="Заблокировать" Command="{Binding LockOrUnlockSecrectsCommand}" Padding="5,0"

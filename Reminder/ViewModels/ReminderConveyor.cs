@@ -83,7 +83,7 @@ namespace Reminder.ViewModels
             if (_reminderWindowViewModel.IsAllItemsPostponed())
             {
                 // пусть пользователь успеет увидеть ввод
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromMilliseconds(500));
                 _reminderWindowViewModel.Window?.Close(); // "Window?" если ловкий пользователь закрыл окно
                 _reminderWindowViewModel = null;
             }
